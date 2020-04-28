@@ -1,0 +1,20 @@
+{
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-whalewatch-prod-182445-authRole",
+            "UnauthRoleArn": "arn:aws:iam::284113741007:role/amplify-whalewatch-prod-182445-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::284113741007:role/amplify-whalewatch-prod-182445-authRole",
+            "Region": "eu-central-1",
+            "DeploymentBucketName": "amplify-whalewatch-prod-182445-deployment",
+            "UnauthRoleName": "amplify-whalewatch-prod-182445-unauthRole",
+            "StackName": "amplify-whalewatch-prod-182445",
+            "StackId": "arn:aws:cloudformation:eu-central-1:284113741007:stack/amplify-whalewatch-prod-182445/1f0f0320-8191-11ea-b354-06fecd730058",
+            "AmplifyAppId": "dcl4lyw67p4q2"
+        },
+        "categories": {
+            "auth": {
+                "cognitoed159519": {}
+            }
+        }
+    }
+}

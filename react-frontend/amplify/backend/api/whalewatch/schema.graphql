@@ -1,0 +1,17 @@
+type Image {
+	name: String!
+}
+
+type MatchingImage @model{
+  id: ID!
+  image: Image
+  matchingImages: [Image]
+}
+
+#type User @model {
+#  id: ID!
+#  name: String
+#  surname: String
+#  email: String!
+#  password: String!
+#	}

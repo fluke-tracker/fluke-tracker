@@ -1,0 +1,17 @@
+{
+    "projectName": "WhaleWatch",
+    "version": "3.0",
+    "frontend": "javascript",
+    "javascript": {
+        "framework": "react",
+        "config": {
+            "SourceDir": "src",
+            "DistributionDir": "build",
+            "BuildCommand": "yarn build_win",
+            "StartCommand": "yarn start_win"
+        }
+    },
+    "providers": [
+        "awscloudformation"
+    ]
+}

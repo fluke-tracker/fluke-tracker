@@ -1,0 +1,12 @@
+# node packages
+node_modules
+
+# frontend
+/react-frontend/__pycache__
+/react-frontend/yarn-error.log
+/react-frontend/yarn.lock
+
+# backend
+/flask-backend/db.p
+/flask-backend/db_backup.p
+/flask-backend/thumbnails
