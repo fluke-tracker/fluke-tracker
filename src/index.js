@@ -16,7 +16,9 @@ import LandingPage from "views/LandingPage/LandingPage.jsx";
 import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 var hist = createBrowserHistory();
-
+import Amplify from 'aws-amplify';
+import amplify from 'aws-exports';
+Amplify.configure(amplify);
 const token = Cookies.read("token");
 
 if (token) {
