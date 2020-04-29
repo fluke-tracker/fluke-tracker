@@ -91,6 +91,7 @@ class LandingPage extends React.Component {
     this.loadMatches = this.loadMatches.bind(this);
     this._handleKeyDown = this._handleKeyDown.bind(this)
     this.loadData("http://localhost:3000/csv");
+    //this.loadData("assets/sample.csv");
     this.loadMatches();
     this.handleForce = (data, fileInfo) => this.setState({ whale_csv: data }, this.handleCsvData);
     this.handleForce.bind(this);
@@ -276,6 +277,7 @@ class LandingPage extends React.Component {
 
     if (this.state.whale_csv) {
       console.log("yyy");
+      //this.getimages('IMG_2270-16.jpg');
       const vertical = this.state.vertical;
       const horizontal = this.state.horizontal;
 
@@ -358,6 +360,15 @@ class LandingPage extends React.Component {
   //     });
   // }
 
+  getimages = (image) => {
+  console.log ("fetch image s3");
+  console.log ("image rec: ",image);
+  const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/thumbnails/'
+  const image_url = bucket_url+image+"thumbnail.jpg"
+  console.log(image_url)
+    return image_url
+  }
+
   render() {
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
@@ -407,7 +418,10 @@ class LandingPage extends React.Component {
                         <br/>
                         {this.state.whale_csv[this.state.vertical][0]}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][0]) ? '' : <CircularProgress />}
-                        <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
+{/*                         <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
+                          onError={this.handleLeftImageErrored.bind(this)}
+                        /> */}
+                         <img src={this.getimages(this.state.whale_csv[this.state.vertical][0])} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
                         />
                 </GridItem>
@@ -418,7 +432,9 @@ class LandingPage extends React.Component {
                         <br/>
                         {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]) ? '': <CircularProgress />}
-                        <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} />     
+                       {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}     
+                        <img src={this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])} onLoad={this.handleRightImageLoaded.bind(this)} />     
+               
                 </GridItem>      
                 <GridItem xs={12} sm={12} md={6}>
                 {this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures  && this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]].has(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? <Button variant="contained" onClick={() => this.acceptPicture()} color="warning">🐳 UnMatch!</Button> : <Button variant="contained" onClick={() => this.acceptPicture()} color="success">🐳 Match!</Button>}
