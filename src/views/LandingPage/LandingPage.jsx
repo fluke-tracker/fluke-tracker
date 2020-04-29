@@ -401,7 +401,7 @@ class LandingPage extends React.Component {
                 <GridItem xs={12} sm={12} md={6}>
                         <LinearProgress variant="determinate" value={this.state.horizontal / (this.state.whale_csv[this.state.vertical].length - 2) * 100} />
                 </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
                         New Image Number: {this.state.vertical} 
                         <br/>
                         {this.state.whale_csv[this.state.vertical][0]}
@@ -411,7 +411,7 @@ class LandingPage extends React.Component {
                         />
                 </GridItem>
 
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
                         Best Matching Picture Number:
                         {this.state.horizontal} 
                         <br/>
