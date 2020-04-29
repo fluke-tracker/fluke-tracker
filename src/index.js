@@ -10,7 +10,7 @@ import Cookies from "./utils/Cookies";
 
 import "./assets/scss/material-kit-react.scss?v=1.4.0";
 import Amplify from 'aws-amplify';
-import awsmobile from "aws-exports";
+import awsmobile from "./aws-exports";
 // pages for this product
 import Components from "views/Components/Components.jsx";
 import LandingPage from "views/LandingPage/LandingPage.jsx";
