@@ -17,8 +17,8 @@ import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 var hist = createBrowserHistory();
 import Amplify from 'aws-amplify';
-import amplify from './aws-exports';
-Amplify.configure(amplify);
+import awsmobile from './aws-exports';
+Amplify.configure(awsmobile);
 const token = Cookies.read("token");
 
 if (token) {
