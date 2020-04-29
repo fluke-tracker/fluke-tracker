@@ -52,9 +52,9 @@
     "eslint-plugin-prettier": "3.0.1"
   },
   "scripts": {
-    "start": "PORT=8080 NODE_PATH=./src react-scripts start",
+    "start": "react-scripts start",
     "start_win": "react-scripts start",
-    "build": "NODE_PATH=./src react-scripts build",
+    "build": "react-scripts build",
     "build_win": "react-scripts build",
     "deploy": "node deploy",
     "test": "react-scripts test --env=jsdom",
