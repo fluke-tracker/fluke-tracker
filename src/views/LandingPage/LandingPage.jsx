@@ -367,8 +367,7 @@ class LandingPage extends React.Component {
         <Header
           color="transparent"
           routes={dashboardRoutes}
-          brand="Capgemini"
-          rightLinks={<HeaderLinks />}
+          brand=""
           fixed
           changeColorOnScroll={{
             height: 400,
@@ -377,10 +376,12 @@ class LandingPage extends React.Component {
           {...rest}
         />
 
-        <Parallax filter image={require("assets/img/landing-bg.jpg")}>
+        <Parallax small center fixed filter image={require("assets/img/Web-Banner-GDSC-v2_TD.png")} />
+                <div className={classNames(classes.main, classes.mainRaised)}>
+          <div>
           <div className={classes.container}>
             <GridContainer>
-            <GridItem xs={12} sm={12} md={6}><h1 className={classes.title}>Do the whales match?</h1></GridItem>
+            <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Do these whales match?</h2></GridItem>
 {/*             <GridItem xs={12} sm={12} md={6}>
               <img src={require("assets/img/arrow_keys.svg")} style={{"width": "150px", "height": "150px", "backgroundColor": "white"}}/>
             </GridItem> */}
@@ -389,7 +390,7 @@ class LandingPage extends React.Component {
                 
                       <CSVReader
                           cssClass="react-csv-input"
-                          label="Select CSV with results from your Machine Learning model"
+                          label="Select a CSV file with results from your Machine Learning model "
                           onFileLoaded={this.handleForce}
                           parserOptions={papaparseOptions}
                         />
@@ -401,7 +402,7 @@ class LandingPage extends React.Component {
                 <GridItem xs={12} sm={12} md={6}>
                         <LinearProgress variant="determinate" value={this.state.horizontal / (this.state.whale_csv[this.state.vertical].length - 2) * 100} />
                 </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
                         New Image Number: {this.state.vertical} 
                         <br/>
                         {this.state.whale_csv[this.state.vertical][0]}
@@ -411,7 +412,7 @@ class LandingPage extends React.Component {
                         />
                 </GridItem>
 
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
                         Best Matching Picture Number:
                         {this.state.horizontal} 
                         <br/>
@@ -437,15 +438,19 @@ class LandingPage extends React.Component {
                 />
               </GridItem>
               <GridItem xs={12} sm={12} md={6}>
+      {/*  new buttons for the matching result */}
+              <Button variant="contained" onClick={() => this.go_match()}color="match" size="sm">Match</Button>
+              <Button variant="contained" onClick={() => this.go_noMatch()}color="noMatch" size="sm">No match</Button>
+              <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button>
+              <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button>
+              <Button variant="contained" onClick={() => this.go_badPicture()}color="badPicture" size="sm">Bad picture</Button>
+              <br/>
+{/*  next pictures */}
               <Button variant="contained" onClick={() => this.go_left()}color="info" size="sm">&#9664;</Button>
               <Button variant="contained" onClick={() => this.go_right()}color="info" size="sm">&#10148;</Button>
               </GridItem>
             </GridContainer>
           </div>
-        </Parallax>
-        <div className={classNames(classes.main, classes.mainRaised)}>
-          <div className={classes.container}>
-
           </div>
         </div>
         <Footer />
