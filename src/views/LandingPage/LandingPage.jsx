@@ -43,13 +43,14 @@ import { updateMatchingImage  } from 'graphql/mutations';
 import { deleteMatchingImage  } from 'graphql/mutations';
 import { listMatchingImages } from 'graphql/queries';
 
-//import awsconfig from 'aws-exports';
-import Amplify from 'aws-amplify';
+import awsconfig from 'aws-exports';
+import Amplify , { Storage } from 'aws-amplify';
 
 // Configure Amplify
-/* API.configure(awsconfig);
+API.configure(awsconfig);
 PubSub.configure(awsconfig);
-Amplify.configure(awsconfig); */
+Amplify.configure(awsconfig); 
+
 
 
 var imageList = []

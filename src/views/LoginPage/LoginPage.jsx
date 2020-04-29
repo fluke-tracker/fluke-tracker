@@ -30,10 +30,10 @@ import { Auth } from 'aws-amplify';
 import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp, VerifyContact, withAuthenticator } from 'aws-amplify-react';
 
 //amplify
-import Amplify from 'aws-amplify';
-//import awsconfig from 'aws-exports';
+import Amplify,{ Storage } from 'aws-amplify';
+import awsconfig from 'aws-exports';
 
-//Amplify.configure(awsconfig);
+Amplify.configure(awsconfig);
 
 const AlwaysOn = (props) => {
   return (
