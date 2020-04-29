@@ -15,15 +15,6 @@ import Components from "views/Components/Components.jsx";
 import LandingPage from "views/LandingPage/LandingPage.jsx";
 import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
-
-import awsconfig from 'aws-exports';
-import Amplify , { Storage } from 'aws-amplify';
-
-// Configure Amplify
-API.configure(awsconfig);
-PubSub.configure(awsconfig);
-Amplify.configure(awsconfig); 
-
 var hist = createBrowserHistory();
 
 const token = Cookies.read("token");
