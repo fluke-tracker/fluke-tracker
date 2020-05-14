@@ -42,6 +42,7 @@ import { createMatchingImage  } from 'graphql/mutations';
 import { updateMatchingImage  } from 'graphql/mutations';
 import { deleteMatchingImage  } from 'graphql/mutations';
 import { listMatchingImages } from 'graphql/queries';
+import { getMatchingImage } from 'graphql/queries';
 
 //import awsconfig from 'aws-exports';
 import Amplify , { Storage } from 'aws-amplify';
@@ -77,7 +78,9 @@ class LandingPage extends React.Component {
       left_img: '',
       whale_csv: [[]],
       is_loaded: new Set(),
-      matchedPictures: {}
+      matchedPictures: {},
+      image_id: {},
+      isMatched: '',
     }
     this.acceptPicture = this.acceptPicture.bind(this);
     this.unacceptPicture = this.unacceptPicture.bind(this);
@@ -127,19 +130,22 @@ class LandingPage extends React.Component {
   acceptPicture() {
     const left_img_name = this.state.whale_csv[this.state.vertical][0];
     const right_img_name = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
-    console.log(right_img_name);
+    console.log('left_img_name is: ',left_img_name);
+    console.log('right_image is: ',right_img_name);
     this.setState(prevState => { 
       if (prevState.matchedPictures[left_img_name] == undefined){
         prevState.matchedPictures[left_img_name] = new Set([right_img_name]);
-        API.graphql(graphqlOperation(createMatchingImage, {input: { image: {name: left_img_name}, matchingImages: [{name: right_img_name}] }})).then( () => console.log("created matching image"));
+        API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
       } 
       else {
         prevState.matchedPictures[left_img_name].add(right_img_name)
-        API.graphql(graphqlOperation(updateMatchingImage, {input: { image: {name: left_img_name}, matchingImages: Array.from(prevState.matchedPictures[left_img_name]) }}));
+        console.log ('prevState.matchedPictures[left_img_name])::: ',prevState.matchedPictures[left_img_name]);
+        console.log('added_arry:', Array.from(prevState.matchedPictures[left_img_name]));
+        API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err))
+        ;
       } 
-      console.log(prevState.matchedPictures);
-      return {matchedPictures:  prevState.matchedPictures}}
-    );
+      return {matchedPictures:  prevState.matchedPictures}
+    });
     if (left_img_name && right_img_name) {
       
     //   const url = 'http://localhost:3000/accept/' + left_img_name + '/' + right_img_name;
@@ -167,8 +173,10 @@ class LandingPage extends React.Component {
     const left_img_name = this.state.whale_csv[this.state.vertical][0];
     const right_img_name = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
     this.setState(prevState => { 
+      console.log('left img id: ',prevState.image_id[left_img_name]);
       prevState.matchedPictures[left_img_name].delete(right_img_name); 
-      API.graphql(graphqlOperation(updateMatchingImage, {image: left_img_name, matchingImages: Array.from(prevState.matchedPictures[left_img_name])}));
+    console.log("array after deletion", prevState.matchedPictures[left_img_name]);
+      API.graphql(graphqlOperation(updateMatchingImage, {input: {id: prevState.image_id[left_img_name], image:  {name: left_img_name}, matchingImages: {name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("deletin matching image")).catch(err => console.log(err));
       return prevState.matchedPictures;
 
     });
@@ -276,8 +284,7 @@ class LandingPage extends React.Component {
   handleCsvData() {
 
     if (this.state.whale_csv) {
-      console.log("yyy");
-      //this.getimages('IMG_2270-16.jpg');
+
       const vertical = this.state.vertical;
       const horizontal = this.state.horizontal;
 
@@ -323,9 +330,15 @@ class LandingPage extends React.Component {
     console.log("load matches");
     const matchingImages = API.graphql(graphqlOperation(listMatchingImages)).then(
       response => {
+        const image_id = {};
         const matchedPictures = response.data.listMatchingImages.items;
-        const reformatedMatchedPictures = matchedPictures.reduce((obj, item) => {if(item.image) obj[item.image.name] = new Set(item.matchingImages.map( img => img.name)); return obj} , {})
+        const reformatedMatchedPictures = matchedPictures.reduce((obj_id, item) => { 
+          const left_image_name = item.image.name;
+          if(item.image) image_id[left_image_name] = item.id;
+          if(item.image) obj_id[left_image_name] = new Set(item.matchingImages.map( right_img => right_img.name)); return obj_id} , {})
         this.setState(() => { return { matchedPictures:  reformatedMatchedPictures} });
+        this.setState(() => { return { image_id: image_id} });
+        console.log(response);
       }
     );
     
@@ -361,11 +374,8 @@ class LandingPage extends React.Component {
   // }
 
   getimages = (image) => {
-  console.log ("fetch image s3");
-  console.log ("image rec: ",image);
   const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/thumbnails/'
   const image_url = bucket_url+image+"thumbnail.jpg"
-  console.log(image_url)
     return image_url
   }
 
@@ -434,10 +444,18 @@ class LandingPage extends React.Component {
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]) ? '': <CircularProgress />}
                        {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}     
                         <img src={this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])} onLoad={this.handleRightImageLoaded.bind(this)} />     
-               
                 </GridItem>      
-                <GridItem xs={12} sm={12} md={6}>
-                {this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures  && this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]].has(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? <Button variant="contained" onClick={() => this.acceptPicture()} color="warning">🐳 UnMatch!</Button> : <Button variant="contained" onClick={() => this.acceptPicture()} color="success">🐳 Match!</Button>}
+                <GridItem xs={12} sm={12} md={6}>     
+                          
+                    {/*     {console.log('this.state.vertical][0]::',this.state.whale_csv[this.state.vertical][0])}
+                        {console.log('this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]:  ',this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]])}
+                        {console.log('has(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]): ',this.state.whale_csv[this.state.vertical][this.state.horizontal+1])} */}
+{/*                 {this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures &&
+                 Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? 
+                 <Button variant="contained" onClick={() => this.unacceptPicture()} color="warning">🐳 UnMatch!</Button> : 
+                 <Button variant="contained" onClick={() => this.acceptPicture()} color="success">🐳 Match!</Button>} */}
+                 {this.state.isMatched = this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures &&
+                Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1])}         
                 <br/>
                 <Button variant="contained" onClick={() => this.go_up()}color="info" size="sm">&#9650;</Button>
               <Button variant="contained" onClick={() => this.go_down()}color="info" size="sm">&#9660;</Button>
@@ -455,10 +473,10 @@ class LandingPage extends React.Component {
               </GridItem>
               <GridItem xs={12} sm={12} md={6}>
       {/*  new buttons for the matching result */}
-              <Button variant="contained" onClick={() => this.go_match()}color="match" size="sm">Match</Button>
-              <Button variant="contained" onClick={() => this.go_noMatch()}color="noMatch" size="sm">No match</Button>
-              <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button>
-              <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button>
+              <Button variant="contained" onClick={() => this.acceptPicture()}color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} size="sm">Match</Button>
+              <Button variant="contained" onClick={() => this.unacceptPicture()}color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} size="sm">Unmatch</Button>
+{/*               <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button> */}
+{/*               <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button> */}
               <Button variant="contained" onClick={() => this.go_badPicture()}color="badPicture" size="sm">Bad picture</Button>
               <br/>
 {/*  next pictures */}
