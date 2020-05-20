@@ -47,6 +47,7 @@ import { getMatchingImage } from 'graphql/queries';
 //import awsconfig from 'aws-exports';
 import Amplify , { Storage } from 'aws-amplify';
 
+
 // Configure Amplify
 /* API.configure(awsconfig);
 PubSub.configure(awsconfig);
@@ -93,8 +94,8 @@ class LandingPage extends React.Component {
     this.loadData = this.loadData.bind(this);
     this.loadMatches = this.loadMatches.bind(this);
     this._handleKeyDown = this._handleKeyDown.bind(this)
-    this.loadData("http://localhost:3000/csv");
-    //this.loadData("assets/sample.csv");
+    //this.loadData("http://localhost:3000/csv");
+    this.loadData("https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/AI_Sensing.csv");
     this.loadMatches();
     this.handleForce = (data, fileInfo) => this.setState({ whale_csv: data }, this.handleCsvData);
     this.handleForce.bind(this);
@@ -141,8 +142,7 @@ class LandingPage extends React.Component {
         prevState.matchedPictures[left_img_name].add(right_img_name)
         console.log ('prevState.matchedPictures[left_img_name])::: ',prevState.matchedPictures[left_img_name]);
         console.log('added_arry:', Array.from(prevState.matchedPictures[left_img_name]));
-        API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err))
-        ;
+        API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err));    
       } 
       return {matchedPictures:  prevState.matchedPictures}
     });
@@ -318,13 +318,13 @@ class LandingPage extends React.Component {
         throw new Error('Error message.');
       })
       .then(function (data) {
-        /* when csv is downloaded it is converted into arrays and saved in whale_csv var */
+        // when csv is downloaded it is converted into arrays and saved in whale_csv var 
         this.setState({ whale_csv: data.split("\n").map(data => data.split(",")) }, () => setTimeout(() => this.handleCsvData(), 100));
       }.bind(this))
       .catch(function (err) {
         console.log("failed to load ", url, err.message);
       });
-  }
+  } 
 
   loadMatches =  () => {
     console.log("load matches");
