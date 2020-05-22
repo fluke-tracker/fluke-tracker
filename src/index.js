@@ -11,6 +11,7 @@ import Cookies from "./utils/Cookies";
 import "./assets/scss/material-kit-react.scss?v=1.4.0";
 import Amplify from 'aws-amplify';
 import awsmobile from "./aws-exports";
+import { Auth } from 'aws-amplify';
 // pages for this product
 import Components from "views/Components/Components.jsx";
 import LandingPage from "views/LandingPage/LandingPage.jsx";
@@ -19,6 +20,7 @@ import LoginPage from "views/LoginPage/LoginPage.jsx";
 var hist = createBrowserHistory();
 Amplify.configure(awsmobile);
 const token = Cookies.read("token");
+
 
 if (token) {
   const user = jwtDecode(token);
