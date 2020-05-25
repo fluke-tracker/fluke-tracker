@@ -46,6 +46,7 @@ import { getMatchingImage } from 'graphql/queries';
 
 //import awsconfig from 'aws-exports';
 import Amplify , { Storage } from 'aws-amplify';
+import { Auth } from 'aws-amplify';
 
 
 // Configure Amplify

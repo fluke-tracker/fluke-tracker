@@ -92,7 +92,7 @@ class LoginPage extends React.Component {
             _this.setState({user: user2})
           }
           )
-        .catch(error => console.log("not authenticated!"));
+        .catch(err => console.log('error,err'));
         console.log("login redirect");
         this.props.history.push('/');    
     }
@@ -167,13 +167,13 @@ class LoginPage extends React.Component {
           <div className={classes.container}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
-                <Card className={classes[this.state.cardAnimaton]}>
+  {/*               <Card className={classes[this.state.cardAnimaton]}>
                 
                  
                     <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
                     </CardHeader>
-                    <p className={classes.divider}></p>
+                     <p className={classes.divider}></p> 
                     <CardBody>
                     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
                           <SignIn/>
@@ -186,7 +186,10 @@ class LoginPage extends React.Component {
                       </Button>
                     </CardFooter>
                   
-                </Card>
+                </Card> */}
+                     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
+                    </Authenticator>  
+
               </GridItem>
             </GridContainer>
           </div>
