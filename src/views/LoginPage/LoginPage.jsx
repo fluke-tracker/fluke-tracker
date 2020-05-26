@@ -81,8 +81,8 @@ class LoginPage extends React.Component {
     if (authState == "signedIn") {
       const _this = this;
       Auth.currentSession()
-        .then(data => console.log(data))
-        .catch(err => console.log(err));
+        .then(data => console.log('current session data', data))
+        .catch(err => console.log('current session err', err));
       
       Auth.currentAuthenticatedUser()
         .then(user => 
@@ -92,7 +92,7 @@ class LoginPage extends React.Component {
             _this.setState({user: user2})
           }
           )
-        .catch(err => console.log('error,err'));
+        .catch(err => console.log('error,err',err));
         console.log("login redirect");
         this.props.history.push('/');    
     }
