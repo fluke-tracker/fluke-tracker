@@ -373,16 +373,6 @@ class LandingPage extends React.Component {
   //       console.log("failed to load ", url, err.message);
   //     });
   // }
-signOut = () => {
-  this.setState(() => {
-    try {
-    console.log('signing out');
-         Auth.signOut();
-    } catch (error) {
-        console.log('error signing out: ', error);
-    }
-  });
-}
   getimages = (image) => {
   const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/thumbnails/'
   const image_url = bucket_url+image+"thumbnail.jpg"
@@ -494,11 +484,6 @@ signOut = () => {
               <Button variant="contained" onClick={() => this.go_right()}color="info" size="sm">&#10148;</Button>
               </GridItem>
             </GridContainer >
-            <GridContainer spacing={3}>
-            <GridItem xs={6} sm={3}>
-        <Button variant="contained" onClick={() => this.signOut()}color="info" size="lg">Sign Out</Button>
-            </GridItem>
-            </GridContainer>
           </div>
           </div>
         </div>
