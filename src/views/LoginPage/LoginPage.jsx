@@ -27,7 +27,7 @@ import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
 import image from "assets/img/bg7.jpg";
 import { Authenticator, Greetings } from 'aws-amplify-react';
 import { Auth } from 'aws-amplify';
-import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp, VerifyContact, withAuthenticator } from 'aws-amplify-react';
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp,SignOut, VerifyContact, withAuthenticator } from 'aws-amplify-react';
 
 //amplify
 import Amplify,{ Storage } from 'aws-amplify';
@@ -84,7 +84,7 @@ class LoginPage extends React.Component {
         .then(data => console.log('current session data', data))
         .catch(err => console.log('current session err', err));
       
-      Auth.currentAuthenticatedUser()
+/*       Auth.currentAuthenticatedUser()
         .then(user => 
           {
             const email = user.attribues.email;
@@ -93,6 +93,10 @@ class LoginPage extends React.Component {
           }
           )
         .catch(err => console.log('error,err',err));
+         */
+        Auth.currentAuthenticatedUser()
+        .then(user => this.setState({ user: user }))
+        .catch(err => console.log('currentAuthenticatedUser err', err))
         console.log("login redirect");
         this.props.history.push('/');    
     }
@@ -187,9 +191,8 @@ class LoginPage extends React.Component {
                     </CardFooter>
                   
                 </Card> */}
-                     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
-                    </Authenticator>  
-
+               {/*       <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} > </Authenticator>   */}
+                   <Authenticator />
               </GridItem>
             </GridContainer>
           </div>
