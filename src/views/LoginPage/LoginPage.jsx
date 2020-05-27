@@ -98,7 +98,7 @@ class LoginPage extends React.Component {
         .then(user => this.setState({ user: user }))
         .catch(err => console.log('currentAuthenticatedUser err', err))
         console.log("login redirect");
-        console.log("user,",this.state.user);
+       // console.log("user,",this.state.user);
         this.props.history.push('/landing-page');    
     }
     
