@@ -98,12 +98,14 @@ class LoginPage extends React.Component {
         .then(user => this.setState({ user: user }))
         .catch(err => console.log('currentAuthenticatedUser err', err))
         console.log("login redirect");
+        console.log("user,", user);
         this.props.history.push('/landing-page');    
     }
     
 //    this.setState({ email: { ...Authenticator.authData, errors: [] }, password: { ...this.state.password, errors: [] }  })
   }
   submitForm(e){
+    console.log("inside submit form");
     e.preventDefault();
 
     const user = {
