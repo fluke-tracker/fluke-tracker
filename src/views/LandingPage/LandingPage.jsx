@@ -30,7 +30,7 @@ import WorkSection from "./Sections/WorkSection.jsx";
 import ImagePicker from 'react-image-picker'
 import 'react-image-picker/dist/index.css'
 import Cookies from "utils/Cookies";
-import { withAuthenticator } from 'aws-amplify-react'
+import { withAuthenticator,SignOut } from 'aws-amplify-react'
 
 //import images from local
 import { MuiThemeProvider } from "@material-ui/core";
@@ -349,7 +349,8 @@ class LandingPage extends React.Component {
   signout = () =>{
     try {
       var _this = this;
-      _this.props.dispatch(logout())
+      Auth.signOut({ global: true });
+      //_this.props.dispatch(logout())
     } catch (error) {
         console.log('error signout', error);
     }
@@ -493,6 +494,7 @@ class LandingPage extends React.Component {
               <Button variant="contained" onClick={() => this.go_left()}color="info" size="sm">&#9664;</Button>
               <Button variant="contained" onClick={() => this.go_right()}color="info" size="sm">&#10148;</Button>
               <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Signout</Button>
+              <SignOut/>
               </GridItem>
             </GridContainer>
           </div>
