@@ -16,6 +16,8 @@ import { Apps, CloudDownload } from "@material-ui/icons";
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
+import { Auth } from 'aws-amplify';
+
 
 const RegisterButton = props => (
     <ListItem className={props.classes.listItem}>
@@ -39,6 +41,7 @@ const Logout = connect(dispatch => ({ dispatch }))(props => (
         target="_blank"
         style={{color: 'white'}}
         onClick={() => props.dispatch(logout())}
+        /* onClick={() => Auth.signOut} */
         className={props.classes.navLink}>Logout</Button>
     </ListItem>
 ))
@@ -82,8 +85,7 @@ function HeaderLinks({ ...props }) {
                 style={{color: 'white'}}
                 className={classes.navLink}>{props.state.user ? `${props.state.user.name} ${props.state.user.surname}` : `Login`}</Button>
             </Link>
-        </ListItem>
-        {console.log('props.state.user',props.state.user)}
+        </ListItem>         
         {
             props.state.user ? <Logout {...props}/> : <RegisterButton {...props} />
         }

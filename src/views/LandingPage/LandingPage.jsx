@@ -148,7 +148,7 @@ class LandingPage extends React.Component {
       return {matchedPictures:  prevState.matchedPictures}
     });
     if (left_img_name && right_img_name) {
-      
+      console.log('commented');
     //   const url = 'http://localhost:3000/accept/' + left_img_name + '/' + right_img_name;
     //   var _this = this;
     //   fetch(url, { credentials: "same-origin", 'headers': { 'Authorization': 'Bearer ' + Cookies.read('token') } })
@@ -345,6 +345,15 @@ class LandingPage extends React.Component {
     
     return matchingImages;
   }
+  
+  signout = () =>{
+    try {
+      var _this = this;
+      _this.props.dispatch(logout())
+    } catch (error) {
+        console.log('error signout', error);
+    }
+  }
   // loadMatches = (url) => {
   //   var _this = this;
   //   fetch(url, { credentials: "same-origin", 'headers': { 'token': 'Bearer ' + Cookies.read('token') } })
@@ -389,8 +398,8 @@ class LandingPage extends React.Component {
           color="transparent"
           routes={dashboardRoutes}
           brand=""
-          rightLinks={<HeaderLinks />}
           fixed
+    /*       rightLinks={<HeaderLinks />} */
           changeColorOnScroll={{
             height: 400,
             color: "white"
@@ -483,8 +492,9 @@ class LandingPage extends React.Component {
 {/*  next pictures */}
               <Button variant="contained" onClick={() => this.go_left()}color="info" size="sm">&#9664;</Button>
               <Button variant="contained" onClick={() => this.go_right()}color="info" size="sm">&#10148;</Button>
+              <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Signout</Button>
               </GridItem>
-            </GridContainer >
+            </GridContainer>
           </div>
           </div>
         </div>

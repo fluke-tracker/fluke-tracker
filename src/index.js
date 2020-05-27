@@ -24,9 +24,10 @@ const token = Cookies.read("token");
 
 if (token) {
   const user = jwtDecode(token);
-
+console.log('token present user,', user);
   store.dispatch(login(user));
 }
+
 
 ReactDOM.render(
   <Provider store={store}>

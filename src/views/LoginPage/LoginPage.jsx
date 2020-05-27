@@ -27,7 +27,7 @@ import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
 import image from "assets/img/bg7.jpg";
 import { Authenticator, Greetings } from 'aws-amplify-react';
 import { Auth } from 'aws-amplify';
-import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp,SignOut, VerifyContact, withAuthenticator } from 'aws-amplify-react';
+import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp, VerifyContact, withAuthenticator } from 'aws-amplify-react';
 
 //amplify
 import Amplify,{ Storage } from 'aws-amplify';
@@ -81,8 +81,8 @@ class LoginPage extends React.Component {
     if (authState == "signedIn") {
       const _this = this;
       Auth.currentSession()
-        .then(data => console.log('current session data', data))
-        .catch(err => console.log('current session err', err));
+      .then(data => console.log('current session data', data))
+      .catch(err => console.log('current session err', err));
       
 /*       Auth.currentAuthenticatedUser()
         .then(user => 
@@ -92,13 +92,13 @@ class LoginPage extends React.Component {
             _this.setState({user: user2})
           }
           )
-        .catch(err => console.log('error,err',err));
-         */
+        .catch(err => console.log('error,err')); */
+
         Auth.currentAuthenticatedUser()
         .then(user => this.setState({ user: user }))
         .catch(err => console.log('currentAuthenticatedUser err', err))
         console.log("login redirect");
-        console.log("user,", user);
+        console.log("user,",this.user);
         this.props.history.push('/landing-page');    
     }
     
@@ -193,7 +193,9 @@ class LoginPage extends React.Component {
                     </CardFooter>
                   
                 </Card> */}
-                      <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} > </Authenticator>  
+                     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
+                    </Authenticator>  
+
               </GridItem>
             </GridContainer>
           </div>
