@@ -346,7 +346,7 @@ class LandingPage extends React.Component {
     return matchingImages;
   }
   
-  signout = () =>{
+/*   signout = () =>{
     try {
       var _this = this;
       Auth.signOut({ global: true });
@@ -354,7 +354,7 @@ class LandingPage extends React.Component {
     } catch (error) {
         console.log('error signout', error);
     }
-  }
+  } */
   // loadMatches = (url) => {
   //   var _this = this;
   //   fetch(url, { credentials: "same-origin", 'headers': { 'token': 'Bearer ' + Cookies.read('token') } })
@@ -493,8 +493,8 @@ class LandingPage extends React.Component {
 {/*  next pictures */}
               <Button variant="contained" onClick={() => this.go_left()}color="info" size="sm">&#9664;</Button>
               <Button variant="contained" onClick={() => this.go_right()}color="info" size="sm">&#10148;</Button>
-              <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Signout</Button>
-              <SignOut/>
+{/*               <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Signout</Button>
+              <SignOut/> */}
               </GridItem>
             </GridContainer>
           </div>
