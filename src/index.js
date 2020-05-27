@@ -36,7 +36,7 @@ ReactDOM.render(
         <Route path="/profile-page" component={ProfilePage} />
         <Route path="/login-page" component={LoginPage} />
         <Route path="/components" component={Components} />
-        <Route path="/" component={LandingPage} />
+        <Route path="/" component={LoginPage} />
       </Switch>
     </Router>
   </Provider>,

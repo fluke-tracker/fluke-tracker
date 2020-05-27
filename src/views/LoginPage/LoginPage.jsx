@@ -191,8 +191,7 @@ class LoginPage extends React.Component {
                     </CardFooter>
                   
                 </Card> */}
-               {/*       <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} > </Authenticator>   */}
-                   <Authenticator />
+                      <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} > </Authenticator>  
               </GridItem>
             </GridContainer>
           </div>

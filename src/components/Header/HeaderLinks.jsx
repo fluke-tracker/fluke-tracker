@@ -49,7 +49,7 @@ function HeaderLinks({ ...props }) {
   const { classes } = props;
   return (
     <List className={classes.list}>
-{/*       <ListItem className={classes.listItem}>
+      <ListItem className={classes.listItem}>
         <CustomDropdown
           noLiPadding
           buttonText="Pages"
@@ -61,13 +61,14 @@ function HeaderLinks({ ...props }) {
           dropdownList={[
             <Link to="/" className={classes.dropdownLink}>
               Landing Page
-            </Link>,
-            <Link to="/profile-page" className={classes.dropdownLink}>
+            </Link>
+           /* ,
+             <Link to="/profile-page" className={classes.dropdownLink}>
               Profile Page
             </Link>,
             <Link to="/components" className={classes.dropdownLink}>
               Components
-            </Link> 
+            </Link>  */
           ]}
         />
       </ListItem>
@@ -82,10 +83,11 @@ function HeaderLinks({ ...props }) {
                 className={classes.navLink}>{props.state.user ? `${props.state.user.name} ${props.state.user.surname}` : `Login`}</Button>
             </Link>
         </ListItem>
+        {console.log('props.state.user',props.state.user)}
         {
             props.state.user ? <Logout {...props}/> : <RegisterButton {...props} />
         }
-         */}
+        
     </List>
   );
 }

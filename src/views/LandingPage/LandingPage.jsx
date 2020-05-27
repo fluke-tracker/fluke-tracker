@@ -389,6 +389,7 @@ class LandingPage extends React.Component {
           color="transparent"
           routes={dashboardRoutes}
           brand=""
+          rightLinks={<HeaderLinks />}
           fixed
           changeColorOnScroll={{
             height: 400,
