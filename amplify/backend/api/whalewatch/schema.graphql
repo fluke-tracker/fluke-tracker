@@ -1,3 +1,25 @@
+type Whale @model{
+    name: String!
+}
+
+type Picture @model{
+    high_res: String
+    thumbnail: String
+    filename: String!
+    whale: Whale
+    geocoords: String
+    date_taken: String
+    embedding: String
+    uploaded_by: String
+}
+
+type Match @model{
+    picture1: Picture!
+    picture2: Picture!
+    match_status: String
+    similarity_score: Int
+}
+
 type Image {
 	name: String!
 }

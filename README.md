@@ -10,6 +10,7 @@ Full-Stack app with **Material Design** coded in **React**
 
 ## Requirements
 - [Node.js](https://nodejs.org/) >= 6.x
+- [AWS CLI](https://aws.amazon.com/de/cli/)
 
 <br />
 
@@ -24,12 +25,21 @@ Full-Stack app with **Material Design** coded in **React**
 
 **Install Dependencies**
 ```bash
-$ yarn 
+$ yarn install
+$ npm install -g @aws-amplify/cli
 ```
+
+**Run aws configure**
+```bash
+$ aws confgigure
+```
+
 
 **Start app for development**
 * **Linux/MacOs**: 
 ```yarn start```
+* **Windows**: 
+```yarn start_win```
 
 * Visit [localhost:8080](http://localhost:8080) in your browser. The `default port 8080` can be overwritten by updating the `package.json`, `scripts \ start` attribute.
 
