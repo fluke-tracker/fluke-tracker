@@ -347,14 +347,16 @@ class LandingPage extends React.Component {
   }
   
 /*   signout = () =>{
+    const currentUser = Auth.userPool.getCurrentUser();
+    console.log('currentUser',currentUser)
     try {
-      var _this = this;
-      Auth.signOut({ global: true });
-      //_this.props.dispatch(logout())
-    } catch (error) {
-        console.log('error signout', error);
+       currentUser.signOut()
+      console.log('signout success');
+   }
+   catch(e) {
+    console.log('signout failed',e);
     }
-  } */
+  }  */
   // loadMatches = (url) => {
   //   var _this = this;
   //   fetch(url, { credentials: "same-origin", 'headers': { 'token': 'Bearer ' + Cookies.read('token') } })
@@ -495,6 +497,8 @@ class LandingPage extends React.Component {
               <Button variant="contained" onClick={() => this.go_right()}color="info" size="sm">&#10148;</Button>
 {/*               <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Signout</Button>
               <SignOut/> */}
+                     {/*        <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Log Out</Button>
+                            <SignOut/> */}
               </GridItem>
             </GridContainer>
           </div>

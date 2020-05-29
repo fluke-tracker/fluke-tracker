@@ -49,7 +49,7 @@ class LoginPage extends React.Component {
     super(props);
     // we use this to make the card to appear after the page has been rendered
     this.state = {
-        cardAnimaton: "cardHidden",
+/*         cardAnimaton: "cardHidden",
         email: {
             value: "",
             errors: []
@@ -57,10 +57,11 @@ class LoginPage extends React.Component {
         password: {
             value: "",
             errors: []
-        }
+        } */
+     user: null 
     };
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.submitForm = this.submitForm.bind(this);
+/*     this.handleInputChange = this.handleInputChange.bind(this);
+    this.submitForm = this.submitForm.bind(this); */
   }
 
   componentDidMount() {
@@ -83,7 +84,6 @@ class LoginPage extends React.Component {
       Auth.currentSession()
       .then(data => console.log('current session data', data))
       .catch(err => console.log('current session err', err));
-      
 /*       Auth.currentAuthenticatedUser()
         .then(user => 
           {
@@ -92,19 +92,20 @@ class LoginPage extends React.Component {
             _this.setState({user: user2})
           }
           )
-        .catch(err => console.log('error,err')); */
+        .catch(err => console.log('error,err',err)); */
 
         Auth.currentAuthenticatedUser()
-        .then(user => this.setState({ user: user }))
-        .catch(err => console.log('currentAuthenticatedUser err', err))
-        console.log("login redirect");
-       // console.log("user,",this.state.user);
+        .then(user => { 
+         console.log('loginpage user',user.username);
+          this.setState({ user: user })
+        }).catch(err => console.log('currentAuthenticatedUser err', err))
         this.props.history.push('/landing-page');    
     }
-    
-//    this.setState({ email: { ...Authenticator.authData, errors: [] }, password: { ...this.state.password, errors: [] }  })
+    console.log('this state is',this.state);
+    this.setState({ user: this.state.user })
   }
-  submitForm(e){
+    
+/*   submitForm(e){
     console.log("inside submit form");
     e.preventDefault();
 
@@ -147,10 +148,10 @@ class LoginPage extends React.Component {
             Cookies.create('token', token, null);
             
             this.props.dispatch(login(userData));
-            this.props.history.push('/');
+            this.props.history.push('/landing-page');
         }
     });
-  }
+  } */
   render() {
     const { classes, ...rest } = this.props;
     return (
@@ -159,7 +160,7 @@ class LoginPage extends React.Component {
           absolute
           color="transparent"
           brand="Capgemini"
-          rightLinks={<HeaderLinks />}
+          rightLinks={<HeaderLinks user={this.state.user} state={this.state.user} />}
           {...rest}
         />
         <div
@@ -173,10 +174,9 @@ class LoginPage extends React.Component {
           <div className={classes.container}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
-  {/*               <Card className={classes[this.state.cardAnimaton]}>
-                
-                 
-                    <CardHeader color="primary" className={classes.cardHeader}>
+                <Card className={classes[this.state.cardAnimaton]}>
+  {/*               <form onSubmit={this.submitForm} className={classes.form}>
+                {   <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
                     </CardHeader>
                      <p className={classes.divider}></p> 
@@ -195,7 +195,7 @@ class LoginPage extends React.Component {
                 </Card> */}
                      <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
                     </Authenticator>  
-
+                </Card>
               </GridItem>
             </GridContainer>
           </div>

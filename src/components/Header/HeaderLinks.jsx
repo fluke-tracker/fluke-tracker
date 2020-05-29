@@ -18,7 +18,6 @@ import Button from "components/CustomButtons/Button.jsx";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
 import { Auth } from 'aws-amplify';
 
-
 const RegisterButton = props => (
     <ListItem className={props.classes.listItem}>
         <Link to={"/login-page"}>
@@ -40,8 +39,8 @@ const Logout = connect(dispatch => ({ dispatch }))(props => (
         color="transparent"
         target="_blank"
         style={{color: 'white'}}
-        onClick={() => props.dispatch(logout())}
-        /* onClick={() => Auth.signOut} */
+     /*    onClick={() => props.dispatch(logout())} */
+        onClick={() => Auth.signOut()}
         className={props.classes.navLink}>Logout</Button>
     </ListItem>
 ))
@@ -50,6 +49,7 @@ const Logout = connect(dispatch => ({ dispatch }))(props => (
 
 function HeaderLinks({ ...props }) {
   const { classes } = props;
+  console.log('header props are,', props);
   return (
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
@@ -62,7 +62,7 @@ function HeaderLinks({ ...props }) {
           }}
           buttonIcon={Apps}
           dropdownList={[
-            <Link to="/" className={classes.dropdownLink}>
+            <Link to="/landing-page" className={classes.dropdownLink}>
               Landing Page
             </Link>
            /* ,
@@ -86,6 +86,7 @@ function HeaderLinks({ ...props }) {
                 className={classes.navLink}>{props.state.user ? `${props.state.user.name} ${props.state.user.surname}` : `Login`}</Button>
             </Link>
         </ListItem>         
+        {console.log('user data logout, ', props.user)}         
         {
             props.state.user ? <Logout {...props}/> : <RegisterButton {...props} />
         }
