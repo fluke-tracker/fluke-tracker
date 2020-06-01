@@ -83,6 +83,7 @@ class LandingPage extends React.Component {
       matchedPictures: {},
       image_id: {},
       isMatched: '',
+      user: null,
     }
     this.acceptPicture = this.acceptPicture.bind(this);
     this.unacceptPicture = this.unacceptPicture.bind(this);
@@ -100,9 +101,17 @@ class LandingPage extends React.Component {
     this.loadMatches();
     this.handleForce = (data, fileInfo) => this.setState({ whale_csv: data }, this.handleCsvData);
     this.handleForce.bind(this);
+    this.authenticate_user();
 
   }
+authenticate_user() {
 
+  Auth.currentAuthenticatedUser()
+        .then(user => { 
+         console.log('loginpage user',user.username);
+          this.setState({ user: user })
+        }).catch(err => console.log('currentAuthenticatedUser err', err))
+}
   go_left() {
     //console.log("left");
     this.setState(prevState => ({
@@ -402,7 +411,7 @@ class LandingPage extends React.Component {
           routes={dashboardRoutes}
           brand=""
           fixed
-    /*       rightLinks={<HeaderLinks />} */
+          rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
             height: 400,
             color: "white"

@@ -32,20 +32,19 @@ const RegisterButton = props => (
 )
 
 // the logout component emits a logout signal to redux
-const Logout = connect(dispatch => ({ dispatch }))(props => (
+const Logout = props => (
     <ListItem className={props.classes.listItem}>
+       <Link to={"/login-page"}>
         <Button 
         href=""
         color="transparent"
         target="_blank"
         style={{color: 'white'}}
-     /*    onClick={() => props.dispatch(logout())} */
         onClick={() => Auth.signOut()}
         className={props.classes.navLink}>Logout</Button>
+        </Link>
     </ListItem>
-))
-
-
+)
 
 function HeaderLinks({ ...props }) {
   const { classes } = props;
@@ -62,8 +61,8 @@ function HeaderLinks({ ...props }) {
           }}
           buttonIcon={Apps}
           dropdownList={[
-            <Link to="/landing-page" className={classes.dropdownLink}>
-              Landing Page
+            <Link to={props.user ? "/landing-page":"/"} className={classes.dropdownLink}>
+              {props.user ? `Landing Page`: `Login Page`}
             </Link>
            /* ,
              <Link to="/profile-page" className={classes.dropdownLink}>
@@ -76,19 +75,18 @@ function HeaderLinks({ ...props }) {
         />
       </ListItem>
       
-        <ListItem className={classes.listItem}>
-            <Link to={props.state.user ? "/profile-page" : "/login-page"}>
+{/*         <ListItem className={classes.listItem}>
+            <Link to={props.user ? "/profile-page" : "/login-page"}>
                 <Button 
                 href=""
                 color="transparent"
                 target="_blank"
                 style={{color: 'white'}}
-                className={classes.navLink}>{props.state.user ? `${props.state.user.name} ${props.state.user.surname}` : `Login`}</Button>
+                className={classes.navLink}>{props.user ? `${props.user.name} ${props.user.surname}` : `Login`}</Button>
             </Link>
-        </ListItem>         
-        {console.log('user data logout, ', props.user)}         
+        </ListItem>      */}         
         {
-            props.state.user ? <Logout {...props}/> : <RegisterButton {...props} />
+            props.user ? <Logout {...props}/> : <div></div>
         }
         
     </List>
