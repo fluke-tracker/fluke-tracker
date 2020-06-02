@@ -419,7 +419,7 @@ authenticate_user() {
           {...rest}
         />
 
-        <Parallax small center fixed filter image={require("assets/img/Web-Banner-GDSC-v2_TD.png")} />
+        <Parallax small center fixed filter image={require("assets/img/Pardot-Banner-GDSC_TD.png")} />
                 <div className={classNames(classes.main, classes.mainRaised)}>
           <div>
           <div className={classes.container}>
