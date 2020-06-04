@@ -97,8 +97,8 @@ class LoginPage extends React.Component {
         Auth.currentAuthenticatedUser()
         .then(user => { 
          console.log('loginpage user',user.username);
-          this.setState({ user: user })
-          this.props.history.push('/landing-page')
+          this.setState({ user: user.username })
+        //  this.props.history.push('/landing-page')
         }).catch(err => console.log('currentAuthenticatedUser err', err))     
     }
     }
@@ -152,13 +152,14 @@ class LoginPage extends React.Component {
   } */
   render() {
     const { classes, ...rest } = this.props;
+    const { user } = this.props;
     return (
       <div>
         <Header
           absolute
           color="transparent"
           brand="Capgemini"
-          rightLinks={<HeaderLinks user={this.state.user} state={this.state.user} />}
+          rightLinks={<HeaderLinks user={this.state.user} state={this.state} />}
           {...rest}
         />
         <div
@@ -191,8 +192,9 @@ class LoginPage extends React.Component {
                     </CardFooter>
                   
                 </Card> */}
-                     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
-                    </Authenticator>  
+                 {/*     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
+                    </Authenticator>   */}
+                     <Authenticator hide={[Greetings]}onStateChange={(authState) => this.loginRedirect(authState)}></Authenticator>
                 </Card>
               </GridItem>
             </GridContainer>

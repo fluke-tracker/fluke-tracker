@@ -17,6 +17,8 @@ import Components from "views/Components/Components.jsx";
 import LandingPage from "views/LandingPage/LandingPage.jsx";
 import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
+import UploadPage from "views/UploadPage.jsx";
+
 var hist = createBrowserHistory();
 Amplify.configure(awsmobile);
 const token = Cookies.read("token");
@@ -37,6 +39,7 @@ ReactDOM.render(
         <Route path="/profile-page" component={ProfilePage} />
         <Route path="/login-page" component={LoginPage} />
         <Route path="/components" component={Components} />
+        <Route path="/upload-page" component={UploadPage} />
         <Route path="/" component={LoginPage} />
       </Switch>
     </Router>

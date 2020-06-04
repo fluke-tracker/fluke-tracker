@@ -46,11 +46,13 @@ const Logout = props => (
     </ListItem>
 )
 
+
 function HeaderLinks({ ...props }) {
   const { classes } = props;
   console.log('header props are,', props);
   return (
     <List className={classes.list}>
+      { props.user ?
       <ListItem className={classes.listItem}>
         <CustomDropdown
           noLiPadding
@@ -61,19 +63,21 @@ function HeaderLinks({ ...props }) {
           }}
           buttonIcon={Apps}
           dropdownList={[
-            <Link to={props.user ? "/landing-page":"/"} className={classes.dropdownLink}>
-              {props.user ? `Landing Page`: `Login Page`}
-            </Link>
-           /* ,
-             <Link to="/profile-page" className={classes.dropdownLink}>
-              Profile Page
+            <Link to= {"/landing-page"} className={classes.dropdownLink} user={props.user}>
+              Matching Page
             </Link>,
-            <Link to="/components" className={classes.dropdownLink}>
-              Components
-            </Link>  */
+            <Link to= {"/upload-page"} className={classes.dropdownLink} user={props.user}>
+            Upload Page
+          </Link>,
+            /*
+             <Link to = {"/upload-page"} className={classes.dropdownLink} user={props.user}>
+             Upload Page
+           </Link> */
           ]}
         />
       </ListItem>
+: <ListItem>
+  </ListItem>}
       
 {/*         <ListItem className={classes.listItem}>
             <Link to={props.user ? "/profile-page" : "/login-page"}>
