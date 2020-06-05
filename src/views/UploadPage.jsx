@@ -12,6 +12,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from 'aws-amplify';
+import Footer from "components/Footer/Footer.jsx";
 
 const dashboardRoutes = [];
 class UploadPage extends React.Component {
@@ -67,21 +68,21 @@ this.state = {
         fixed
         rightLinks={<HeaderLinks user={this.state.user} />}
         changeColorOnScroll={{
-          height: 400,
-          color: "white"
+          "height": "400",
+          "color": "white"
         }}
         {...rest}
       />
          <Parallax color="black" small center fixed filter image={require("assets/img/Pardot-Banner-GDSC_TD.png")} />
                 <div className={classNames(classes.main, classes.mainRaised)}>
-          <div className={classes.container}>
+          <div className={classes.container} style={{"height": "350px"}}>
           <GridContainer color = "black">
             <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Upload Whale Image 🐳</h2></GridItem>
             <GridItem xs={12} sm={12} md={6}>
         <input
           type="file"
           accept="image/png, image/jpeg"
-          style={{ display: "none" }}
+          style={{ "display": "none" }}
           ref={ref => (this.upload = ref)}
           onChange={e =>
             this.setState({
@@ -110,6 +111,7 @@ this.state = {
         </GridItem>
       </div>
       </div>
+              <Footer />
       </div>
     );
   }
