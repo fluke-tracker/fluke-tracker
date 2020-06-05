@@ -304,9 +304,8 @@ authenticate_user() {
       const img1 = this.state.whale_csv[vertical][0];
           const img2 = this.state.whale_csv[vertical][horizontal + 1];
 
-      API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][0]})).then( picture => {console.log("get picture" + picture); this.setState({left_id: picture.whale_id});});
-      API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][horizontal + 1]})).then( picture => {console.log("get picture");console.log(picture); this.setState({right_id: picture.whale_id});});
-      API.graphql(graphqlOperation(createPicture, {input: { filename: 'test_filename', pictureWhaleId: 123}})).then( picture => {console.log("get picture");console.log(picture);});
+      //API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][0]})).then( picture => {console.log("get picture" + picture); this.setState({left_id: picture.whale_id});});
+      //API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][horizontal + 1]})).then( picture => {console.log("get picture");console.log(picture); this.setState({right_id: picture.whale_id});});
 
       //console.log("img1"+img1);
       //console.log("img2"+img2);
