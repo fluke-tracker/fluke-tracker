@@ -112,8 +112,7 @@ authenticate_user() {
 
   Auth.currentAuthenticatedUser()
         .then(user => { 
-         console.log('loginpage user',user.username);
-          this.setState({ user: user })
+          this.setState({ user: user.username })
         }).catch(err => console.log('currentAuthenticatedUser err', err))
 }
   go_left() {
