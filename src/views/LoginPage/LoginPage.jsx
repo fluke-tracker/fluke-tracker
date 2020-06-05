@@ -24,7 +24,7 @@ import CardFooter from "components/Card/CardFooter.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 // assets
 import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
-import image from "assets/img/bg7.jpg";
+import image from "assets/img/bg.jpg";
 import { Authenticator, Greetings } from 'aws-amplify-react';
 import { Auth } from 'aws-amplify';
 import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp, VerifyContact, withAuthenticator } from 'aws-amplify-react';
@@ -158,7 +158,7 @@ class LoginPage extends React.Component {
         <Header
           absolute
           color="transparent"
-          brand="Capgemini"
+          brand=""
           rightLinks={<HeaderLinks user={this.state.user} state={this.state} />}
           {...rest}
         />
@@ -171,9 +171,15 @@ class LoginPage extends React.Component {
           }}
         >
           <div className={classes.container}>
-            <GridContainer justify="center">
+            <GridContainer justify="left">
               <GridItem xs={12} sm={12} md={4}>
-                <Card className={classes[this.state.cardAnimaton]}>
+                <Card className={classes[this.state.cardAnimaton]}
+                style={{
+            backgroundColor: "transparent",
+            color: "white",
+            boxShadow: "none"
+          }}>
+                <h3><strong>Welcome to the webpage</strong></h3>
   {/*               <form onSubmit={this.submitForm} className={classes.form}>
                 {   <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
