@@ -43,6 +43,8 @@ import { updateMatchingImage  } from 'graphql/mutations';
 import { deleteMatchingImage  } from 'graphql/mutations';
 import { listMatchingImages } from 'graphql/queries';
 import { getMatchingImage } from 'graphql/queries';
+import { getPicture } from 'graphql/queries';
+import { createPicture } from 'graphql/mutations';
 
 //import awsconfig from 'aws-exports';
 import Amplify , { Storage } from 'aws-amplify';
@@ -78,6 +80,8 @@ class LandingPage extends React.Component {
       dialogMessage: '',
       right_img: '',
       left_img: '',
+      left_id: '',
+      right_id: '',
       whale_csv: [[]],
       is_loaded: new Set(),
       matchedPictures: {},
@@ -299,7 +303,12 @@ authenticate_user() {
       const horizontal = this.state.horizontal;
 
       const img1 = this.state.whale_csv[vertical][0];
-      const img2 = this.state.whale_csv[vertical][horizontal + 1];
+          const img2 = this.state.whale_csv[vertical][horizontal + 1];
+
+      API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][0]})).then( picture => {console.log("get picture" + picture); this.setState({left_id: picture.whale_id});});
+      API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][horizontal + 1]})).then( picture => {console.log("get picture");console.log(picture); this.setState({right_id: picture.whale_id});});
+      API.graphql(graphqlOperation(createPicture, {input: { filename: 'test_filename', pictureWhaleId: 123}})).then( picture => {console.log("get picture");console.log(picture);});
+
       //console.log("img1"+img1);
       //console.log("img2"+img2);
       if (img1 != this.state.left_img && img1 !== '') {
@@ -449,6 +458,7 @@ authenticate_user() {
                         New Image Number: {this.state.vertical} 
                         <br/>
                         {this.state.whale_csv[this.state.vertical][0]}
+                        {this.state.left_id}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][0]) ? '' : <CircularProgress />}
 {/*                         <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
@@ -461,6 +471,7 @@ authenticate_user() {
                 <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
                         Best Matching Picture Number:
                         {this.state.horizontal} 
+                        {this.state.right_id}
                         <br/>
                         {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]) ? '': <CircularProgress />}

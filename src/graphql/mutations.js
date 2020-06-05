@@ -8,8 +8,24 @@ export const createWhale = /* GraphQL */ `
   ) {
     createWhale(input: $input, condition: $condition) {
       name
+      pictures {
+        items {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -20,8 +36,24 @@ export const updateWhale = /* GraphQL */ `
   ) {
     updateWhale(input: $input, condition: $condition) {
       name
+      pictures {
+        items {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -32,8 +64,24 @@ export const deleteWhale = /* GraphQL */ `
   ) {
     deleteWhale(input: $input, condition: $condition) {
       name
+      pictures {
+        items {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -48,15 +96,82 @@ export const createPicture = /* GraphQL */ `
       filename
       whale {
         name
+        pictures {
+          nextToken
+        }
         createdAt
         updatedAt
+        owner
       }
       geocoords
       date_taken
       embedding
       uploaded_by
+      matchLeft {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
+      matchRight {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -71,15 +186,82 @@ export const updatePicture = /* GraphQL */ `
       filename
       whale {
         name
+        pictures {
+          nextToken
+        }
         createdAt
         updatedAt
+        owner
       }
       geocoords
       date_taken
       embedding
       uploaded_by
+      matchLeft {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
+      matchRight {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -94,24 +276,91 @@ export const deletePicture = /* GraphQL */ `
       filename
       whale {
         name
+        pictures {
+          nextToken
+        }
         createdAt
         updatedAt
+        owner
       }
       geocoords
       date_taken
       embedding
       uploaded_by
+      matchLeft {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
+      matchRight {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
-export const createMatches = /* GraphQL */ `
-  mutation CreateMatches(
-    $input: CreateMatchesInput!
-    $condition: ModelMatchesConditionInput
+export const createMatch = /* GraphQL */ `
+  mutation CreateMatch(
+    $input: CreateMatchInput!
+    $condition: ModelMatchConditionInput
   ) {
-    createMatches(input: $input, condition: $condition) {
+    createMatch(input: $input, condition: $condition) {
       picture1 {
         high_res
         thumbnail
@@ -120,13 +369,29 @@ export const createMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       picture2 {
         high_res
@@ -136,27 +401,44 @@ export const createMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       match_status
       similarity_score
       createdAt
       updatedAt
+      owner
     }
   }
 `;
-export const updateMatches = /* GraphQL */ `
-  mutation UpdateMatches(
-    $input: UpdateMatchesInput!
-    $condition: ModelMatchesConditionInput
+export const updateMatch = /* GraphQL */ `
+  mutation UpdateMatch(
+    $input: UpdateMatchInput!
+    $condition: ModelMatchConditionInput
   ) {
-    updateMatches(input: $input, condition: $condition) {
+    updateMatch(input: $input, condition: $condition) {
       picture1 {
         high_res
         thumbnail
@@ -165,13 +447,29 @@ export const updateMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       picture2 {
         high_res
@@ -181,27 +479,44 @@ export const updateMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       match_status
       similarity_score
       createdAt
       updatedAt
+      owner
     }
   }
 `;
-export const deleteMatches = /* GraphQL */ `
-  mutation DeleteMatches(
-    $input: DeleteMatchesInput!
-    $condition: ModelMatchesConditionInput
+export const deleteMatch = /* GraphQL */ `
+  mutation DeleteMatch(
+    $input: DeleteMatchInput!
+    $condition: ModelMatchConditionInput
   ) {
-    deleteMatches(input: $input, condition: $condition) {
+    deleteMatch(input: $input, condition: $condition) {
       picture1 {
         high_res
         thumbnail
@@ -210,13 +525,29 @@ export const deleteMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       picture2 {
         high_res
@@ -226,18 +557,35 @@ export const deleteMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       match_status
       similarity_score
       createdAt
       updatedAt
+      owner
     }
   }
 `;

@@ -1,21 +1,24 @@
-type Whale @model{
+type Whale @auth(rules: [{allow: owner, operations: [create, delete, update]}]) @model{
     name: String!
+    pictures: [Picture] @connection(name: "PictureWhale")
 }
 
-type Picture @model{
+type Picture @auth(rules: [{allow: owner, operations: [create, delete, update]}]) @model{
     high_res: String
     thumbnail: String
     filename: String!
-    whale: Whale
+    whale: Whale @connection(name: "PictureWhale")
     geocoords: String
     date_taken: String
     embedding: String
     uploaded_by: String
+    matchLeft: Match @connection(name: "MatchLeftPicture")
+    matchRight: Match @connection(name: "MatchRightPicture")
 }
 
-type Match @model{
-    picture1: Picture!
-    picture2: Picture!
+type Match @auth(rules: [{allow: owner, operations: [create, delete, update]}]) @model{
+    picture1: Picture! @connection(name: "MatchLeftPicture")
+    picture2: Picture! @connection(name: "MatchRightPicture")
     match_status: String
     similarity_score: Int
 }

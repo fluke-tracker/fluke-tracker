@@ -2,95 +2,344 @@
 // this is an auto generated file. This will be overwritten
 
 export const onCreateWhale = /* GraphQL */ `
-  subscription OnCreateWhale {
-    onCreateWhale {
+  subscription OnCreateWhale($owner: String!) {
+    onCreateWhale(owner: $owner) {
       name
+      pictures {
+        items {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
 export const onUpdateWhale = /* GraphQL */ `
-  subscription OnUpdateWhale {
-    onUpdateWhale {
+  subscription OnUpdateWhale($owner: String!) {
+    onUpdateWhale(owner: $owner) {
       name
+      pictures {
+        items {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
 export const onDeleteWhale = /* GraphQL */ `
-  subscription OnDeleteWhale {
-    onDeleteWhale {
+  subscription OnDeleteWhale($owner: String!) {
+    onDeleteWhale(owner: $owner) {
       name
+      pictures {
+        items {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
 export const onCreatePicture = /* GraphQL */ `
-  subscription OnCreatePicture {
-    onCreatePicture {
+  subscription OnCreatePicture($owner: String!) {
+    onCreatePicture(owner: $owner) {
       high_res
       thumbnail
       filename
       whale {
         name
+        pictures {
+          nextToken
+        }
         createdAt
         updatedAt
+        owner
       }
       geocoords
       date_taken
       embedding
       uploaded_by
+      matchLeft {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
+      matchRight {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
 export const onUpdatePicture = /* GraphQL */ `
-  subscription OnUpdatePicture {
-    onUpdatePicture {
+  subscription OnUpdatePicture($owner: String!) {
+    onUpdatePicture(owner: $owner) {
       high_res
       thumbnail
       filename
       whale {
         name
+        pictures {
+          nextToken
+        }
         createdAt
         updatedAt
+        owner
       }
       geocoords
       date_taken
       embedding
       uploaded_by
+      matchLeft {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
+      matchRight {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
 export const onDeletePicture = /* GraphQL */ `
-  subscription OnDeletePicture {
-    onDeletePicture {
+  subscription OnDeletePicture($owner: String!) {
+    onDeletePicture(owner: $owner) {
       high_res
       thumbnail
       filename
       whale {
         name
+        pictures {
+          nextToken
+        }
         createdAt
         updatedAt
+        owner
       }
       geocoords
       date_taken
       embedding
       uploaded_by
+      matchLeft {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
+      matchRight {
+        picture1 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        picture2 {
+          high_res
+          thumbnail
+          filename
+          geocoords
+          date_taken
+          embedding
+          uploaded_by
+          createdAt
+          updatedAt
+          owner
+        }
+        match_status
+        similarity_score
+        createdAt
+        updatedAt
+        owner
+      }
       createdAt
       updatedAt
+      owner
     }
   }
 `;
-export const onCreateMatches = /* GraphQL */ `
-  subscription OnCreateMatches {
-    onCreateMatches {
+export const onCreateMatch = /* GraphQL */ `
+  subscription OnCreateMatch($owner: String!) {
+    onCreateMatch(owner: $owner) {
       picture1 {
         high_res
         thumbnail
@@ -99,13 +348,29 @@ export const onCreateMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       picture2 {
         high_res
@@ -115,24 +380,41 @@ export const onCreateMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       match_status
       similarity_score
       createdAt
       updatedAt
+      owner
     }
   }
 `;
-export const onUpdateMatches = /* GraphQL */ `
-  subscription OnUpdateMatches {
-    onUpdateMatches {
+export const onUpdateMatch = /* GraphQL */ `
+  subscription OnUpdateMatch($owner: String!) {
+    onUpdateMatch(owner: $owner) {
       picture1 {
         high_res
         thumbnail
@@ -141,13 +423,29 @@ export const onUpdateMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       picture2 {
         high_res
@@ -157,24 +455,41 @@ export const onUpdateMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       match_status
       similarity_score
       createdAt
       updatedAt
+      owner
     }
   }
 `;
-export const onDeleteMatches = /* GraphQL */ `
-  subscription OnDeleteMatches {
-    onDeleteMatches {
+export const onDeleteMatch = /* GraphQL */ `
+  subscription OnDeleteMatch($owner: String!) {
+    onDeleteMatch(owner: $owner) {
       picture1 {
         high_res
         thumbnail
@@ -183,13 +498,29 @@ export const onDeleteMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       picture2 {
         high_res
@@ -199,18 +530,35 @@ export const onDeleteMatches = /* GraphQL */ `
           name
           createdAt
           updatedAt
+          owner
         }
         geocoords
         date_taken
         embedding
         uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
+        owner
       }
       match_status
       similarity_score
       createdAt
       updatedAt
+      owner
     }
   }
 `;

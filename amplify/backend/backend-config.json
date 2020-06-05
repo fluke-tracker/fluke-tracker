@@ -4,6 +4,27 @@
             "service": "Lambda",
             "providerPlugin": "awscloudformation",
             "build": true
+        },
+        "scanPictures": {
+            "build": true,
+            "providerPlugin": "awscloudformation",
+            "service": "Lambda",
+            "dependsOn": [
+                {
+                    "category": "hosting",
+                    "resourceName": "S3AndCloudFront",
+                    "attributes": [
+                        "HostingBucketName"
+                    ]
+                },
+                {
+                    "category": "api",
+                    "resourceName": "whalewatch",
+                    "attributes": [
+                        "GraphQLAPIIdOutput"
+                    ]
+                }
+            ]
         }
     },
     "auth": {
@@ -37,10 +58,9 @@
                 "authConfig": {
                     "additionalAuthenticationProviders": [],
                     "defaultAuthentication": {
-                        "authenticationType": "API_KEY",
-                        "apiKeyConfig": {
-                            "description": "",
-                            "apiKeyExpirationDays": "365"
+                        "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+                        "userPoolConfig": {
+                            "userPoolId": "authcognitoed159519"
                         }
                     }
                 }
