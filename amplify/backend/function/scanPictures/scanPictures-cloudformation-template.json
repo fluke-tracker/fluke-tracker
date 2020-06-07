@@ -1,0 +1,502 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Lambda resource stack creation using Amplify CLI",
+	"Parameters": {
+		"CloudWatchRule": {
+			"Type": "String",
+			"Default": "NONE",
+			"Description": " Schedule Expression"
+		},
+		"env": {
+			"Type": "String"
+		},
+		"hostingS3AndCloudFrontHostingBucketName": {
+			"Type": "String",
+			"Default": "hostingS3AndCloudFrontHostingBucketName"
+		},
+		"apiwhalewatchGraphQLAPIIdOutput": {
+			"Type": "String",
+			"Default": "apiwhalewatchGraphQLAPIIdOutput"
+		}
+	},
+	"Conditions": {
+		"ShouldNotCreateEnvResources": {
+			"Fn::Equals": [
+				{
+					"Ref": "env"
+				},
+				"NONE"
+			]
+		}
+	},
+	"Resources": {
+		"LambdaFunction": {
+			"Type": "AWS::Lambda::Function",
+			"Metadata": {
+				"aws:asset:path": "./src",
+				"aws:asset:property": "Code"
+			},
+			"Properties": {
+				"Handler": "index.handler",
+				"FunctionName": {
+					"Fn::If": [
+						"ShouldNotCreateEnvResources",
+						"scanPictures",
+						{
+							"Fn::Join": [
+								"",
+								[
+									"scanPictures",
+									"-",
+									{
+										"Ref": "env"
+									}
+								]
+							]
+						}
+					]
+				},
+				"Environment": {
+					"Variables": {
+						"ENV": {
+							"Ref": "env"
+						},
+						"REGION": {
+							"Ref": "AWS::Region"
+						},
+						"HOSTING_S3ANDCLOUDFRONT_HOSTINGBUCKETNAME": {
+							"Ref": "hostingS3AndCloudFrontHostingBucketName"
+						},
+						"API_WHALEWATCH_WHALETABLE_NAME": {
+							"Fn::ImportValue": {
+								"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:WhaleTable:Name"
+							}
+						},
+						"API_WHALEWATCH_WHALETABLE_ARN": {
+							"Fn::Join": [
+								"",
+								[
+									"arn:aws:dynamodb:",
+									{
+										"Ref": "AWS::Region"
+									},
+									":",
+									{
+										"Ref": "AWS::AccountId"
+									},
+									":table/",
+									{
+										"Fn::ImportValue": {
+											"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:WhaleTable:Name"
+										}
+									}
+								]
+							]
+						},
+						"API_WHALEWATCH_GRAPHQLAPIIDOUTPUT": {
+							"Ref": "apiwhalewatchGraphQLAPIIdOutput"
+						},
+						"API_WHALEWATCH_PICTURETABLE_NAME": {
+							"Fn::ImportValue": {
+								"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:PictureTable:Name"
+							}
+						},
+						"API_WHALEWATCH_PICTURETABLE_ARN": {
+							"Fn::Join": [
+								"",
+								[
+									"arn:aws:dynamodb:",
+									{
+										"Ref": "AWS::Region"
+									},
+									":",
+									{
+										"Ref": "AWS::AccountId"
+									},
+									":table/",
+									{
+										"Fn::ImportValue": {
+											"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:PictureTable:Name"
+										}
+									}
+								]
+							]
+						},
+						"API_WHALEWATCH_MATCHTABLE_NAME": {
+							"Fn::ImportValue": {
+								"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:MatchTable:Name"
+							}
+						},
+						"API_WHALEWATCH_MATCHTABLE_ARN": {
+							"Fn::Join": [
+								"",
+								[
+									"arn:aws:dynamodb:",
+									{
+										"Ref": "AWS::Region"
+									},
+									":",
+									{
+										"Ref": "AWS::AccountId"
+									},
+									":table/",
+									{
+										"Fn::ImportValue": {
+											"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:MatchTable:Name"
+										}
+									}
+								]
+							]
+						}
+					}
+				},
+				"Role": {
+					"Fn::GetAtt": [
+						"LambdaExecutionRole",
+						"Arn"
+					]
+				},
+				"Runtime": "python3.8",
+				"Timeout": "25",
+				"Code": {
+					"S3Bucket": "amplify-whalewatch-dev-175546-deployment",
+					"S3Key": "amplify-builds/scanPictures-30715342537447794e79-build.zip"
+				}
+			}
+		},
+		"LambdaExecutionRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"RoleName": {
+					"Fn::If": [
+						"ShouldNotCreateEnvResources",
+						"whalewatchLambdaRole1224e6d8",
+						{
+							"Fn::Join": [
+								"",
+								[
+									"whalewatchLambdaRole1224e6d8",
+									"-",
+									{
+										"Ref": "env"
+									}
+								]
+							]
+						}
+					]
+				},
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Principal": {
+								"Service": [
+									"lambda.amazonaws.com"
+								]
+							},
+							"Action": [
+								"sts:AssumeRole"
+							]
+						}
+					]
+				}
+			}
+		},
+		"lambdaexecutionpolicy": {
+			"DependsOn": [
+				"LambdaExecutionRole"
+			],
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "lambda-execution-policy",
+				"Roles": [
+					{
+						"Ref": "LambdaExecutionRole"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"logs:CreateLogGroup",
+								"logs:CreateLogStream",
+								"logs:PutLogEvents"
+							],
+							"Resource": {
+								"Fn::Sub": [
+									"arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*",
+									{
+										"region": {
+											"Ref": "AWS::Region"
+										},
+										"account": {
+											"Ref": "AWS::AccountId"
+										},
+										"lambda": {
+											"Ref": "LambdaFunction"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		},
+		"AmplifyResourcesPolicy": {
+			"DependsOn": [
+				"LambdaExecutionRole"
+			],
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "amplify-lambda-execution-policy",
+				"Roles": [
+					{
+						"Ref": "LambdaExecutionRole"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"s3:PutObject",
+								"s3:GetObject",
+								"s3:ListBucket"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:s3:::",
+											{
+												"Ref": "hostingS3AndCloudFrontHostingBucketName"
+											},
+											"/*"
+										]
+									]
+								}
+							]
+						},
+						{
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:Put*",
+								"dynamodb:Create*",
+								"dynamodb:BatchWriteItem",
+								"dynamodb:Get*",
+								"dynamodb:BatchGetItem",
+								"dynamodb:List*",
+								"dynamodb:Describe*",
+								"dynamodb:Scan",
+								"dynamodb:Query",
+								"dynamodb:Update*",
+								"dynamodb:RestoreTable*",
+								"dynamodb:Delete*"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:dynamodb:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":table/",
+											{
+												"Fn::ImportValue": {
+													"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:WhaleTable:Name"
+												}
+											}
+										]
+									]
+								},
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:dynamodb:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":table/",
+											{
+												"Fn::ImportValue": {
+													"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:WhaleTable:Name"
+												}
+											},
+											"/index/*"
+										]
+									]
+								}
+							]
+						},
+						{
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:Put*",
+								"dynamodb:Create*",
+								"dynamodb:BatchWriteItem",
+								"dynamodb:Get*",
+								"dynamodb:BatchGetItem",
+								"dynamodb:List*",
+								"dynamodb:Describe*",
+								"dynamodb:Scan",
+								"dynamodb:Query",
+								"dynamodb:Update*",
+								"dynamodb:RestoreTable*",
+								"dynamodb:Delete*"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:dynamodb:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":table/",
+											{
+												"Fn::ImportValue": {
+													"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:PictureTable:Name"
+												}
+											}
+										]
+									]
+								},
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:dynamodb:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":table/",
+											{
+												"Fn::ImportValue": {
+													"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:PictureTable:Name"
+												}
+											},
+											"/index/*"
+										]
+									]
+								}
+							]
+						},
+						{
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:Put*",
+								"dynamodb:Create*",
+								"dynamodb:BatchWriteItem",
+								"dynamodb:Get*",
+								"dynamodb:BatchGetItem",
+								"dynamodb:List*",
+								"dynamodb:Describe*",
+								"dynamodb:Scan",
+								"dynamodb:Query",
+								"dynamodb:Update*",
+								"dynamodb:RestoreTable*",
+								"dynamodb:Delete*"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:dynamodb:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":table/",
+											{
+												"Fn::ImportValue": {
+													"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:MatchTable:Name"
+												}
+											}
+										]
+									]
+								},
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:dynamodb:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":table/",
+											{
+												"Fn::ImportValue": {
+													"Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:MatchTable:Name"
+												}
+											},
+											"/index/*"
+										]
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		}
+	},
+	"Outputs": {
+		"Name": {
+			"Value": {
+				"Ref": "LambdaFunction"
+			}
+		},
+		"Arn": {
+			"Value": {
+				"Fn::GetAtt": [
+					"LambdaFunction",
+					"Arn"
+				]
+			}
+		},
+		"Region": {
+			"Value": {
+				"Ref": "AWS::Region"
+			}
+		},
+		"LambdaExecutionRole": {
+			"Value": {
+				"Ref": "LambdaExecutionRole"
+			}
+		}
+	}
+}

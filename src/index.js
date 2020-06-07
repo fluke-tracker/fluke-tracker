@@ -18,6 +18,7 @@ import LandingPage from "views/LandingPage/LandingPage.jsx";
 import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 import UploadPage from "views/UploadPage.jsx";
+import SearchPage from "views/SearchPage.jsx";
 
 var hist = createBrowserHistory();
 Amplify.configure(awsmobile);
@@ -40,6 +41,7 @@ ReactDOM.render(
         <Route path="/login-page" component={LoginPage} />
         <Route path="/components" component={Components} />
         <Route path="/upload-page" component={UploadPage} />
+        <Route path="/search-page" component={SearchPage} />
         <Route path="/" component={LoginPage} />
       </Switch>
     </Router>
