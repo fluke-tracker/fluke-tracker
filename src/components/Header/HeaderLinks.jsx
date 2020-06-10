@@ -69,10 +69,12 @@ function HeaderLinks({ ...props }) {
             <Link to= {"/upload-page"} className={classes.dropdownLink} user={props.user}>
             Upload Page
           </Link>,
-            /*
-             <Link to = {"/upload-page"} className={classes.dropdownLink} user={props.user}>
-             Upload Page
-           </Link> */
+          <Link to= {"/profile-page"} className={classes.dropdownLink} user={props.user}>
+            Profile Page
+          </Link>,
+             <Link to = {"/search-page"} className={classes.dropdownLink} user={props.user}>
+             Search Page
+           </Link>
           ]}
         />
       </ListItem>

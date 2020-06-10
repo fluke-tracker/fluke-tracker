@@ -85,4 +85,4 @@ def handler(event, context):
     }
 
 
-handler({"filename": ""}, None)
+#handler({"filename": ""}, None)

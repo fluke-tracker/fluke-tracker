@@ -13,37 +13,49 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from 'aws-amplify';
 import Footer from "components/Footer/Footer.jsx";
-
-
-class ProfilePage extends React.Component {
+import { getWhale  } from 'graphql/queries';
+import API, { graphqlOperation } from '@aws-amplify/api';
+const dashboardRoutes = [];
+class UploadPage extends React.Component {
     constructor(props) {
     super(props)
 this.state = {
-    imageName: "",
-    imageFile: "",
-    response: "",
+    searchInput: "",
     user: null
 }
     this.authenticate_user();
-  }
+}
 
-
-  authenticate_user() {
-
+authenticate_user() {
     Auth.currentAuthenticatedUser()
-          .then(user => {
-           console.log('profilepage user',user.username);
+          .then(user => { 
+           console.log('searchpage user',user.username);
            this.setState({ user: user })
-          }).catch(err => console.log('currentAuthenticatedUser profilepage err', err))
+          }).catch(err => console.log('currentAuthenticatedUser searchpage err', err))
   }
-
+handleInputChange (event) {
+    event.preventDefault()
+/*     console.log(event.target.name)
+    console.log(event.target.value) */
+    this.setState({
+        [event.target.name]: event.target.value
+    })
+  }
+handleSubmit (event){
+    event.preventDefault()
+    const data = this.state
+    console.log('final search data',data)
+    const whale = API.graphql(graphqlOperation(getWhale, {input: {id: "PM-WWA-20050620-050.jpg"}}))
+    console.log('whale,',whale)
+}  
   render() {
     const { classes, ...rest } = this.props;
-
+const searchInput=this.state.searchInput
     return (
       <div>
         <Header
         color="transparent"
+        routes={dashboardRoutes}
         brand=""
         fixed
         rightLinks={<HeaderLinks user={this.state.user} />}
@@ -57,10 +69,20 @@ this.state = {
                 <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container} style={{"height": "350px"}}>
           <GridContainer color = "black">
-            <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Welcome to our home page</h2>
-            <p style={{"color": "black"}}>Here is a short instruction of how to use this website</p>
-            </GridItem>
-        </GridContainer>
+            <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Search Whale Image 🐳</h2></GridItem>
+        </GridContainer>   
+        <p style={{ color: 'red' }}>{searchInput}</p>
+          <form onSubmit={this.handleSubmit.bind(this)}>
+        <input
+        type="text"
+        name = 'searchInput'
+        placeholder="Search"
+        value={this.state.searchInput}
+        onChange={this.handleInputChange.bind(this)}
+      />
+        <button >Search Whale</button>
+
+      </form>
       </div>
       </div>
               <Footer />
@@ -68,4 +90,4 @@ this.state = {
     );
   }
 }
-export default withStyles(landingPageStyle)(ProfilePage);
+export default withStyles(landingPageStyle)(UploadPage);
