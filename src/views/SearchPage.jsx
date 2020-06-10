@@ -48,7 +48,6 @@ handleSubmit (event){
     console.log('final search data',data)
     const whale = API.graphql(graphqlOperation(getWhale, {id: "1078"})).then(data => console.log(data));
     const pictures = API.graphql(graphqlOperation(getPicture, {id: "PM-WWA-20060531-D057.jpg"})).then(data => console.log(data));
-
 }  
   render() {
     const { classes, ...rest } = this.props;

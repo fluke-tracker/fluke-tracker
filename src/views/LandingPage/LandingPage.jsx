@@ -311,8 +311,18 @@ authenticate_user() {
       const img1 = this.state.whale_csv[vertical][0];
           const img2 = this.state.whale_csv[vertical][horizontal + 1];
 
-      //API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][0]})).then( picture => {console.log("get picture" + picture); this.setState({left_id: picture.whale_id});});
-      //API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][horizontal + 1]})).then( picture => {console.log("get picture");console.log(picture); this.setState({right_id: picture.whale_id});});
+      API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][0]}))
+      .then( picture => {
+      console.log("get picture" + picture);
+      if(picture.data.getPicture.whale != undefined)this.setState({left_id: picture.data.getPicture.whale.name});});
+      API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][horizontal + 1]}))
+      .then( picture =>
+      {
+      console.log("get picture");console.log(picture);
+      if(picture.data.getPicture.whale != undefined) this.setState({right_id: picture.data.getPicture.whale.name},
+            _ => console.log(picture.data.getPicture.whale)
+      )
+      });
 
       //console.log("img1"+img1);
       //console.log("img2"+img2);
@@ -357,6 +367,7 @@ authenticate_user() {
 
   loadMatches =  () => {
     console.log("load matches");
+    const img2id = {};
     API.graphql(graphqlOperation(listMatchs)).then(response => {
         console.log(response);
         const imgArr = {};
@@ -485,7 +496,8 @@ authenticate_user() {
                         New Image Number: {this.state.vertical} 
                         <br/>
                         {this.state.whale_csv[this.state.vertical][0]}
-                        {this.state.left_id}
+                        <br/>
+                        Whale Id: {this.state.left_id}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][0]) ? '' : <CircularProgress />}
 {/*                         <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
@@ -497,8 +509,9 @@ authenticate_user() {
 
                 <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
                         Best Matching Picture Number:
-                        {this.state.horizontal} 
-                        {this.state.right_id}
+                        {this.state.horizontal}
+                        <br/>
+                        Whale Id: {this.state.right_id}
                         <br/>
                         {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]) ? '': <CircularProgress />}
@@ -517,6 +530,8 @@ authenticate_user() {
                 <br/>
                 <Button variant="contained" onClick={() => this.go_up()}color="info" size="sm">&#9650;</Button>
               <Button variant="contained" onClick={() => this.go_down()}color="info" size="sm">&#9660;</Button>
+              <Button variant="contained" onClick={() => this.go_badPicture()}color="badPicture" size="sm">Bad picture</Button>
+
                 <div>
                   <ImagePicker
                     images={imageList.map((image, i) => ({ src: image, value: i }))}
@@ -535,7 +550,6 @@ authenticate_user() {
               <Button variant="contained" onClick={() => this.unacceptPicture()}color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} size="sm">Unmatch</Button>
 {/*               <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button> */}
 {/*               <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button> */}
-              <Button variant="contained" onClick={() => this.go_badPicture()}color="badPicture" size="sm">Bad picture</Button>
               <br/>
 {/*  next pictures */}
               <Button variant="contained" onClick={() => this.go_left()}color="info" size="sm">&#9664;</Button>
