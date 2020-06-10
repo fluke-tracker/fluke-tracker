@@ -14,6 +14,7 @@ import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from 'aws-amplify';
 import Footer from "components/Footer/Footer.jsx";
 import { getWhale  } from 'graphql/queries';
+import { getPicture  } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
 const dashboardRoutes = [];
 class UploadPage extends React.Component {
@@ -45,8 +46,9 @@ handleSubmit (event){
     event.preventDefault()
     const data = this.state
     console.log('final search data',data)
-    const whale = API.graphql(graphqlOperation(getWhale, {input: {id: "PM-WWA-20050620-050.jpg"}}))
-    console.log('whale,',whale)
+    const whale = API.graphql(graphqlOperation(getWhale, {id: "1078"})).then(data => console.log(data));
+    const pictures = API.graphql(graphqlOperation(getPicture, {id: "PM-WWA-20060531-D057.jpg"})).then(data => console.log(data));
+
 }  
   render() {
     const { classes, ...rest } = this.props;
