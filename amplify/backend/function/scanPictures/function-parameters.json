@@ -1,0 +1,18 @@
+{
+    "permissions": {
+        "hosting": {
+            "S3AndCloudFront": [
+                "create",
+                "read"
+            ]
+        },
+        "storage": {
+            "Picture:@model(appsync)": [
+                "create",
+                "read",
+                "update",
+                "delete"
+            ]
+        }
+    }
+}

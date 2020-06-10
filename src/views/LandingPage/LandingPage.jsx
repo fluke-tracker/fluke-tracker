@@ -41,7 +41,10 @@ import PubSub from '@aws-amplify/pubsub';
 import { createMatchingImage  } from 'graphql/mutations';
 import { updateMatchingImage  } from 'graphql/mutations';
 import { deleteMatchingImage  } from 'graphql/mutations';
+import { createMatch  } from 'graphql/mutations';
 import { listMatchingImages } from 'graphql/queries';
+import { listMatchs } from 'graphql/queries';
+
 import { getMatchingImage } from 'graphql/queries';
 import { getPicture } from 'graphql/queries';
 import { createPicture } from 'graphql/mutations';
@@ -149,14 +152,16 @@ authenticate_user() {
     this.setState(prevState => { 
       if (prevState.matchedPictures[left_img_name] == undefined){
         prevState.matchedPictures[left_img_name] = new Set([right_img_name]);
-        API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
-      } 
+        //API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
+        API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
+      }
       else {
         prevState.matchedPictures[left_img_name].add(right_img_name)
         console.log ('prevState.matchedPictures[left_img_name])::: ',prevState.matchedPictures[left_img_name]);
         console.log('added_arry:', Array.from(prevState.matchedPictures[left_img_name]));
-        API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err));    
-      } 
+        //API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err));
+        API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
+      }
       return {matchedPictures:  prevState.matchedPictures}
     });
     if (left_img_name && right_img_name) {
@@ -188,8 +193,10 @@ authenticate_user() {
     this.setState(prevState => { 
       console.log('left img id: ',prevState.image_id[left_img_name]);
       prevState.matchedPictures[left_img_name].delete(right_img_name); 
-    console.log("array after deletion", prevState.matchedPictures[left_img_name]);
-      API.graphql(graphqlOperation(updateMatchingImage, {input: {id: prevState.image_id[left_img_name], image:  {name: left_img_name}, matchingImages: {name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("deletin matching image")).catch(err => console.log(err));
+      console.log("array after deletion", prevState.matchedPictures[left_img_name]);
+      //API.graphql(graphqlOperation(updateMatchingImage, {input: {id: prevState.image_id[left_img_name], image:  {name: left_img_name}, matchingImages: {name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("deletin matching image")).catch(err => console.log(err));
+        API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
+
       return prevState.matchedPictures;
 
     });
@@ -317,6 +324,11 @@ authenticate_user() {
         this.setState({ imageStatusRight: "loading" })
         this.setState({ right_img: img2 });
       }
+      this.setState({
+      isMatched: this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures &&
+                Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1])
+      }, data => console.log(data));
+
 
 
       //this.imageList[0]..
@@ -345,7 +357,26 @@ authenticate_user() {
 
   loadMatches =  () => {
     console.log("load matches");
-    const matchingImages = API.graphql(graphqlOperation(listMatchingImages)).then(
+    API.graphql(graphqlOperation(listMatchs)).then(response => {
+        console.log(response);
+        const imgArr = {};
+        response.data.listMatchs.items.forEach(
+            match => {
+                if(match.picture1.filename in imgArr){
+
+                }
+                else{
+                    imgArr[match.picture1.filename] = new Set();
+                }
+                imgArr[match.picture1.filename].add(match.picture2.filename);
+            }
+        );
+        console.log("imgArr");
+        console.log(imgArr);
+        this.setState({matchedPictures: imgArr});
+    }
+    );
+    /*const matchingImages = API.graphql(graphqlOperation(listMatchingImages)).then(
       response => {
         const image_id = {};
         const matchedPictures = response.data.listMatchingImages.items;
@@ -357,10 +388,8 @@ authenticate_user() {
         this.setState(() => { return { image_id: image_id} });
         console.log(response);
       }
-    );
-    
-    return matchingImages;
-  }
+    );*/
+    }
   
 /*   signout = () =>{
     const currentUser = Auth.userPool.getCurrentUser();
@@ -485,8 +514,6 @@ authenticate_user() {
                  Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? 
                  <Button variant="contained" onClick={() => this.unacceptPicture()} color="warning">🐳 UnMatch!</Button> : 
                  <Button variant="contained" onClick={() => this.acceptPicture()} color="success">🐳 Match!</Button>} */}
-                 {this.state.isMatched = this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures &&
-                Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1])}         
                 <br/>
                 <Button variant="contained" onClick={() => this.go_up()}color="info" size="sm">&#9650;</Button>
               <Button variant="contained" onClick={() => this.go_down()}color="info" size="sm">&#9660;</Button>
