@@ -111,6 +111,9 @@ class LandingPage extends React.Component {
     this.authenticate_user();
 
   }
+  go_badPicture() {
+    console.log('bad picture code goes here')
+  }
 authenticate_user() {
 
   Auth.currentAuthenticatedUser()
