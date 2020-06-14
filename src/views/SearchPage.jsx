@@ -16,13 +16,18 @@ import Footer from "components/Footer/Footer.jsx";
 import { getWhale  } from 'graphql/queries';
 import { getPicture  } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
+import { render } from 'react-dom';
+import Gallery from 'react-grid-gallery';
 const dashboardRoutes = [];
+const IMAGES = []
 class UploadPage extends React.Component {
     constructor(props) {
     super(props)
 this.state = {
     searchInput: "",
-    user: null
+    user: null,
+    IMAGES: [],
+    noData: false,
 }
     this.authenticate_user();
 }
@@ -42,16 +47,42 @@ handleInputChange (event) {
         [event.target.name]: event.target.value
     })
   }
-handleSubmit (event){
+async handleSubmit (event){
     event.preventDefault()
     const data = this.state
-    console.log('final search data',data)
-    const whale = API.graphql(graphqlOperation(getWhale, {id: "1078"})).then(data => console.log(data));
-    const pictures = API.graphql(graphqlOperation(getPicture, {id: "PM-WWA-20060531-D057.jpg"})).then(data => console.log(data));
-}  
+    console.log('state before submit',data)
+    try {
+    const whale = await API.graphql(graphqlOperation(getWhale, {id: data.searchInput}));
+    //const pictures = API.graphql(graphqlOperation(getPicture, {id: "PM-WWA-20060531-D057.jpg"})).then(data => console.log(data));
+    console.log('whale output aws',whale)
+    console.log('length',whale.data.getWhale.pictures.items.length)
+    this.state.IMAGES=[]
+    whale.data.getWhale.pictures.items.forEach(item => {
+      this.state.IMAGES.push(this.formatImages(item))
+    });
+   this.setState({searchInput: "",noData: false})
+   console.log("IMAGES To be printed ",this.state)
+    }
+    catch(e)
+  {
+   this.setState({noData: true})
+    console.log("no results found",e)
+  }
+   console.log('state after submit',this.state)
+}
+formatImages(item){
+console.log('fetching images array from S3',item)
+return {
+    src: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/cropped_images/'+ item.filename,
+    thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/thumbnails/'+ item.thumbnail,
+    thumbnailWidth: 320,
+    thumbnailHeight: 174,
+    caption: item.filename
+  }
+}
   render() {
     const { classes, ...rest } = this.props;
-const searchInput=this.state.searchInput
+    const searchInput=this.state.searchInput;
     return (
       <div>
         <Header
@@ -71,18 +102,19 @@ const searchInput=this.state.searchInput
           <div className={classes.container} style={{"height": "350px"}}>
           <GridContainer color = "black">
             <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Search Whale Image 🐳</h2></GridItem>
-        </GridContainer>   
-        <p style={{ color: 'red' }}>{searchInput}</p>
-          <form onSubmit={this.handleSubmit.bind(this)}>
+        </GridContainer> 
+         {this.state.noData && (<p style={{ color: 'red' }}>No Results Found!</p>)}  
+          <form onSubmit={this.handleSubmit.bind(this)} >
         <input
         type="text"
         name = 'searchInput'
         placeholder="Search"
         value={this.state.searchInput}
         onChange={this.handleInputChange.bind(this)}
+        required
       />
         <button >Search Whale</button>
-
+        <Gallery images={this.state.IMAGES}/>
       </form>
       </div>
       </div>
