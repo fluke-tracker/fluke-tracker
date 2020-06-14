@@ -172,14 +172,16 @@ class LoginPage extends React.Component {
         >
           <div className={classes.container}>
             <GridContainer justify="left">
-              <GridItem xs={12} sm={12} md={4}>
+              <GridItem xs={12} sm={12} md={6}>
                 <Card className={classes[this.state.cardAnimaton]}
                 style={{
             backgroundColor: "transparent",
             color: "white",
-            boxShadow: "none"
+            boxShadow: "none",
+            fontSize: "120%",
+            lineHeight: "1.6"
           }}>
-                <h3><strong>Welcome to the webpage</strong></h3>
+                <h3><strong>Welcome to the whalewatching</strong></h3>
   {/*               <form onSubmit={this.submitForm} className={classes.form}>
                 {   <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
