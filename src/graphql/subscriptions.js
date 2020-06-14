@@ -4,9 +4,12 @@
 export const onCreateWhale = /* GraphQL */ `
   subscription OnCreateWhale($owner: String!) {
     onCreateWhale(owner: $owner) {
+      id
       name
       pictures {
         items {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -29,9 +32,12 @@ export const onCreateWhale = /* GraphQL */ `
 export const onUpdateWhale = /* GraphQL */ `
   subscription OnUpdateWhale($owner: String!) {
     onUpdateWhale(owner: $owner) {
+      id
       name
       pictures {
         items {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -54,9 +60,12 @@ export const onUpdateWhale = /* GraphQL */ `
 export const onDeleteWhale = /* GraphQL */ `
   subscription OnDeleteWhale($owner: String!) {
     onDeleteWhale(owner: $owner) {
+      id
       name
       pictures {
         items {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -79,10 +88,13 @@ export const onDeleteWhale = /* GraphQL */ `
 export const onCreatePicture = /* GraphQL */ `
   subscription OnCreatePicture($owner: String!) {
     onCreatePicture(owner: $owner) {
+      id
+      is_new
       high_res
       thumbnail
       filename
       whale {
+        id
         name
         pictures {
           nextToken
@@ -97,6 +109,8 @@ export const onCreatePicture = /* GraphQL */ `
       uploaded_by
       matchLeft {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -109,6 +123,8 @@ export const onCreatePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -128,6 +144,8 @@ export const onCreatePicture = /* GraphQL */ `
       }
       matchRight {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -140,6 +158,8 @@ export const onCreatePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -166,10 +186,13 @@ export const onCreatePicture = /* GraphQL */ `
 export const onUpdatePicture = /* GraphQL */ `
   subscription OnUpdatePicture($owner: String!) {
     onUpdatePicture(owner: $owner) {
+      id
+      is_new
       high_res
       thumbnail
       filename
       whale {
+        id
         name
         pictures {
           nextToken
@@ -184,6 +207,8 @@ export const onUpdatePicture = /* GraphQL */ `
       uploaded_by
       matchLeft {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -196,6 +221,8 @@ export const onUpdatePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -215,6 +242,8 @@ export const onUpdatePicture = /* GraphQL */ `
       }
       matchRight {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -227,6 +256,8 @@ export const onUpdatePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -253,10 +284,13 @@ export const onUpdatePicture = /* GraphQL */ `
 export const onDeletePicture = /* GraphQL */ `
   subscription OnDeletePicture($owner: String!) {
     onDeletePicture(owner: $owner) {
+      id
+      is_new
       high_res
       thumbnail
       filename
       whale {
+        id
         name
         pictures {
           nextToken
@@ -271,6 +305,8 @@ export const onDeletePicture = /* GraphQL */ `
       uploaded_by
       matchLeft {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -283,6 +319,8 @@ export const onDeletePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -302,6 +340,8 @@ export const onDeletePicture = /* GraphQL */ `
       }
       matchRight {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -314,6 +354,8 @@ export const onDeletePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -341,10 +383,13 @@ export const onCreateMatch = /* GraphQL */ `
   subscription OnCreateMatch($owner: String!) {
     onCreateMatch(owner: $owner) {
       picture1 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -373,10 +418,13 @@ export const onCreateMatch = /* GraphQL */ `
         owner
       }
       picture2 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -416,10 +464,13 @@ export const onUpdateMatch = /* GraphQL */ `
   subscription OnUpdateMatch($owner: String!) {
     onUpdateMatch(owner: $owner) {
       picture1 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -448,10 +499,13 @@ export const onUpdateMatch = /* GraphQL */ `
         owner
       }
       picture2 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -491,10 +545,13 @@ export const onDeleteMatch = /* GraphQL */ `
   subscription OnDeleteMatch($owner: String!) {
     onDeleteMatch(owner: $owner) {
       picture1 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -523,10 +580,13 @@ export const onDeleteMatch = /* GraphQL */ `
         owner
       }
       picture2 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt

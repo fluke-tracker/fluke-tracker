@@ -7,9 +7,12 @@ export const createWhale = /* GraphQL */ `
     $condition: ModelWhaleConditionInput
   ) {
     createWhale(input: $input, condition: $condition) {
+      id
       name
       pictures {
         items {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -35,9 +38,12 @@ export const updateWhale = /* GraphQL */ `
     $condition: ModelWhaleConditionInput
   ) {
     updateWhale(input: $input, condition: $condition) {
+      id
       name
       pictures {
         items {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -63,9 +69,12 @@ export const deleteWhale = /* GraphQL */ `
     $condition: ModelWhaleConditionInput
   ) {
     deleteWhale(input: $input, condition: $condition) {
+      id
       name
       pictures {
         items {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -91,10 +100,13 @@ export const createPicture = /* GraphQL */ `
     $condition: ModelPictureConditionInput
   ) {
     createPicture(input: $input, condition: $condition) {
+      id
+      is_new
       high_res
       thumbnail
       filename
       whale {
+        id
         name
         pictures {
           nextToken
@@ -109,6 +121,8 @@ export const createPicture = /* GraphQL */ `
       uploaded_by
       matchLeft {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -121,6 +135,8 @@ export const createPicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -140,6 +156,8 @@ export const createPicture = /* GraphQL */ `
       }
       matchRight {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -152,6 +170,8 @@ export const createPicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -181,10 +201,13 @@ export const updatePicture = /* GraphQL */ `
     $condition: ModelPictureConditionInput
   ) {
     updatePicture(input: $input, condition: $condition) {
+      id
+      is_new
       high_res
       thumbnail
       filename
       whale {
+        id
         name
         pictures {
           nextToken
@@ -199,6 +222,8 @@ export const updatePicture = /* GraphQL */ `
       uploaded_by
       matchLeft {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -211,6 +236,8 @@ export const updatePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -230,6 +257,8 @@ export const updatePicture = /* GraphQL */ `
       }
       matchRight {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -242,6 +271,8 @@ export const updatePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -271,10 +302,13 @@ export const deletePicture = /* GraphQL */ `
     $condition: ModelPictureConditionInput
   ) {
     deletePicture(input: $input, condition: $condition) {
+      id
+      is_new
       high_res
       thumbnail
       filename
       whale {
+        id
         name
         pictures {
           nextToken
@@ -289,6 +323,8 @@ export const deletePicture = /* GraphQL */ `
       uploaded_by
       matchLeft {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -301,6 +337,8 @@ export const deletePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -320,6 +358,8 @@ export const deletePicture = /* GraphQL */ `
       }
       matchRight {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -332,6 +372,8 @@ export const deletePicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -362,10 +404,13 @@ export const createMatch = /* GraphQL */ `
   ) {
     createMatch(input: $input, condition: $condition) {
       picture1 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -394,10 +439,13 @@ export const createMatch = /* GraphQL */ `
         owner
       }
       picture2 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -440,10 +488,13 @@ export const updateMatch = /* GraphQL */ `
   ) {
     updateMatch(input: $input, condition: $condition) {
       picture1 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -472,10 +523,13 @@ export const updateMatch = /* GraphQL */ `
         owner
       }
       picture2 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -518,10 +572,13 @@ export const deleteMatch = /* GraphQL */ `
   ) {
     deleteMatch(input: $input, condition: $condition) {
       picture1 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -550,10 +607,13 @@ export const deleteMatch = /* GraphQL */ `
         owner
       }
       picture2 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt

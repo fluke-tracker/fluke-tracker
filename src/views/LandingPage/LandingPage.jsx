@@ -47,7 +47,9 @@ import { listMatchs } from 'graphql/queries';
 
 import { getMatchingImage } from 'graphql/queries';
 import { getPicture } from 'graphql/queries';
+import { getWhale } from 'graphql/queries';
 import { createPicture } from 'graphql/mutations';
+import { updatePicture } from 'graphql/mutations';
 
 //import awsconfig from 'aws-exports';
 import Amplify , { Storage } from 'aws-amplify';
@@ -155,15 +157,21 @@ authenticate_user() {
     this.setState(prevState => { 
       if (prevState.matchedPictures[left_img_name] == undefined){
         prevState.matchedPictures[left_img_name] = new Set([right_img_name]);
+        console.log(this.state.left_id, this.state.right_id);
         //API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
-        API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
+        if (this.state.right_id)
+            //API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: this.state.right_id}}));
+            API.graphql(graphqlOperation(updatePicture, {input:  {id: "PM-WWA-20070526-179.jpg", filename: left_img_name}}));
+        //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
       }
       else {
         prevState.matchedPictures[left_img_name].add(right_img_name)
         console.log ('prevState.matchedPictures[left_img_name])::: ',prevState.matchedPictures[left_img_name]);
         console.log('added_arry:', Array.from(prevState.matchedPictures[left_img_name]));
+        if (this.state.right_id)
+            API.graphql(graphqlOperation(updatePicture, {input:  {id: "PM-WWA-20070526-179.jpg", filename: left_img_name}}));
         //API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err));
-        API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
+        //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
       }
       return {matchedPictures:  prevState.matchedPictures}
     });
@@ -313,11 +321,10 @@ authenticate_user() {
 
       const img1 = this.state.whale_csv[vertical][0];
           const img2 = this.state.whale_csv[vertical][horizontal + 1];
-
       API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][0]}))
       .then( picture => {
       console.log("get picture" + picture);
-      if(picture.data.getPicture.whale != undefined)this.setState({left_id: picture.data.getPicture.whale.name});});
+      if(picture.data.getPicture.whale != undefined)    this.setState({left_id: picture.data.getPicture.whale.name});});
       API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][horizontal + 1]}))
       .then( picture =>
       {

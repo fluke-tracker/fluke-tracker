@@ -4,9 +4,12 @@
 export const getWhale = /* GraphQL */ `
   query GetWhale($id: ID!) {
     getWhale(id: $id) {
+      id
       name
       pictures {
         items {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -34,6 +37,7 @@ export const listWhales = /* GraphQL */ `
   ) {
     listWhales(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
+        id
         name
         pictures {
           nextToken
@@ -49,10 +53,13 @@ export const listWhales = /* GraphQL */ `
 export const getPicture = /* GraphQL */ `
   query GetPicture($id: ID!) {
     getPicture(id: $id) {
+      id
+      is_new
       high_res
       thumbnail
       filename
       whale {
+        id
         name
         pictures {
           nextToken
@@ -67,6 +74,8 @@ export const getPicture = /* GraphQL */ `
       uploaded_by
       matchLeft {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -79,6 +88,8 @@ export const getPicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -98,6 +109,8 @@ export const getPicture = /* GraphQL */ `
       }
       matchRight {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -110,6 +123,8 @@ export const getPicture = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -141,10 +156,13 @@ export const listPictures = /* GraphQL */ `
   ) {
     listPictures(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -180,10 +198,13 @@ export const getMatch = /* GraphQL */ `
   query GetMatch($id: ID!) {
     getMatch(id: $id) {
       picture1 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -212,10 +233,13 @@ export const getMatch = /* GraphQL */ `
         owner
       }
       picture2 {
+        id
+        is_new
         high_res
         thumbnail
         filename
         whale {
+          id
           name
           createdAt
           updatedAt
@@ -260,6 +284,8 @@ export const listMatchs = /* GraphQL */ `
     listMatchs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         picture1 {
+          id
+          is_new
           high_res
           thumbnail
           filename
@@ -272,6 +298,8 @@ export const listMatchs = /* GraphQL */ `
           owner
         }
         picture2 {
+          id
+          is_new
           high_res
           thumbnail
           filename

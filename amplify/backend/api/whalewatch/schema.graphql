@@ -1,12 +1,15 @@
 type Whale @auth(rules: [{allow: owner, operations: [create, delete, update]}]) @model{
+    id: ID!
     name: String!
     pictures: [Picture] @connection(name: "PictureWhale")
 }
 
-type Picture @auth(rules: [{allow: owner, operations: [create, delete, update]}]) @model{
+type Picture @model @auth(rules: [{allow: owner, operations: [create, delete, update]}]){
+    id: ID!
+    is_new: Boolean
     high_res: String
     thumbnail: String
-    filename: String!
+    filename: String
     whale: Whale @connection(name: "PictureWhale")
     geocoords: String
     date_taken: String
