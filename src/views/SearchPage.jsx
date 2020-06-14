@@ -97,9 +97,9 @@ return {
         }}
         {...rest}
       />
-         <Parallax color="black" small center fixed filter image={require("assets/img/Pardot-Banner-GDSC_TD.png")} />
-                <div className={classNames(classes.main, classes.mainRaised)}>
-          <div className={classes.container} style={{"height": "350px"}}>
+         <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "30vh"}} />
+                <div className={classNames(classes.main, classes.mainRaised)} style={{"height": "66vh"}}>
+          <div className={classes.container}>
           <GridContainer color = "black">
             <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Search Whale Image 🐳</h2></GridItem>
         </GridContainer> 
@@ -107,6 +107,7 @@ return {
           <form onSubmit={this.handleSubmit.bind(this)} >
         <input
         type="text"
+        style={{"text-align": "center"}}
         name = 'searchInput'
         placeholder="Search"
         value={this.state.searchInput}

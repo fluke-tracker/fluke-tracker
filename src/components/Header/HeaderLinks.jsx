@@ -63,15 +63,15 @@ function HeaderLinks({ ...props }) {
           }}
           buttonIcon={Apps}
           dropdownList={[
-            <Link to= {"/landing-page"} className={classes.dropdownLink} user={props.user}>
-              Matching Page
-            </Link>,
-            <Link to= {"/upload-page"} className={classes.dropdownLink} user={props.user}>
-            Upload Page
-          </Link>,
           <Link to= {"/profile-page"} className={classes.dropdownLink} user={props.user}>
             Profile Page
           </Link>,
+            <Link to= {"/landing-page"} className={classes.dropdownLink} user={props.user}>
+              Matching Page
+            </Link>,
+/*            <Link to= {"/upload-page"} className={classes.dropdownLink} user={props.user}>
+            Upload Page
+          </Link>,*/
              <Link to = {"/search-page"} className={classes.dropdownLink} user={props.user}>
              Search Page
            </Link>
