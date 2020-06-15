@@ -60,12 +60,11 @@ async handleSubmit (event){
     whale.data.getWhale.pictures.items.forEach(item => {
       this.state.IMAGES.push(this.formatImages(item))
     });
-   this.setState({searchInput: "",noData: false})
-   console.log("IMAGES To be printed ",this.state)
+   this.setState({noData: false})
     }
     catch(e)
   {
-   this.setState({noData: true})
+   this.setState({noData: true,IMAGES:[]})
     console.log("no results found",e)
   }
    console.log('state after submit',this.state)
