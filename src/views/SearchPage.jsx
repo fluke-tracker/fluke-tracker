@@ -76,6 +76,7 @@ return {
     thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/thumbnails/'+ item.thumbnail,
     thumbnailWidth: 320,
     thumbnailHeight: 174,
+    tags: [{value: "Whale", title: item.filename},{value:this.state.searchInput, title:"Whale ID"}],
     caption: item.filename
   }
 }
@@ -97,7 +98,7 @@ return {
         {...rest}
       />
          <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "30vh"}} />
-                <div className={classNames(classes.main, classes.mainRaised)} style={{"height": "66vh"}}>
+                <div className={classNames(classes.main, classes.mainRaised)} style={{"height": "80vh"}}>
           <div className={classes.container}>
           <GridContainer color = "black">
             <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Search Whale Image 🐳</h2></GridItem>
@@ -114,7 +115,7 @@ return {
         required
       />
         <button >Search Whale</button>
-        <Gallery images={this.state.IMAGES}/>
+        <Gallery images={this.state.IMAGES} enableLightbox={true} backdropClosesModal maxRows={3} enableImageSelection={false}/>
       </form>
       </div>
       </div>
