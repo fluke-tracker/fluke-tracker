@@ -10,5 +10,3 @@ verify_ssl = true
 boto3 = '*'
 exifread = '*'
 
-[requires]
-python_version = "3.8"
