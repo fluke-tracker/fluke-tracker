@@ -113,6 +113,9 @@ class LandingPage extends React.Component {
     this.authenticate_user();
 
   }
+  go_badPicture() {
+    console.log('bad picture code goes here')
+  }
 authenticate_user() {
 
   Auth.currentAuthenticatedUser()
@@ -473,7 +476,7 @@ authenticate_user() {
           {...rest}
         />
 
-        <Parallax small center fixed filter image={require("assets/img/Pardot-Banner-GDSC_TD.png")} />
+        <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "30vh"}} />
                 <div className={classNames(classes.main, classes.mainRaised)}>
           <div>
           <div className={classes.container}>
@@ -509,7 +512,7 @@ authenticate_user() {
 {/*                         <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
                         /> */}
-                         <img src={this.getimages(this.state.whale_csv[this.state.vertical][0])} onLoad={this.handleLeftImageLoaded.bind(this)}
+                         <img style={{"width": "480px", "height": "256px"}} src={this.getimages(this.state.whale_csv[this.state.vertical][0])} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
                         />
                 </GridItem>
@@ -521,9 +524,9 @@ authenticate_user() {
                         Whale Id: {this.state.right_id}
                         <br/>
                         {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
-                        {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]) ? '': <CircularProgress />}
+                        {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}
                        {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}     
-                        <img src={this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])} onLoad={this.handleRightImageLoaded.bind(this)} />     
+                        <img style={{"width": "480px", "height": "256px"}} src={this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])} onLoad={this.handleRightImageLoaded.bind(this)} />
                 </GridItem>      
                 <GridItem xs={12} sm={12} md={6}>     
                           
