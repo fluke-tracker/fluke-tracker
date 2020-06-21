@@ -16,5 +16,24 @@
                 "cognitoed159519": {}
             }
         }
+    },
+    "whaledev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-whalewatching-whaledev-115044-authRole",
+            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-115044-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-115044-authRole",
+            "Region": "eu-central-1",
+            "DeploymentBucketName": "amplify-whalewatching-whaledev-115044-deployment",
+            "UnauthRoleName": "amplify-whalewatching-whaledev-115044-unauthRole",
+            "StackName": "amplify-whalewatching-whaledev-115044",
+            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaledev-115044/848852d0-b2db-11ea-943d-0647b6afc3d8",
+            "AmplifyAppId": "dlxbyik3p6wn1"
+        },
+        "categories": {
+            "auth": {
+                "whalewatchde5a26fd": {},
+                "whalewatchdd55043a": {}
+            }
+        }
     }
 }

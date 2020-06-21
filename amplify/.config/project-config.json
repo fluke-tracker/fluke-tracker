@@ -7,8 +7,8 @@
         "config": {
             "SourceDir": "src",
             "DistributionDir": "build",
-            "BuildCommand": "yarn build_win",
-            "StartCommand": "yarn start_win"
+            "BuildCommand": "yarn.cmd build_win",
+            "StartCommand": "yarn.cmd start_win"
         }
     },
     "providers": [

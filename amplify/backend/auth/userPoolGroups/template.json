@@ -1,23 +1,23 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Parameters": {
-        "authcognitoed159519UserPoolId": {
+        "authwhalewatchdd55043aUserPoolId": {
             "Type": "String",
-            "Default": "authcognitoed159519UserPoolId"
+            "Default": "authwhalewatchdd55043aUserPoolId"
         },
         
-        "authcognitoed159519IdentityPoolId": {
+        "authwhalewatchdd55043aIdentityPoolId": {
             "Type": "String",
-            "Default": "authcognitoed159519IdentityPoolId"
+            "Default": "authwhalewatchdd55043aIdentityPoolId"
         },
         
-        "authcognitoed159519AppClientID": {
+        "authwhalewatchdd55043aAppClientID": {
             "Type": "String",
-            "Default": "authcognitoed159519AppClientID"
+            "Default": "authwhalewatchdd55043aAppClientID"
         },
-        "authcognitoed159519AppClientIDWeb": {
+        "authwhalewatchdd55043aAppClientIDWeb": {
             "Type": "String",
-            "Default": "authcognitoed159519AppClientIDWeb"
+            "Default": "authwhalewatchdd55043aAppClientIDWeb"
         },
         "AuthRoleArn": {
             "Type": "String"
@@ -55,7 +55,7 @@
               },
               
               "UserPoolId" : {
-                "Ref": "authcognitoed159519UserPoolId"
+                "Ref": "authwhalewatchdd55043aUserPoolId"
               } 
             }
         },
@@ -68,7 +68,7 @@
                         "",
                         [
                           {
-                            "Ref": "authcognitoed159519UserPoolId"
+                            "Ref": "authwhalewatchdd55043aUserPoolId"
                           },
                           "-whalewatchingGroupRole"
                         ]
@@ -85,7 +85,7 @@
                             },
                             "Action": "sts:AssumeRoleWithWebIdentity",
                             "Condition": {
-                              "StringEquals": {"cognito-identity.amazonaws.com:aud": {"Ref":"authcognitoed159519IdentityPoolId"}},
+                              "StringEquals": {"cognito-identity.amazonaws.com:aud": {"Ref":"authwhalewatchdd55043aIdentityPoolId"}},
                               "ForAnyValue:StringLike": {"cognito-identity.amazonaws.com:amr": "authenticated"}
                             }
                         }
@@ -111,7 +111,7 @@
                                 "",
                                 [
                                   
-                                  "cognitoed159519",
+                                  "whalewatchdd55043a",
                                   "-ExecutionRole-",
                                   {
                                     "Ref": "env"
@@ -270,16 +270,16 @@
                     "Ref": "UnauthRoleArn"
                 },
                 "identityPoolId": {
-                    "Ref": "authcognitoed159519IdentityPoolId"
+                    "Ref": "authwhalewatchdd55043aIdentityPoolId"
                 },
                 "userPoolId": {
-                    "Ref": "authcognitoed159519UserPoolId"
+                    "Ref": "authwhalewatchdd55043aUserPoolId"
                 },
                 "appClientIDWeb": {
-                    "Ref": "authcognitoed159519AppClientIDWeb"
+                    "Ref": "authwhalewatchdd55043aAppClientIDWeb"
                 },
                 "appClientID": {
-                    "Ref": "authcognitoed159519AppClientID"
+                    "Ref": "authwhalewatchdd55043aAppClientID"
                 },
                 "region": {
                     "Ref": "AWS::Region"
