@@ -59,7 +59,7 @@
 				"Runtime": "nodejs10.x",
 				"Timeout": "25",
 				"Code": {
-					"S3Bucket": "amplify-whalewatch-dev-175546-deployment",
+					"S3Bucket": "amplify-whalewatching-whaledev-213627-deployment",
 					"S3Key": "amplify-builds/S3Triggereb38f992-6d7275476f77792b4a42-build.zip"
 				}
 			}

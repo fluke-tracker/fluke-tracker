@@ -1,39 +1,15 @@
 {
-    "dev": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-whalewatch-dev-175546-authRole",
-            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatch-dev-175546-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatch-dev-175546-authRole",
-            "Region": "eu-central-1",
-            "DeploymentBucketName": "amplify-whalewatch-dev-175546-deployment",
-            "UnauthRoleName": "amplify-whalewatch-dev-175546-unauthRole",
-            "StackName": "amplify-whalewatch-dev-175546",
-            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatch-dev-175546/ba635ea0-8968-11ea-a19c-06bc90058f1a",
-            "AmplifyAppId": "d18qwm2hnkq30r"
-        },
-        "categories": {
-            "auth": {
-                "cognitoed159519": {}
-            }
-        }
-    },
     "whaledev": {
         "awscloudformation": {
-            "AuthRoleName": "amplify-whalewatching-whaledev-115044-authRole",
-            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-115044-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-115044-authRole",
+            "AuthRoleName": "amplify-whalewatching-whaledev-213627-authRole",
+            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-213627-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-213627-authRole",
             "Region": "eu-central-1",
-            "DeploymentBucketName": "amplify-whalewatching-whaledev-115044-deployment",
-            "UnauthRoleName": "amplify-whalewatching-whaledev-115044-unauthRole",
-            "StackName": "amplify-whalewatching-whaledev-115044",
-            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaledev-115044/848852d0-b2db-11ea-943d-0647b6afc3d8",
-            "AmplifyAppId": "dlxbyik3p6wn1"
-        },
-        "categories": {
-            "auth": {
-                "whalewatchde5a26fd": {},
-                "whalewatchdd55043a": {}
-            }
+            "DeploymentBucketName": "amplify-whalewatching-whaledev-213627-deployment",
+            "UnauthRoleName": "amplify-whalewatching-whaledev-213627-unauthRole",
+            "StackName": "amplify-whalewatching-whaledev-213627",
+            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaledev-213627/045359c0-b19b-11ea-b135-06bc90058f1a",
+            "AmplifyAppId": "d2vtiv2q3fzo2l"
         }
     }
 }
