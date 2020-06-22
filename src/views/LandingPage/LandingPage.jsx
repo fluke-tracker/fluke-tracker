@@ -106,7 +106,7 @@ class LandingPage extends React.Component {
     this.loadMatches = this.loadMatches.bind(this);
     this._handleKeyDown = this._handleKeyDown.bind(this)
     //this.loadData("http://localhost:3000/csv");
-    this.loadData("https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/AI_Sensing.csv");
+    this.loadData("https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/AI_Sensing.csv");
     this.loadMatches();
     this.handleForce = (data, fileInfo) => this.setState({ whale_csv: data }, this.handleCsvData);
     this.handleForce.bind(this);
@@ -452,7 +452,7 @@ authenticate_user() {
   //     });
   // }
   getimages = (image) => {
-  const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/thumbnails/'
+  const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/thumbnails/'
   const image_url = bucket_url+image+"thumbnail.jpg"
     return image_url
   }

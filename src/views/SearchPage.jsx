@@ -72,8 +72,8 @@ async handleSubmit (event){
 formatImages(item){
 console.log('fetching images array from S3',item)
 return {
-    src: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/cropped_images/'+ item.filename,
-    thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09175546-dev.s3.eu-central-1.amazonaws.com/thumbnails/'+ item.thumbnail,
+    src: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/cropped_images/'+ item.filename,
+    thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/thumbnails/'+ item.thumbnail,
     thumbnailWidth: 320,
     thumbnailHeight: 174,
     tags: [{value: "Whale", title: item.filename},{value:this.state.searchInput, title:"Whale ID"}],
