@@ -160,7 +160,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-whalewatching-whaledev-213627-deployment",
-					"S3Key": "amplify-builds/scanPictures-492b6668335641394168-build.zip"
+					"S3Key": "amplify-builds/scanPictures-6749523177385157586f-build.zip"
 				}
 			}
 		},

@@ -1,10 +1,10 @@
-type Whale @auth(rules: [{allow: owner, operations: [create, delete, update]}]) @model{
+type Whale @model{
     id: ID!
     name: String!
     pictures: [Picture] @connection(name: "PictureWhale")
 }
 
-type Picture @model @auth(rules: [{allow: owner, operations: [create, delete, update]}]){
+type Picture @model{
     id: ID!
     is_new: Boolean
     high_res: String
@@ -19,7 +19,7 @@ type Picture @model @auth(rules: [{allow: owner, operations: [create, delete, up
     matchRight: Match @connection(name: "MatchRightPicture")
 }
 
-type Match @auth(rules: [{allow: owner, operations: [create, delete, update]}]) @model{
+type Match @model{
     picture1: Picture! @connection(name: "MatchLeftPicture")
     picture2: Picture! @connection(name: "MatchRightPicture")
     match_status: String

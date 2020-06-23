@@ -2,8 +2,8 @@
 // this is an auto generated file. This will be overwritten
 
 export const onCreateWhale = /* GraphQL */ `
-  subscription OnCreateWhale($owner: String!) {
-    onCreateWhale(owner: $owner) {
+  subscription OnCreateWhale {
+    onCreateWhale {
       id
       name
       pictures {
@@ -17,21 +17,15 @@ export const onCreateWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onUpdateWhale = /* GraphQL */ `
-  subscription OnUpdateWhale($owner: String!) {
-    onUpdateWhale(owner: $owner) {
+  subscription OnUpdateWhale {
+    onUpdateWhale {
       id
       name
       pictures {
@@ -45,21 +39,15 @@ export const onUpdateWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onDeleteWhale = /* GraphQL */ `
-  subscription OnDeleteWhale($owner: String!) {
-    onDeleteWhale(owner: $owner) {
+  subscription OnDeleteWhale {
+    onDeleteWhale {
       id
       name
       pictures {
@@ -73,21 +61,15 @@ export const onDeleteWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onCreatePicture = /* GraphQL */ `
-  subscription OnCreatePicture($owner: String!) {
-    onCreatePicture(owner: $owner) {
+  subscription OnCreatePicture {
+    onCreatePicture {
       id
       is_new
       high_res
@@ -99,9 +81,6 @@ export const onCreatePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
-        createdAt
-        updatedAt
-        owner
       }
       geocoords
       date_taken
@@ -118,9 +97,6 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -132,15 +108,9 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
       matchRight {
         picture1 {
@@ -153,9 +123,6 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -167,25 +134,16 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onUpdatePicture = /* GraphQL */ `
-  subscription OnUpdatePicture($owner: String!) {
-    onUpdatePicture(owner: $owner) {
+  subscription OnUpdatePicture {
+    onUpdatePicture {
       id
       is_new
       high_res
@@ -197,9 +155,6 @@ export const onUpdatePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
-        createdAt
-        updatedAt
-        owner
       }
       geocoords
       date_taken
@@ -216,9 +171,6 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -230,15 +182,9 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
       matchRight {
         picture1 {
@@ -251,9 +197,6 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -265,25 +208,16 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onDeletePicture = /* GraphQL */ `
-  subscription OnDeletePicture($owner: String!) {
-    onDeletePicture(owner: $owner) {
+  subscription OnDeletePicture {
+    onDeletePicture {
       id
       is_new
       high_res
@@ -295,9 +229,6 @@ export const onDeletePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
-        createdAt
-        updatedAt
-        owner
       }
       geocoords
       date_taken
@@ -314,9 +245,6 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -328,15 +256,9 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
       matchRight {
         picture1 {
@@ -349,9 +271,6 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -363,25 +282,16 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onCreateMatch = /* GraphQL */ `
-  subscription OnCreateMatch($owner: String!) {
-    onCreateMatch(owner: $owner) {
+  subscription OnCreateMatch {
+    onCreateMatch {
       picture1 {
         id
         is_new
@@ -391,9 +301,6 @@ export const onCreateMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -402,20 +309,11 @@ export const onCreateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       picture2 {
         id
@@ -426,9 +324,6 @@ export const onCreateMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -437,32 +332,20 @@ export const onCreateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       match_status
       similarity_score
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onUpdateMatch = /* GraphQL */ `
-  subscription OnUpdateMatch($owner: String!) {
-    onUpdateMatch(owner: $owner) {
+  subscription OnUpdateMatch {
+    onUpdateMatch {
       picture1 {
         id
         is_new
@@ -472,9 +355,6 @@ export const onUpdateMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -483,20 +363,11 @@ export const onUpdateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       picture2 {
         id
@@ -507,9 +378,6 @@ export const onUpdateMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -518,32 +386,20 @@ export const onUpdateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       match_status
       similarity_score
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
 export const onDeleteMatch = /* GraphQL */ `
-  subscription OnDeleteMatch($owner: String!) {
-    onDeleteMatch(owner: $owner) {
+  subscription OnDeleteMatch {
+    onDeleteMatch {
       picture1 {
         id
         is_new
@@ -553,9 +409,6 @@ export const onDeleteMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -564,20 +417,11 @@ export const onDeleteMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       picture2 {
         id
@@ -588,9 +432,6 @@ export const onDeleteMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -599,26 +440,14 @@ export const onDeleteMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       match_status
       similarity_score
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -632,8 +461,6 @@ export const onCreateMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -647,8 +474,6 @@ export const onUpdateMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -662,8 +487,6 @@ export const onDeleteMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
-      createdAt
-      updatedAt
     }
   }
 `;

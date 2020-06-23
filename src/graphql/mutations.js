@@ -20,15 +20,9 @@ export const createWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -51,15 +45,9 @@ export const updateWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -82,15 +70,9 @@ export const deleteWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -111,9 +93,6 @@ export const createPicture = /* GraphQL */ `
         pictures {
           nextToken
         }
-        createdAt
-        updatedAt
-        owner
       }
       geocoords
       date_taken
@@ -130,9 +109,6 @@ export const createPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -144,15 +120,9 @@ export const createPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
       matchRight {
         picture1 {
@@ -165,9 +135,6 @@ export const createPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -179,19 +146,10 @@ export const createPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -212,9 +170,6 @@ export const updatePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
-        createdAt
-        updatedAt
-        owner
       }
       geocoords
       date_taken
@@ -231,9 +186,6 @@ export const updatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -245,15 +197,9 @@ export const updatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
       matchRight {
         picture1 {
@@ -266,9 +212,6 @@ export const updatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -280,19 +223,10 @@ export const updatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -313,9 +247,6 @@ export const deletePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
-        createdAt
-        updatedAt
-        owner
       }
       geocoords
       date_taken
@@ -332,9 +263,6 @@ export const deletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -346,15 +274,9 @@ export const deletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
       matchRight {
         picture1 {
@@ -367,9 +289,6 @@ export const deletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         picture2 {
           id
@@ -381,19 +300,10 @@ export const deletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
-          createdAt
-          updatedAt
-          owner
         }
         match_status
         similarity_score
-        createdAt
-        updatedAt
-        owner
       }
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -412,9 +322,6 @@ export const createMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -423,20 +330,11 @@ export const createMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       picture2 {
         id
@@ -447,9 +345,6 @@ export const createMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -458,26 +353,14 @@ export const createMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       match_status
       similarity_score
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -496,9 +379,6 @@ export const updateMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -507,20 +387,11 @@ export const updateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       picture2 {
         id
@@ -531,9 +402,6 @@ export const updateMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -542,26 +410,14 @@ export const updateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       match_status
       similarity_score
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -580,9 +436,6 @@ export const deleteMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -591,20 +444,11 @@ export const deleteMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       picture2 {
         id
@@ -615,9 +459,6 @@ export const deleteMatch = /* GraphQL */ `
         whale {
           id
           name
-          createdAt
-          updatedAt
-          owner
         }
         geocoords
         date_taken
@@ -626,26 +467,14 @@ export const deleteMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
         matchRight {
           match_status
           similarity_score
-          createdAt
-          updatedAt
-          owner
         }
-        createdAt
-        updatedAt
-        owner
       }
       match_status
       similarity_score
-      createdAt
-      updatedAt
-      owner
     }
   }
 `;
@@ -662,8 +491,6 @@ export const createMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -680,8 +507,6 @@ export const updateMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -698,8 +523,6 @@ export const deleteMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
-      createdAt
-      updatedAt
     }
   }
 `;
