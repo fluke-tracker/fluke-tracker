@@ -161,7 +161,7 @@ authenticate_user() {
         //API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
         if (this.state.right_id)
             //API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: this.state.right_id}}));
-            API.graphql(graphqlOperation(updatePicture, {input:  {id: "PM-WWA-20070526-179.jpg", filename: left_img_name}}));
+            API.graphql(graphqlOperation(updatePicture, {input:  {id: "PM-WWA-20070526-179.jpg", filename: left_img_name}})).then(() => console.log("created matching image")).catch(err => console.log(err));;
         //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
       }
       else {
@@ -173,6 +173,7 @@ authenticate_user() {
         //API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err));
         //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
       }
+      console.log('returning matched pictures', prevState.matchedPictures)
       return {matchedPictures:  prevState.matchedPictures}
     });
     if (left_img_name && right_img_name) {
