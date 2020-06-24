@@ -476,9 +476,7 @@ authenticate_user() {
           {...rest}
         />
 
-        <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "30vh"}} />
-                <div className={classNames(classes.main, classes.mainRaised)}>
-          <div>
+        <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "20vh"}} />
           <div className={classes.container}>
             <GridContainer>
             <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Do these whales match?</h2></GridItem>
@@ -518,12 +516,11 @@ authenticate_user() {
                 </GridItem>
 
                 <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
-                        Best Matching Picture Number:
-                        {this.state.horizontal}
-                        <br/>
-                        Whale Id: {this.state.right_id}
+                        Best Matching Picture Number: {this.state.horizontal}
                         <br/>
                         {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
+                        <br/>
+                        Whale Id: {this.state.right_id}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}
                        {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}     
                         <img style={{"width": "480px", "height": "256px"}} src={this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])} onLoad={this.handleRightImageLoaded.bind(this)} />
@@ -572,9 +569,6 @@ authenticate_user() {
             </GridContainer>
           </div>
           </div>
-        </div>
-        <Footer />
-      </div>
     );
   }
 }

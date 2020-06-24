@@ -72,18 +72,19 @@ this.state = {
         }}
         {...rest}
       />
-         <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "30vh"}} />
-                <div className={classNames(classes.main, classes.mainRaised)} style={{"height": "66vh"}}>
+         <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "20vh"}} />
           <div className={classes.container}>
           <GridContainer>
-            <GridItem xs={12} sm={12} md={6} style={{"padding": "0px 0px 0px 0px"}}><h2 className={classes.title} style={{"color": "black"}}>Welcome to our home page</h2>
-            <p style={{"color": "black"}}>Here is a short instruction of how to use this website</p>
+            <GridItem xs={12} sm={12} md={3} style={{"padding": "0px 0px 0px 0px"}}><h2 className={classes.title} style={{"color": "black"}}>Whalewatching</h2>
+            <h4 className={classes.title} style={{"color": "black"}}>Welcome to our website</h4>
+            <p style={{"color": "black"}}>Here is a short instruction</p>
+            <p style={{"color": "black"}}>Here is another short instruction</p>
             </GridItem>
         </GridContainer>
       </div>
       <div className={classes.container}>
           <GridContainer>
-            <GridItem xs={12} sm={12} md={6} style={{"padding": "0px 0px 20px 0px"}}><h2 className={classes.title} style={{"color": "black"}}>Upload Whale Image 🐳</h2></GridItem>
+            <GridItem xs={12} sm={12} md={6} style={{"padding": "0px 0px 20px 0px"}}><h4 className={classes.title} style={{"color": "black"}}>Upload Whale Image 🐳</h4></GridItem>
             <GridItem xs={12} sm={12} md={6}>
         <input
           type="file"
@@ -117,12 +118,11 @@ this.state = {
         <div color="red" size="sm">{!!this.state.response && <h5 style={{ color: 'red' }}>{this.state.response}</h5>}</div>
         </GridItem>
                   <GridContainer>
+            <GridItem xs={12} sm={12} md={6} style={{"padding": "0px 0px 0px 0px"}}><h4 className={classes.title} style={{"color": "black"}}>Impressum</h4></GridItem>
             <GridItem xs={12} sm={12} md={6} style={{"padding": "0px 0px 0px 0px"}}><h5 className={classes.title} style={{"color": "black"}}><a href="mailto:gdsc3_core.iandd@capgemini.com">Contact us</a></h5>
             </GridItem>
         </GridContainer>
       </div>
-      </div>
-              <Footer />
       </div>
     );
   }
