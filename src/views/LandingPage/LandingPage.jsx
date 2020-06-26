@@ -501,11 +501,11 @@ authenticate_user() {
                         <LinearProgress variant="determinate" value={this.state.horizontal / (this.state.whale_csv[this.state.vertical].length - 2) * 100} />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
-                        New Image Number: {this.state.vertical} 
+                        <strong>New Image Number: </strong> {this.state.vertical}
                         <br/>
-                        {this.state.whale_csv[this.state.vertical][0]}
+                        <strong>File Name: </strong> {this.state.whale_csv[this.state.vertical][0]}
                         <br/>
-                        Whale Id: {this.state.left_id}
+                        <strong>Whale Id: </strong> {this.state.left_id}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][0]) ? '' : <CircularProgress />}
 {/*                         <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
@@ -516,11 +516,11 @@ authenticate_user() {
                 </GridItem>
 
                 <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
-                        Best Matching Picture Number: {this.state.horizontal}
+                        <strong>Best Matching Picture Number: </strong> {this.state.horizontal}
                         <br/>
-                        {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
+                        <strong>File Name: </strong> {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
                         <br/>
-                        Whale Id: {this.state.right_id}
+                        <strong>Whale Id: </strong> {this.state.right_id}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}
                        {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}     
                         <img style={{"width": "480px", "height": "256px"}} src={this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])} onLoad={this.handleRightImageLoaded.bind(this)} />

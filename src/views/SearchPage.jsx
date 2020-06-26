@@ -76,7 +76,7 @@ return {
     thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/thumbnails/'+ item.thumbnail,
     thumbnailWidth: 320,
     thumbnailHeight: 174,
-    tags: [{value: "Whale", title: item.filename},{value:this.state.searchInput, title:"Whale ID"}],
+    tags: [{value: item.filename, title:"File name"},{value:this.state.searchInput, title:"Whale ID"}],
     caption: item.filename
   }
 }
