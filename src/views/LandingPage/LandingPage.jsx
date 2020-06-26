@@ -11,14 +11,18 @@ import { logout } from "../../store/actions";
 import CSVReader from "react-csv-reader";
 import Header from "components/Header/Header.jsx";
 import Footer from "components/Footer/Footer.jsx";
+import SetWhaleDialog from "components/CustomDialog/SetWhaleID.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
+import Badge from "components/Badge/Badge.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Parallax from "components/Parallax/Parallax.jsx";
 import Snackbar from '@material-ui/core/Snackbar';
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
 import LinearProgress from '@material-ui/core/LinearProgress';
+    import Gallery from 'react-grid-gallery';
+
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from "react-redux";
 
@@ -48,6 +52,7 @@ import { listMatchs } from 'graphql/queries';
 import { getMatchingImage } from 'graphql/queries';
 import { getPicture } from 'graphql/queries';
 import { getWhale } from 'graphql/queries';
+import { listWhales } from 'graphql/queries';
 import { createPicture } from 'graphql/mutations';
 import { updatePicture } from 'graphql/mutations';
 
@@ -74,6 +79,19 @@ const papaparseOptions = {
 
 
 const dashboardRoutes = [];
+
+class ImageComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            show: true
+        };
+    }
+
+    render () {
+            return <img {...this.props.imageProps} onLoad={this.props.item.onLoad} onError={this.props.item.onError} />;
+    }
+}
 
 class LandingPage extends React.Component {
   constructor(props) {
@@ -115,6 +133,16 @@ class LandingPage extends React.Component {
   }
   go_badPicture() {
     console.log('bad picture code goes here')
+  }
+  go_newId() {
+    console.log('new id code goes here')
+  }
+  go_manualId(id) {
+    console.log('manual id code goes here, id: ' + id)
+    const left_img_name = this.state.whale_csv[this.state.vertical][0];
+    const right_img_name = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
+    API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: id}}));
+    this.setState({left_id: id});
   }
 authenticate_user() {
 
@@ -159,21 +187,37 @@ authenticate_user() {
         prevState.matchedPictures[left_img_name] = new Set([right_img_name]);
         console.log(this.state.left_id, this.state.right_id);
         //API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
-        if (this.state.right_id)
+
+
             //API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: this.state.right_id}}));
-            API.graphql(graphqlOperation(updatePicture, {input:  {id: "PM-WWA-20070526-179.jpg", filename: left_img_name}})).then(() => console.log("created matching image")).catch(err => console.log(err));;
+            //API.graphql(graphqlOperation(updatePicture, {input:  {id: this.state.right_id, filename: left_img_name}})).then(() => console.log("created matching image")).catch(err => console.log(err));;
         //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
       }
       else {
         prevState.matchedPictures[left_img_name].add(right_img_name)
         console.log ('prevState.matchedPictures[left_img_name])::: ',prevState.matchedPictures[left_img_name]);
         console.log('added_arry:', Array.from(prevState.matchedPictures[left_img_name]));
-        if (this.state.right_id)
-            API.graphql(graphqlOperation(updatePicture, {input:  {id: "PM-WWA-20070526-179.jpg", filename: left_img_name}}));
-        //API.graphql(graphqlOperation(updateMatchingImage, {input:  { id: prevState.image_id[left_img_name], image: {name: left_img_name}, matchingImages: { name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("updated matching image")).catch(err => console.log(err));
-        //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
       }
-      console.log('returning matched pictures', prevState.matchedPictures)
+      if (parseInt(this.state.right_id) < parseInt(this.state.left_id)){
+        // assign all pictures of the left id the right id
+        console.log("YAAY")
+        API.graphql(graphqlOperation(getWhale, { id:  this.state.left_id})).then(
+            pictures => pictures.data.getWhale.pictures.items.forEach(picture => API.graphql(graphqlOperation(updatePicture, {input:  {id: picture.id, pictureWhaleId: this.state.right_id}}))
+        ));
+        this.setState({ dialogMessage: "Assigned all whales with id " + this.state.left_id + " the id " + this.state.right_id});
+        setTimeout(_ => this.setState({ dialogMessage: "" }), 2000)
+      }
+      if (parseInt(this.state.left_id) < parseInt(this.state.right_id)){
+        // assign all pictures of the right id the left id
+        console.log("YAAY")
+        API.graphql(graphqlOperation(getWhale, { id:  this.state.right_id})).then(
+            pictures => pictures.data.getWhale.pictures.items.forEach(picture => API.graphql(graphqlOperation(updatePicture, {input:  {id: picture.id, pictureWhaleId: this.state.left_id}}))
+        ));
+        this.setState({ dialogMessage: "Assigned all whales with id " + this.state.right_id + " the id " + this.state.left_id});
+        setTimeout(_ => this.setState({ dialogMessage: "" }), 2000)
+      }
+      API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, is_new: "false"}}));
+      console.log('returning matched pictures', prevState.matchedPictures);
       return {matchedPictures:  prevState.matchedPictures}
     });
     if (left_img_name && right_img_name) {
@@ -457,6 +501,11 @@ authenticate_user() {
   const image_url = bucket_url+image+"thumbnail.jpg"
     return image_url
   }
+  getimagescropped = (image) => {
+    const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/cropped_images/'
+    const image_url = bucket_url+image
+    return image_url
+  }
 
   render() {
     const { classes, ...rest } = this.props;
@@ -502,30 +551,30 @@ authenticate_user() {
                         <LinearProgress variant="determinate" value={this.state.horizontal / (this.state.whale_csv[this.state.vertical].length - 2) * 100} />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
-                        <strong>New Image Number: </strong> {this.state.vertical}
+                        <strong>New Image Number: </strong> <Badge color="success">{this.state.vertical}</Badge>
                         <br/>
-                        <strong>File Name: </strong> {this.state.whale_csv[this.state.vertical][0]}
+                        <strong>Guessed or assigned Whale Id:</strong> <Badge  color="info">{this.state.left_id}</Badge>
                         <br/>
-                        <strong>Whale Id: </strong> {this.state.left_id}
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][0]) ? '' : <CircularProgress />}
 {/*                         <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
                         /> */}
-                         <img style={{"width": "480px", "height": "256px"}} src={this.getimages(this.state.whale_csv[this.state.vertical][0])} onLoad={this.handleLeftImageLoaded.bind(this)}
-                          onError={this.handleLeftImageErrored.bind(this)}
-                        />
+
+                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [{value: this.state.whale_csv[this.state.vertical][0]}], onError: this.handleLeftImageErrored.bind(this), onLoad: this.handleLeftImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][0]), thumbnailWidth: 480, thumbnailHeight: 256,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][0])}]} rowHeight={174} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
+                        <br/>
                 </GridItem>
 
                 <GridItem xs={12} sm={12} md={6} style={{"color": "black"}}>
-                        <strong>Best Matching Picture Number: </strong> {this.state.horizontal}
+                        <strong>Best Matching Picture Number:</strong>
+                        <Badge color="success">{this.state.horizontal}</Badge>
                         <br/>
-                        <strong>File Name: </strong> {this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}
+                        <strong>Whale Id:</strong> <Badge color="info">{this.state.right_id}</Badge >
                         <br/>
-                        <strong>Whale Id: </strong> {this.state.right_id}
-                        {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}
-                       {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}     
-                        <img style={{"width": "480px", "height": "256px"}} src={this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])} onLoad={this.handleRightImageLoaded.bind(this)} />
-                </GridItem>      
+                        {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]) ? '' : <CircularProgress />}
+                       {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}
+                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [{value: this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}], onError: this.handleRightImageErrored.bind(this), onLoad: this.handleRightImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]), thumbnailWidth: 480, thumbnailHeight: 256,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}]} rowHeight={174} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
+                        <br/>
+                </GridItem>
                 <GridItem xs={12} sm={12} md={6}>     
                           
                     {/*     {console.log('this.state.vertical][0]::',this.state.whale_csv[this.state.vertical][0])}
@@ -539,7 +588,8 @@ authenticate_user() {
                 <Button variant="contained" onClick={() => this.go_up()}color="info" size="sm">&#9650;</Button>
               <Button variant="contained" onClick={() => this.go_down()}color="info" size="sm">&#9660;</Button>
               <Button variant="contained" onClick={() => this.go_badPicture()}color="badPicture" size="sm">Bad picture</Button>
-
+              <Button variant="contained" onClick={() => this.go_newId()}color="success" size="sm">New ID</Button>
+              <SetWhaleDialog function={this.go_manualId.bind(this)}></SetWhaleDialog>
                 <div>
                   <ImagePicker
                     images={imageList.map((image, i) => ({ src: image, value: i }))}
@@ -555,7 +605,7 @@ authenticate_user() {
               <GridItem xs={12} sm={12} md={6}>
       {/*  new buttons for the matching result */}
               <Button variant="contained" onClick={() => this.acceptPicture()}color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} size="sm">Match</Button>
-              <Button variant="contained" onClick={() => this.unacceptPicture()}color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} size="sm">Unmatch</Button>
+              <Button variant="contained" onClick={() => this.unacceptPicture()}color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} size="sm">Don't match</Button>
 {/*               <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button> */}
 {/*               <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button> */}
               <br/>
