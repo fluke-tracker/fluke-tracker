@@ -182,6 +182,7 @@ authenticate_user() {
     const right_img_name = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
     console.log('left_img_name is: ',left_img_name);
     console.log('right_image is: ',right_img_name);
+    console.log('ismached',this.state.isMatched)
     this.setState(prevState => { 
       if (prevState.matchedPictures[left_img_name] == undefined){
         prevState.matchedPictures[left_img_name] = new Set([right_img_name]);
@@ -604,8 +605,8 @@ authenticate_user() {
               </GridItem>
               <GridItem xs={12} sm={12} md={6}>
       {/*  new buttons for the matching result */}
-              <Button variant="contained" onClick={() => this.acceptPicture()}color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} size="sm">Match</Button>
-              <Button variant="contained" onClick={() => this.unacceptPicture()}color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} size="sm">Don't match</Button>
+              <Button variant="contained" onClick={() => this.acceptPicture()} color = "success"/* color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} */ size="sm">Match</Button>
+              <Button variant="contained" onClick={() => this.unacceptPicture()} color = "info"/* color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} */ size="sm">Don't match</Button>
 {/*               <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button> */}
 {/*               <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button> */}
               <br/>
