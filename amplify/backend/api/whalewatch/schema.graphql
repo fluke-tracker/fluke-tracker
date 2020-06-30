@@ -4,6 +4,11 @@ type Whale @model{
     pictures: [Picture] @connection(name: "PictureWhale")
 }
 
+type Config {
+    id: ID!
+    value: String
+}
+
 type Picture @model{
     id: ID!
     is_new: Boolean
