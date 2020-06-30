@@ -3,6 +3,7 @@ type Whale @auth(rules: [{allow: owner, operations: [create, delete, update]}]) 
     name: String!
     pictures: [Picture] @connection(name: "PictureWhale")
 }
+type Config
 
 type Picture @model @auth(rules: [{allow: owner, operations: [create, delete, update]}]){
     id: ID!
