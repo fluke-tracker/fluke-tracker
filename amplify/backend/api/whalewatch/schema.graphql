@@ -4,9 +4,16 @@ type Whale @model{
     pictures: [Picture] @connection(name: "PictureWhale")
 }
 
+
 type Config @model{
     id: ID!
     value: String
+}
+
+type EuclidianDistances @model {
+    picture1: Picture! @connection(name: "MatchLeftPicture")
+    picture2: Picture! @connection(name: "MatchRightPicture")
+    distance: Float
 }
 
 type Picture @model{
