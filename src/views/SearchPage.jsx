@@ -77,7 +77,7 @@ async handleAlternate (event){
   console.log('inside handleAlternate function')
   console.log('state before submit',data)
   try {
-  const whale = await API.graphql(graphqlOperation(listWhales, {limit: 999 }));
+  const whale = await API.graphql(graphqlOperation(listWhales, {limit: 3000 }));
   console.log('whale output aws',whale)
   const whale_items = whale.data.listWhales.items
   console.log('whale_items',whale_items)
@@ -87,10 +87,10 @@ async handleAlternate (event){
   console.log('random_whale',random_whale)
   const picture_items = random_whale.data.getWhale.pictures.items
   console.log('picture_items',picture_items)
-  const random_picture = picture_items[Math.floor(Math.random() * picture_items.length)];
-  console.log('random_picture',random_picture)
   this.state.IMAGES=[]
-  this.state.IMAGES.push(this.formatImages(random_picture,randomID.name))
+  picture_items.forEach(item => {
+    this.state.IMAGES.push(this.formatImages(item,randomID.name))
+  });
   this.setState({noData: false,searchInput:randomID.name})
   }
   catch(e)
