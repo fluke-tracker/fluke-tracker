@@ -68,11 +68,11 @@ def handler(event, context):
                     'filename': image,
                     'geocoords': str(tags.gps_latitude if 'gps_latitude' in tags else '') + ',' + str(tags.gps_longitude if 'gps_longitude' in tags else ''),
                     'date_taken': tags.LastModified if 'LastModified' in tags else '',
-                    'embedding': '123',
                     'uploaded_by': context.identity.cognito_identity_id if context else '',
                     'createdAt': '2020-06-03T16:49:42.406Z',
                     'uploadedAt': '2020-06-03T16:49:42.406Z',
                     'updatedAt': '2020-06-03T16:49:42.406Z',
+                    'is_new': False,
                     **additional,
                 })
         if "NextContinuationToken" in objs and objs['NextContinuationToken']:

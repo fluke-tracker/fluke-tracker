@@ -17,9 +17,13 @@ export const getWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         nextToken
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -36,6 +40,35 @@ export const listWhales = /* GraphQL */ `
         pictures {
           nextToken
         }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getConfig = /* GraphQL */ `
+  query GetConfig($id: ID!) {
+    getConfig(id: $id) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listConfigs = /* GraphQL */ `
+  query ListConfigs(
+    $filter: ModelConfigFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listConfigs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        value
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -55,6 +88,8 @@ export const getPicture = /* GraphQL */ `
         pictures {
           nextToken
         }
+        createdAt
+        updatedAt
       }
       geocoords
       date_taken
@@ -71,6 +106,8 @@ export const getPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -82,9 +119,13 @@ export const getPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
       matchRight {
         picture1 {
@@ -97,6 +138,8 @@ export const getPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -108,10 +151,16 @@ export const getPicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -131,6 +180,8 @@ export const listPictures = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -139,11 +190,17 @@ export const listPictures = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -161,6 +218,8 @@ export const getMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -169,11 +228,17 @@ export const getMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       picture2 {
         id
@@ -184,6 +249,8 @@ export const getMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -192,14 +259,22 @@ export const getMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       match_status
       similarity_score
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -221,6 +296,8 @@ export const listMatchs = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -232,9 +309,13 @@ export const listMatchs = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -250,6 +331,8 @@ export const getMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -268,6 +351,8 @@ export const listMatchingImages = /* GraphQL */ `
         matchingImages {
           name
         }
+        createdAt
+        updatedAt
       }
       nextToken
     }

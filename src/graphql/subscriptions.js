@@ -17,9 +17,13 @@ export const onCreateWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         nextToken
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -39,9 +43,13 @@ export const onUpdateWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         nextToken
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -61,9 +69,43 @@ export const onDeleteWhale = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         nextToken
       }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateConfig = /* GraphQL */ `
+  subscription OnCreateConfig {
+    onCreateConfig {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateConfig = /* GraphQL */ `
+  subscription OnUpdateConfig {
+    onUpdateConfig {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteConfig = /* GraphQL */ `
+  subscription OnDeleteConfig {
+    onDeleteConfig {
+      id
+      value
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -81,6 +123,8 @@ export const onCreatePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
+        createdAt
+        updatedAt
       }
       geocoords
       date_taken
@@ -97,6 +141,8 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -108,9 +154,13 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
       matchRight {
         picture1 {
@@ -123,6 +173,8 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -134,10 +186,16 @@ export const onCreatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -155,6 +213,8 @@ export const onUpdatePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
+        createdAt
+        updatedAt
       }
       geocoords
       date_taken
@@ -171,6 +231,8 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -182,9 +244,13 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
       matchRight {
         picture1 {
@@ -197,6 +263,8 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -208,10 +276,16 @@ export const onUpdatePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -229,6 +303,8 @@ export const onDeletePicture = /* GraphQL */ `
         pictures {
           nextToken
         }
+        createdAt
+        updatedAt
       }
       geocoords
       date_taken
@@ -245,6 +321,8 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -256,9 +334,13 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
       matchRight {
         picture1 {
@@ -271,6 +353,8 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         picture2 {
           id
@@ -282,10 +366,16 @@ export const onDeletePicture = /* GraphQL */ `
           date_taken
           embedding
           uploaded_by
+          createdAt
+          updatedAt
         }
         match_status
         similarity_score
+        createdAt
+        updatedAt
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -301,6 +391,8 @@ export const onCreateMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -309,11 +401,17 @@ export const onCreateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       picture2 {
         id
@@ -324,6 +422,8 @@ export const onCreateMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -332,14 +432,22 @@ export const onCreateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       match_status
       similarity_score
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -355,6 +463,8 @@ export const onUpdateMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -363,11 +473,17 @@ export const onUpdateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       picture2 {
         id
@@ -378,6 +494,8 @@ export const onUpdateMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -386,14 +504,22 @@ export const onUpdateMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       match_status
       similarity_score
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -409,6 +535,8 @@ export const onDeleteMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -417,11 +545,17 @@ export const onDeleteMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       picture2 {
         id
@@ -432,6 +566,8 @@ export const onDeleteMatch = /* GraphQL */ `
         whale {
           id
           name
+          createdAt
+          updatedAt
         }
         geocoords
         date_taken
@@ -440,14 +576,22 @@ export const onDeleteMatch = /* GraphQL */ `
         matchLeft {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
         matchRight {
           match_status
           similarity_score
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
       match_status
       similarity_score
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -461,6 +605,8 @@ export const onCreateMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -474,6 +620,8 @@ export const onUpdateMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -487,6 +635,8 @@ export const onDeleteMatchingImage = /* GraphQL */ `
       matchingImages {
         name
       }
+      createdAt
+      updatedAt
     }
   }
 `;
