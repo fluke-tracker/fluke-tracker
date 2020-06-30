@@ -18,6 +18,7 @@ import { getPicture  } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
 import { render } from 'react-dom';
 import Gallery from 'react-grid-gallery';
+import { listWhales } from 'graphql/queries';
 const dashboardRoutes = [];
 const IMAGES = []
 class UploadPage extends React.Component {
@@ -58,7 +59,7 @@ async handleSubmit (event){
     console.log('length',whale.data.getWhale.pictures.items.length)
     this.state.IMAGES=[]
     whale.data.getWhale.pictures.items.forEach(item => {
-      this.state.IMAGES.push(this.formatImages(item))
+      this.state.IMAGES.push(this.formatImages(item,data.searchInput))
     });
    this.setState({noData: false})
     }
@@ -69,14 +70,45 @@ async handleSubmit (event){
   }
    console.log('state after submit',this.state)
 }
-formatImages(item){
+
+async handleAlternate (event){
+  event.preventDefault()
+  const data = this.state
+  console.log('inside handleAlternate function')
+  console.log('state before submit',data)
+  try {
+  const whale = await API.graphql(graphqlOperation(listWhales, {limit: 999 }));
+  console.log('whale output aws',whale)
+  const whale_items = whale.data.listWhales.items
+  console.log('whale_items',whale_items)
+  const randomID = whale_items[Math.floor(Math.random() * whale_items.length)];
+  console.log('randomID',randomID)
+  const random_whale = await API.graphql(graphqlOperation(getWhale, {id: randomID.name}));
+  console.log('random_whale',random_whale)
+  const picture_items = random_whale.data.getWhale.pictures.items
+  console.log('picture_items',picture_items)
+  const random_picture = picture_items[Math.floor(Math.random() * picture_items.length)];
+  console.log('random_picture',random_picture)
+  this.state.IMAGES=[]
+  this.state.IMAGES.push(this.formatImages(random_picture,randomID.name))
+  this.setState({noData: false,searchInput:randomID.name})
+  }
+  catch(e)
+{
+ this.setState({noData: true,IMAGES:[]})
+  console.log("no results found for random whale",e)
+}
+ console.log('state after submit',this.state)
+}
+
+formatImages(item,whale_id){
 console.log('fetching images array from S3',item)
 return {
     src: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/cropped_images/'+ item.filename,
     thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/thumbnails/'+ item.thumbnail,
     thumbnailWidth: 320,
     thumbnailHeight: 174,
-    tags: [{value: item.filename, title:"File name"},{value:this.state.searchInput, title:"Whale ID"}],
+    tags: [{value: item.filename, title:"File name"},{value:whale_id, title:"Whale ID"}],
     caption: item.filename
   }
 }
@@ -101,21 +133,29 @@ return {
           <div className={classes.container}>
           <GridContainer color = "black">
             <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Search Whale Image 🐳</h2></GridItem>
-        </GridContainer> 
-         {this.state.noData && (<p style={{ color: 'red' }}>No Results Found!</p>)}  
+            <GridItem xs={6} sm={12} md={12}>
+            <h4 style={{ color: 'black' }}>You can search for Whale Images using:</h4>
+            <ul>
+            <li style={{ color: 'black' }}>Whale ID: This will display all Whales tagged to the given ID</li>
+            <li style={{ color: 'black' }}>Random Whale: This will display a random image of the Whale with Image Name and ID</li>
+            </ul>
+            </GridItem>
+        </GridContainer>
           <form onSubmit={this.handleSubmit.bind(this)} >
         <input
         type="text"
         style={{"text-align": "center"}}
         name = 'searchInput'
-        placeholder="Search"
+        placeholder="Whale ID"
         value={this.state.searchInput}
         onChange={this.handleInputChange.bind(this)}
         required
       />
         <button >Search Whale</button>
+        <button onClick={this.handleAlternate.bind(this)}>Display Random Whale</button>
         <Gallery images={this.state.IMAGES} rowHeight={174} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
       </form>
+      {this.state.noData && (<p style={{ color: 'red' }}>No Results Found!</p>)}  
       </div>
       </div>
     );
