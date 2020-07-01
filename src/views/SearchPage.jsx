@@ -30,8 +30,9 @@ this.state = {
     IMAGES: [],
     noData: false,
 }
-    if(this.props.match.params.whale_id) {
-        this.setState({searchInput: this.props.match.params.whale_id})
+    if(props.match.params.whale_id) {
+            this.state.searchInput =  props.match.params.whale_id;
+            this.searchWhales(this.state);
     }
     this.authenticate_user();
 }
@@ -51,11 +52,8 @@ handleInputChange (event) {
         [event.target.name]: event.target.value
     })
   }
-async handleSubmit (event){
-    event.preventDefault()
-    const data = this.state
-    console.log('state before submit',data)
-    try {
+async searchWhales(data) {
+try {
     const whale = await API.graphql(graphqlOperation(getWhale, {id: data.searchInput}));
     //const pictures = API.graphql(graphqlOperation(getPicture, {id: "PM-WWA-20060531-D057.jpg"})).then(data => console.log(data));
     console.log('whale output aws',whale)
@@ -71,6 +69,12 @@ async handleSubmit (event){
    this.setState({noData: true,IMAGES:[]})
     console.log("no results found",e)
   }
+}
+async handleSubmit (event){
+    event.preventDefault()
+    const data = this.state
+    console.log('state before submit',data)
+    this.searchWhales(data)
    console.log('state after submit',this.state)
 }
 
