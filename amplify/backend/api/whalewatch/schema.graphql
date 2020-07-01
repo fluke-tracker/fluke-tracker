@@ -10,7 +10,8 @@ type Config @model{
     value: String
 }
 
-type EuclidianDistances @model @key(fields: ["picture1"]){
+type EuclidianDistances @model{
+    id: ID
     picture1: Picture! @connection(name: "MatchLeftPicture")
     picture2: Picture! @connection(name: "MatchRightPicture")
     distance: Float
