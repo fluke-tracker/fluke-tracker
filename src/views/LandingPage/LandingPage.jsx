@@ -601,7 +601,7 @@ authenticate_user() {
                         <br/>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>     
-                <h4 style={{ color: 'black' }}>{this.state.whale_csv[this.state.vertical][0]} </h4>        
+                <h4 style={{ color: 'black' }}><a href={"search-page/"+ this.state.left_id}>{this.state.whale_csv[this.state.vertical][0]}</a> </h4>
                     {/*     {console.log('this.state.vertical][0]::',this.state.whale_csv[this.state.vertical][0])}
                         {console.log('this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]:  ',this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]])}
                         {console.log('has(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]): ',this.state.whale_csv[this.state.vertical][this.state.horizontal+1])} */}
@@ -626,7 +626,7 @@ authenticate_user() {
                 />
               </GridItem>
               <GridItem xs={12} sm={12} md={6}>
-              <h4 style={{ color: 'black' }}>{this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}</h4>
+              <h4 style={{ color: 'black' }}><a href={"search-page/"+ this.state.left_id}>{this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}</a></h4>
       {/*  new buttons for the matching result */}
               <Button variant="contained" onClick={() => this.acceptPicture()} color = "success"/* color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} */ size="sm">Match</Button>
               <Button variant="contained" onClick={() => this.unacceptPicture()} color = "info"/* color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} */ size="sm">Don't match</Button>
