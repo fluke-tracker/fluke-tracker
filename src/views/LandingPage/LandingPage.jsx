@@ -264,18 +264,21 @@ authenticate_user() {
 
     });
 
-    API.graphql(graphqlOperation(getConfig, {id: "maxWhaleId"})).then(
-        result => {
-                const maxWhaleId = result.data.getConfig.value;
-                const newMaxWhaleId = (parseInt(maxWhaleId)+1).toString();
-                const left_img_name = this.state.whale_csv[this.state.vertical][0];
-                API.graphql(graphqlOperation(createWhale, {input: {id: maxWhaleId, name: maxWhaleId}})).then(
-                    result => API.graphql(graphqlOperation(updatePicture, {input: {id: left_img_name, pictureWhaleId: maxWhaleId}}))
-                );
+    if (this.state.left_id != this.state.right_id) {
+        API.graphql(graphqlOperation(getConfig, {id: "maxWhaleId"})).then(
+            result => {
+                    const maxWhaleId = result.data.getConfig.value;
+                    const newMaxWhaleId = (parseInt(maxWhaleId)+1).toString();
+                    const left_img_name = this.state.whale_csv[this.state.vertical][0];
+                    API.graphql(graphqlOperation(createWhale, {input: {id: maxWhaleId, name: maxWhaleId}})).then(
+                        result => API.graphql(graphqlOperation(updatePicture, {input: {id: left_img_name, pictureWhaleId: maxWhaleId}}))
+                    );
 
-                API.graphql(graphqlOperation(updateConfig, {input: {id: "maxWhaleId", value: newMaxWhaleId}}));
-        }
-    );
+                    API.graphql(graphqlOperation(updateConfig, {input: {id: "maxWhaleId", value: newMaxWhaleId}}));
+            }
+
+        );
+    }
 
     if (left_img_name && right_img_name) {
       // const url = 'http://localhost:3000/unaccept/' + left_img_name + '/' + right_img_name;
