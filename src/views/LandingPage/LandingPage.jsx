@@ -585,7 +585,7 @@ authenticate_user() {
                           onError={this.handleLeftImageErrored.bind(this)}
                         /> */}
 
-                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [{value: this.state.whale_csv[this.state.vertical][0]}], onError: this.handleLeftImageErrored.bind(this), onLoad: this.handleLeftImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][0]), isSelected: this.state.left_id == this.state.right_id, thumbnailWidth: 480, thumbnailHeight: 256,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][0])}]} rowHeight={174} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
+                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [], onError: this.handleLeftImageErrored.bind(this), onLoad: this.handleLeftImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][0]), thumbnailWidth: 480, thumbnailHeight: 320,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][0])}]} rowHeight={240} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
                         <br/>
                 </GridItem>
 
@@ -597,11 +597,11 @@ authenticate_user() {
                         <br/>
                         {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]) ? '' : <CircularProgress />}
                        {/*  <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]} onLoad={this.handleRightImageLoaded.bind(this)} /> */}
-                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [{value: this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}], onError: this.handleRightImageErrored.bind(this), onLoad: this.handleRightImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]), thumbnailWidth: 480, thumbnailHeight: 256,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}]} rowHeight={174} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
+                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [], onError: this.handleRightImageErrored.bind(this), onLoad: this.handleRightImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]), thumbnailWidth: 480, thumbnailHeight: 320,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}]} rowHeight={240} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
                         <br/>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>     
-                          
+                <h4 style={{ color: 'black' }}>{this.state.whale_csv[this.state.vertical][0]} </h4>        
                     {/*     {console.log('this.state.vertical][0]::',this.state.whale_csv[this.state.vertical][0])}
                         {console.log('this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]:  ',this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]])}
                         {console.log('has(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]): ',this.state.whale_csv[this.state.vertical][this.state.horizontal+1])} */}
@@ -609,7 +609,6 @@ authenticate_user() {
                  Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? 
                  <Button variant="contained" onClick={() => this.unacceptPicture()} color="warning">🐳 UnMatch!</Button> : 
                  <Button variant="contained" onClick={() => this.acceptPicture()} color="success">🐳 Match!</Button>} */}
-                <br/>
                 <Button variant="contained" onClick={() => this.go_up()}color="info" size="sm">&#9650;</Button>
               <Button variant="contained" onClick={() => this.go_down()}color="info" size="sm">&#9660;</Button>
               <Button variant="contained" onClick={() => this.go_badPicture()}color="badPicture" size="sm">Bad picture</Button>
@@ -627,6 +626,7 @@ authenticate_user() {
                 />
               </GridItem>
               <GridItem xs={12} sm={12} md={6}>
+              <h4 style={{ color: 'black' }}>{this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]}</h4>
       {/*  new buttons for the matching result */}
               <Button variant="contained" onClick={() => this.acceptPicture()} color = "success"/* color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} */ size="sm">Match</Button>
               <Button variant="contained" onClick={() => this.unacceptPicture()} color = "info"/* color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} */ size="sm">Don't match</Button>
