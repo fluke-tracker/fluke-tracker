@@ -9,15 +9,16 @@ type Config @model{
     id: ID!
     value: String
 }
-type EuclidianDistanceEntry @model @key(fields: ["picture"]){
+type EuclidianDistancePicture @model{
+    id: ID!
     picture: String!
     distance: Float
-    distancePicture: EuclidianDistances @connection(name: "EuclidianDistanceDistances")
+    distancePicture: EuclidianDistances! @connection(name: "EuclidianDistanceDistances")
 }
 
 type EuclidianDistances @model @key(fields: ["picture"]){
     picture: String!
-    distances: [EuclidianDistanceEntry] @connection(name: "EuclidianDistanceDistances")
+    distances: [EuclidianDistancePicture] @connection(name: "EuclidianDistanceDistances")
 }
 
 type Picture @model{
