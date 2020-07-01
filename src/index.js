@@ -42,6 +42,7 @@ ReactDOM.render(
         <Route path="/components" component={Components} />
         <Route path="/upload-page" component={UploadPage} />
         <Route path="/search-page" component={SearchPage} />
+        <Route path="/search-page/:whale_id" component={SearchPage} />
         <Route path="/" component={LoginPage} />
       </Switch>
     </Router>

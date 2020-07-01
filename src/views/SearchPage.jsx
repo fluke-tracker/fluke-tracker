@@ -30,6 +30,9 @@ this.state = {
     IMAGES: [],
     noData: false,
 }
+    if(this.props.match.params.whale_id) {
+        this.setState({searchInput: this.props.match.params.whale_id})
+    }
     this.authenticate_user();
 }
 
