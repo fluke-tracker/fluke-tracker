@@ -13,7 +13,9 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from 'aws-amplify';
 import Footer from "components/Footer/Footer.jsx";
-
+import { createPicture,updateConfig } from 'graphql/mutations';
+import { getConfig } from 'graphql/queries';
+import API, { graphqlOperation } from '@aws-amplify/api';
 const dashboardRoutes = [];
 class ProfilePage extends React.Component {
     constructor(props) {
@@ -36,16 +38,22 @@ this.state = {
            this.setState({ user: user })
           }).catch(err => console.log('currentAuthenticatedUser profilepage err', err))
   }
-  uploadImage = () => {
-  //  SetS3Config("my-test-bucket-amplify", "protected");
-  try {
+  async uploadImage() {
+    var allowUpload = false
+    allowUpload = await this.insertToDynamo(`${this.upload.files[0].name}`,allowUpload)
+    console.log('allowUpload ',allowUpload)
+    if (allowUpload==true){
+   try {
+    console.log('upload image to S3 bucket')
     Storage.put('embeddings/input/'+`${this.upload.files[0].name}`,
                 this.upload.files[0],
                 { contentType: this.upload.files[0].type })
       .then(result => {
+        const image = `${this.upload.files[0].name}`
+        console.log('image name',image)
         this.upload = null;
         console.log("upload success," );
-        this.setState({ response: "Success uploading file!" });
+        this.setState({ response: "Success uploading file!" ,imageName:""});
       })
       .catch(err => {
           console.log("error while uploading,",err );
@@ -53,8 +61,65 @@ this.state = {
       });
     }catch(e) {
       console.log("error in uploading",e);
-   }
+   } 
   }
+  else {
+    console.log('cannot upload image')
+  }
+  }
+  async insertToDynamo(image,allowUpload) {
+      try {
+      console.log('getting config from dynamodb')
+      const getWhaleConfig =  await API.graphql(graphqlOperation(getConfig, {id: 'maxWhaleId'} ));
+      console.log('getConfig output aws',getWhaleConfig)
+      const maxWhaleID = getWhaleConfig.data.getConfig.value
+      console.log('maxWhaleID',maxWhaleID)
+      var newWhaleID = parseInt(maxWhaleID)+1
+      }
+      catch(e)
+      {
+        allowUpload = false
+        console.log("getting config error",e)
+        this.setState({ response: `Error: while fetching AWS Config for upload: ${e}`,imageName:""});
+      }
+       try {
+      console.log('inserting image record to dynamodb')
+      console.log('newWhaleID',newWhaleID)
+      const insertImage = await API.graphql(graphqlOperation(createPicture, 
+      { input : 
+        {
+        id: image,
+        filename: image,
+        geocoords: ',',
+        thumbnail: image+'thumbnail.jpg',
+        pictureWhaleId: newWhaleID,
+        is_new:true,
+        embedding:123,
+        uploaded_by:'whalewatching'
+        } 
+      }));
+      console.log('insertImage output aws',insertImage)
+      console.log('updating maxwhaleID config',newWhaleID)
+      const updateWhaleConfig =  await API.graphql(graphqlOperation(updateConfig, 
+      {input:
+        {
+          id: 'maxWhaleId',
+          value: newWhaleID
+        }
+      }));
+      console.log('updateWhaleConfig output aws',updateWhaleConfig)
+      allowUpload = true
+      console.log('setting allowupload as ',allowUpload)
+      
+      }
+      catch(e)
+      {
+        allowUpload = false
+        console.log("getting insertImage error",e)
+        this.setState({ response: `Error while upload. Check if Image already exists in the Database: ${e}`,imageName:"" });
+      }
+    return allowUpload   
+    }
 
   render() {
     const { classes, ...rest } = this.props;
