@@ -55,15 +55,29 @@ handleInputChange (event) {
 async searchWhales(data) {
 try {
     const whale = await API.graphql(graphqlOperation(getWhale, {id: data.searchInput}));
-    //const pictures = API.graphql(graphqlOperation(getPicture, {id: "PM-WWA-20060531-D057.jpg"})).then(data => console.log(data));
+    const pictures = await API.graphql(graphqlOperation(getPicture, {id: data.searchInput}));
     console.log('whale output aws',whale)
-    console.log('length',whale.data.getWhale.pictures.items.length)
+    console.log('pictures output aws',pictures)
+    if(whale.data.getWhale)
+    {
+    console.log('whale ID output present. length',whale.data.getWhale.pictures.items.length)
     this.state.IMAGES=[]
     whale.data.getWhale.pictures.items.forEach(item => {
       this.state.IMAGES.push(this.formatImages(item,data.searchInput))
     });
-   this.setState({noData: false})
+    this.setState({noData: false})
     }
+    else if (pictures.data.getPicture){
+      console.log('pictures name output present. ',pictures.data.getPicture.id)
+      this.state.IMAGES=[]
+      this.state.IMAGES.push(this.formatImages(pictures.data.getPicture,pictures.data.getPicture.whale.id))
+      this.setState({noData: false})
+    }
+    else {
+      console.log('pictures and whales both null output. ')
+      this.setState({noData: true,IMAGES:[]})
+    }
+  }
     catch(e)
   {
    this.setState({noData: true,IMAGES:[]})
@@ -153,7 +167,7 @@ return {
         type="text"
         style={{"text-align": "center"}}
         name = 'searchInput'
-        placeholder="Whale ID"
+        placeholder="Whale ID/Image Name"
         value={this.state.searchInput}
         onChange={this.handleInputChange.bind(this)}
         required
