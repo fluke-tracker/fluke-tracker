@@ -55,15 +55,29 @@ handleInputChange (event) {
 async searchWhales(data) {
 try {
     const whale = await API.graphql(graphqlOperation(getWhale, {id: data.searchInput}));
-    //const pictures = API.graphql(graphqlOperation(getPicture, {id: "PM-WWA-20060531-D057.jpg"})).then(data => console.log(data));
+    const pictures = await API.graphql(graphqlOperation(getPicture, {id: data.searchInput}));
     console.log('whale output aws',whale)
-    console.log('length',whale.data.getWhale.pictures.items.length)
+    console.log('pictures output aws',pictures)
+    if(whale.data.getWhale)
+    {
+    console.log('whale ID output present. length',whale.data.getWhale.pictures.items.length)
     this.state.IMAGES=[]
     whale.data.getWhale.pictures.items.forEach(item => {
       this.state.IMAGES.push(this.formatImages(item,data.searchInput))
     });
-   this.setState({noData: false})
+    this.setState({noData: false})
     }
+    else if (pictures.data.getPicture){
+      console.log('pictures name output present. ',pictures.data.getPicture.id)
+      this.state.IMAGES=[]
+      this.state.IMAGES.push(this.formatImages(pictures.data.getPicture,pictures.data.getPicture.whale.id))
+      this.setState({noData: false})
+    }
+    else {
+      console.log('pictures and whales both null output. ')
+      this.setState({noData: true,IMAGES:[]})
+    }
+  }
     catch(e)
   {
    this.setState({noData: true,IMAGES:[]})
@@ -124,36 +138,37 @@ return {
     const searchInput=this.state.searchInput;
     return (
       <div>
-        <Header
-        color="transparent"
-        routes={dashboardRoutes}
-        brand=""
+      <Header
+        color="blue"
+        brand={<img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />}
         fixed
         rightLinks={<HeaderLinks user={this.state.user} />}
         changeColorOnScroll={{
           "height": "400",
-          "color": "white"
+          "color": "black"
         }}
         {...rest}
       />
-         <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "20vh"}} />
-          <div className={classes.container}>
-          <GridContainer color = "black">
-            <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Search Whale Image 🐳</h2></GridItem>
-            <GridItem xs={6} sm={12} md={12}>
-            <h4 style={{ color: 'black' }}>You can search for Whale Images using:</h4>
-            <ul>
-            <li style={{ color: 'black' }}>Whale ID: This will display all Whales tagged to the given ID</li>
-            <li style={{ color: 'black' }}>Random Whale: This will display a random image of the Whale with Image Name and ID</li>
-            </ul>
-            </GridItem>
-        </GridContainer>
+      <div className={classes.container}>
+    <div class="section container" style={{"paddingTop": "150px", "paddingBottom": "5px"}}>
+        <div class="row">
+            <div class="col-12">
+                <div class="article-text">
+                    <h2 style={{"paddingTop": "5px"}}><strong>Search Whale Image 🐳</strong></h2>
+                    <p style={{"paddingBottom": "5px"}}>You can search for Whale Images using:</p>
+                    <ul style={{"paddingBottom": "5px", "color":"black"}}>
+                        <li><strong>Whale ID</strong>: This will display all Whales tagged to the given ID</li>
+                        <li><strong>Random Whale</strong>: This will display a random image of the Whale with Image Name and ID</li>
+                    </ul>
+          </div></div></div>
+          </div>
+
           <form onSubmit={this.handleSubmit.bind(this)} >
         <input
         type="text"
         style={{"text-align": "center"}}
         name = 'searchInput'
-        placeholder="Whale ID"
+        placeholder="Whale ID/Image Name"
         value={this.state.searchInput}
         onChange={this.handleInputChange.bind(this)}
         required

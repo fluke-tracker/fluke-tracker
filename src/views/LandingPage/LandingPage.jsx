@@ -563,23 +563,26 @@ authenticate_user() {
 
     return (
       <div>
-        <Header
-          color="transparent"
-          routes={dashboardRoutes}
-          brand=""
-          fixed
-          rightLinks={<HeaderLinks user={this.state.user} />}
-          changeColorOnScroll={{
-            height: 400,
-            color: "white"
-          }}
-          {...rest}
-        />
+      <Header
+        color="blue"
+        brand={<img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />}
+        fixed
+        rightLinks={<HeaderLinks user={this.state.user} />}
+        changeColorOnScroll={{
+          "height": "400",
+          "color": "black"
+        }}
+        {...rest}
+      />
 
-        <Parallax color="black" small center fixed filter image={require("assets/img/tail.jpg")} style={{"height": "20vh"}} />
-          <div className={classes.container}>
-            <GridContainer>
-            <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Do these whales match?</h2></GridItem>
+         <div className={classes.container}>
+    <div class="section container" style={{"paddingTop": "150px", "paddingBottom": "5px"}}>
+        <div class="row">
+            <div class="col-12">
+                <div class="article-text">
+                    <h2 style={{"paddingTop": "5px"}}><strong>Do these whales match?</strong></h2>
+                              </div>
+                                          <GridContainer>
 {/*             <GridItem xs={12} sm={12} md={6}>
               <img src={require("assets/img/arrow_keys.svg")} style={{"width": "150px", "height": "150px", "backgroundColor": "white"}}/>
             </GridItem> */}
@@ -620,14 +623,21 @@ authenticate_user() {
                         <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [], onError: this.handleRightImageErrored.bind(this), onLoad: this.handleRightImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1]), thumbnailWidth: 480, thumbnailHeight: 320,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][this.state.horizontal + 1])}]} rowHeight={240} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
                         <br/>
                 </GridItem>
-                <GridItem xs={12} sm={12} md={6}>     
+                <GridItem xs={12} sm={12} md={6}>
+                <h4 style={{ color: 'black' }}><a href={"search-page/"+ this.state.left_id}>{this.state.whale_csv[this.state.vertical][0]}</a> </h4>
+                    {/*     {console.log('this.state.vertical][0]::',this.state.whale_csv[this.state.vertical][0])}
+                        {console.log('this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]:  ',this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]])}
+                <GridItem xs={12} sm={12} md={6}>
                 <h4 style={{ color: 'black' }}><a href={"search-page/"+ this.state.left_id}>{this.state.new_pictures[this.state.vertical]}</a> </h4>
                     {/*     {console.log('this.state.vertical][0]::',this.state.new_pictures[this.state.vertical];)}
                         {console.log('this.state.matchedPictures[this.state.new_pictures[this.state.vertical];]:  ',this.state.matchedPictures[this.state.new_pictures[this.state.vertical];])}
                         {console.log('has(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]): ',this.state.whale_csv[this.state.vertical][this.state.horizontal+1])} */}
+{/*                 {this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures &&
+                 Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ?
+                 <Button variant="contained" onClick={() => this.unacceptPicture()} color="warning">🐳 UnMatch!</Button> :
 {/*                 {this.state.new_pictures[this.state.vertical]; in this.state.matchedPictures &&
-                 Array.from(this.state.matchedPictures[this.state.new_pictures[this.state.vertical];]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? 
-                 <Button variant="contained" onClick={() => this.unacceptPicture()} color="warning">🐳 UnMatch!</Button> : 
+                 Array.from(this.state.matchedPictures[this.state.new_pictures[this.state.vertical];]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ?
+                 <Button variant="contained" onClick={() => this.unacceptPicture()} color="warning">🐳 UnMatch!</Button> :
                  <Button variant="contained" onClick={() => this.acceptPicture()} color="success">🐳 Match!</Button>} */}
                 <Button variant="contained" onClick={() => this.go_up()}color="info" size="sm">&#9650;</Button>
               <Button variant="contained" onClick={() => this.go_down()}color="info" size="sm">&#9660;</Button>
@@ -662,7 +672,8 @@ authenticate_user() {
                             <SignOut/> */}
               </GridItem>
             </GridContainer>
-          </div>
+          </div></div>
+          </div></div>
           </div>
     );
   }
