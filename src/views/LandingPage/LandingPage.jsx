@@ -59,6 +59,7 @@ import { createWhale } from 'graphql/mutations';
 import { listWhales } from 'graphql/queries';
 import { createPicture } from 'graphql/mutations';
 import { updatePicture } from 'graphql/mutations';
+import { getEuclidianDistances } from 'graphql/customQueries'
 
 //import awsconfig from 'aws-exports';
 import Amplify , { Storage } from 'aws-amplify';
@@ -115,6 +116,8 @@ class LandingPage extends React.Component {
       image_id: {},
       isMatched: '',
       user: null,
+      new_pictures: [],
+      similar_pictures: [],
     }
     this.acceptPicture = this.acceptPicture.bind(this);
     this.unacceptPicture = this.unacceptPicture.bind(this);
@@ -145,7 +148,7 @@ class LandingPage extends React.Component {
   }
   go_manualId(id) {
     console.log('manual id code goes here, id: ' + id)
-    const left_img_name = this.state.whale_csv[this.state.vertical][0];
+    const left_img_name = this.state.new_pictures[this.state.vertical];
     const right_img_name = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
     API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: id}}));
     this.setState({left_id: id});
@@ -173,18 +176,18 @@ authenticate_user() {
     //console.log("down");
     this.setState((prevState, props) => { return { horizontal: 0 } }
     );
-    this.setState(prevState => { return { vertical: Math.max(0, Math.min(this.state.whale_csv.length - 2, prevState.vertical + 1)) } }
+    this.setState(prevState => { return { vertical: Math.max(0, Math.min(this.state.new_pictures.length, prevState.vertical)) } }
       , this.handleCsvData());
 
   }
   go_right() {
     //console.log("right");
     this.setState(prevState => ({
-      horizontal: Math.max(0, Math.min(this.state.whale_csv[this.state.vertical].length - 2, prevState.horizontal + 1))
+      horizontal: Math.max(0, Math.min(this.state.whale_csv[this.state.vertical].length, prevState.horizontal + 1))
     }), this.handleCsvData());
   }
   acceptPicture() {
-    const left_img_name = this.state.whale_csv[this.state.vertical][0];
+    const left_img_name = this.state.new_pictures[this.state.vertical];;
     const right_img_name = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
     console.log('left_img_name is: ',left_img_name);
     console.log('right_image is: ',right_img_name);
@@ -207,7 +210,6 @@ authenticate_user() {
       }
       if (parseInt(this.state.right_id) < parseInt(this.state.left_id)){
         // assign all pictures of the left id the right id
-        console.log("YAAY")
         API.graphql(graphqlOperation(getWhale, { id:  this.state.left_id})).then(
             pictures => pictures.data.getWhale.pictures.items.forEach(picture => API.graphql(graphqlOperation(updatePicture, {input:  {id: picture.id, pictureWhaleId: this.state.right_id}}))
         ));
@@ -216,7 +218,6 @@ authenticate_user() {
       }
       if (parseInt(this.state.left_id) < parseInt(this.state.right_id)){
         // assign all pictures of the right id the left id
-        console.log("YAAY")
         API.graphql(graphqlOperation(getWhale, { id:  this.state.right_id})).then(
             pictures => pictures.data.getWhale.pictures.items.forEach(picture => API.graphql(graphqlOperation(updatePicture, {input:  {id: picture.id, pictureWhaleId: this.state.left_id}}))
         ));
@@ -251,7 +252,7 @@ authenticate_user() {
   }
   }
   unacceptPicture() {
-    const left_img_name = this.state.whale_csv[this.state.vertical][0];
+    const left_img_name = this.state.new_pictures[this.state.vertical];;
     const right_img_name = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
     this.setState(prevState => { 
       console.log('left img id: ',prevState.image_id[left_img_name]);
@@ -269,7 +270,7 @@ authenticate_user() {
             result => {
                     const maxWhaleId = result.data.getConfig.value;
                     const newMaxWhaleId = (parseInt(maxWhaleId)+1).toString();
-                    const left_img_name = this.state.whale_csv[this.state.vertical][0];
+                    const left_img_name = this.state.new_pictures[this.state.vertical];;
                     API.graphql(graphqlOperation(createWhale, {input: {id: maxWhaleId, name: maxWhaleId}})).then(
                         result => API.graphql(graphqlOperation(updatePicture, {input: {id: left_img_name, pictureWhaleId: maxWhaleId}}))
                     );
@@ -303,7 +304,7 @@ authenticate_user() {
   };
   handleLeftImageLoaded(image) {
     this.setState({ imageStatusLeft: "loaded" });
-    this.setState(prevState => {return prevState.is_loaded.add(this.state.whale_csv[this.state.vertical][0])});
+    this.setState(prevState => {return prevState.is_loaded.add(this.state.new_pictures[this.state.vertical])});
   }
   handleRightImageLoaded() {
     this.setState({ imageStatusRight: "loaded" });
@@ -330,7 +331,7 @@ authenticate_user() {
     switch (event.keyCode) {
       case M_KEY:
         
-        const left_img = this.state.whale_csv[this.state.vertical][0];
+        const left_img = this.state.new_pictures[this.state.vertical];;
         const right_img = this.state.whale_csv[this.state.vertical][this.state.horizontal + 1];
         if (left_img in this.state.matchedPictures && this.state.matchedPictures[left_img].has(right_img)){
           
@@ -388,8 +389,8 @@ authenticate_user() {
       const vertical = this.state.vertical;
       const horizontal = this.state.horizontal;
 
-      const img1 = this.state.whale_csv[vertical][0];
-          const img2 = this.state.whale_csv[vertical][horizontal + 1];
+      const img1 = this.state.new_pictures[vertical];
+      const img2 = this.state.whale_csv[vertical][horizontal + 1];
       API.graphql(graphqlOperation(getPicture, { id:  this.state.whale_csv[vertical][0]}))
       .then( picture => {
       console.log("get picture" + picture);
@@ -414,8 +415,8 @@ authenticate_user() {
         this.setState({ right_img: img2 });
       }
       this.setState({
-      isMatched: this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures &&
-                Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1])
+      isMatched: this.state.new_pictures[this.state.vertical] in this.state.matchedPictures &&
+                Array.from(this.state.matchedPictures[this.state.new_pictures[this.state.vertical]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1])
       }, data => console.log(data));
 
 
@@ -423,14 +424,33 @@ authenticate_user() {
       //this.imageList[0]..
     }
   }
+  list_pictures = (nextToken, ids, numReq) => {
+      if (numReq > 10) {
+            this.setState(
+                        {new_pictures: ids},
+                        result => {API.graphql(graphqlOperation(getEuclidianDistances, {picture: this.state.new_pictures[1]})).then(result => console.log(result))}
+            );
+            return
+      }
+      API.graphql(graphqlOperation(listPictures, {filter: {is_new: {eq: true}}, limit: 5000, nextToken: nextToken})).then(result => {
+                result.data.listPictures.items.forEach(id => ids.push(id.id));
+                nextToken = result.data.listPictures.nextToken;
 
+                if (nextToken === undefined){
+                    this.setState(
+                        {new_pictures: ids},
+                        result => {API.graphql(graphqlOperation(getEuclidianDistances, {picture: this.state.new_pictures[1]})).then(result => console.log(result))}
+                    );
+                }
+                else {
+                    this.list_pictures(nextToken, ids, numReq+1);
+                }
+            }
+      );
+  }
   loadData = (url) => {
-    API.graphql(graphqlOperation(listPictures, {filter: {is_new: {eq: true}}})).then(result => {
-            const ids = [];
-            result.data.listPictures.items.forEach(id => ids.push(id.id));
-            this.setState({new_whale_images: ids});
-        }
-    );
+    const ids = [];
+    this.list_pictures(undefined, [], 0);
     var _this = this;
     fetch(url, { credentials: "same-origin", 'headers': { 'token': 'Bearer ' + Cookies.read('token') } })
       .then(function (response) {
@@ -580,12 +600,12 @@ authenticate_user() {
                         <br/>
                         <strong>Assigned Whale Id:</strong> <Badge  color="info">{this.state.left_id}</Badge>
                         <br/>
-                        {this.state.is_loaded.has(this.state.whale_csv[this.state.vertical][0]) ? '' : <CircularProgress />}
-{/*                         <img src={"http://localhost:3000/images/" + this.state.whale_csv[this.state.vertical][0]} onLoad={this.handleLeftImageLoaded.bind(this)}
+                        {this.state.is_loaded.has(this.state.new_pictures[this.state.vertical]) ? '' : <CircularProgress />}
+{/*                         <img src={"http://localhost:3000/images/" + this.state.new_pictures[this.state.vertical];} onLoad={this.handleLeftImageLoaded.bind(this)}
                           onError={this.handleLeftImageErrored.bind(this)}
                         /> */}
 
-                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [], onError: this.handleLeftImageErrored.bind(this), onLoad: this.handleLeftImageLoaded.bind(this), src: this.getimagescropped(this.state.whale_csv[this.state.vertical][0]), thumbnailWidth: 480, thumbnailHeight: 320,thumbnail: this.getimages(this.state.whale_csv[this.state.vertical][0])}]} rowHeight={240} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
+                        <Gallery thumbnailImageComponent={ImageComponent} images={[{tags: [], onError: this.handleLeftImageErrored.bind(this), onLoad: this.handleLeftImageLoaded.bind(this), src: this.getimagescropped(this.state.new_pictures[this.state.vertical]), thumbnailWidth: 480, thumbnailHeight: 320,thumbnail: this.getimages(this.state.new_pictures[this.state.vertical])}]} rowHeight={240} enableLightbox={true} backdropClosesModal enableImageSelection={false}/>
                         <br/>
                 </GridItem>
 
@@ -601,12 +621,12 @@ authenticate_user() {
                         <br/>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>     
-                <h4 style={{ color: 'black' }}><a href={"search-page/"+ this.state.left_id}>{this.state.whale_csv[this.state.vertical][0]}</a> </h4>
-                    {/*     {console.log('this.state.vertical][0]::',this.state.whale_csv[this.state.vertical][0])}
-                        {console.log('this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]:  ',this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]])}
+                <h4 style={{ color: 'black' }}><a href={"search-page/"+ this.state.left_id}>{this.state.new_pictures[this.state.vertical]}</a> </h4>
+                    {/*     {console.log('this.state.vertical][0]::',this.state.new_pictures[this.state.vertical];)}
+                        {console.log('this.state.matchedPictures[this.state.new_pictures[this.state.vertical];]:  ',this.state.matchedPictures[this.state.new_pictures[this.state.vertical];])}
                         {console.log('has(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]): ',this.state.whale_csv[this.state.vertical][this.state.horizontal+1])} */}
-{/*                 {this.state.whale_csv[this.state.vertical][0] in this.state.matchedPictures &&
-                 Array.from(this.state.matchedPictures[this.state.whale_csv[this.state.vertical][0]]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? 
+{/*                 {this.state.new_pictures[this.state.vertical]; in this.state.matchedPictures &&
+                 Array.from(this.state.matchedPictures[this.state.new_pictures[this.state.vertical];]).join().includes(this.state.whale_csv[this.state.vertical][this.state.horizontal+1]) ? 
                  <Button variant="contained" onClick={() => this.unacceptPicture()} color="warning">🐳 UnMatch!</Button> : 
                  <Button variant="contained" onClick={() => this.acceptPicture()} color="success">🐳 Match!</Button>} */}
                 <Button variant="contained" onClick={() => this.go_up()}color="info" size="sm">&#9650;</Button>

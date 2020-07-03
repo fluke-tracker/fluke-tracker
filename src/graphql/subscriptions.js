@@ -109,6 +109,120 @@ export const onDeleteConfig = /* GraphQL */ `
     }
   }
 `;
+export const onCreateEuclidianDistancePicture = /* GraphQL */ `
+  subscription OnCreateEuclidianDistancePicture {
+    onCreateEuclidianDistancePicture {
+      id
+      picture
+      distance
+      distancePicture {
+        picture
+        distances {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateEuclidianDistancePicture = /* GraphQL */ `
+  subscription OnUpdateEuclidianDistancePicture {
+    onUpdateEuclidianDistancePicture {
+      id
+      picture
+      distance
+      distancePicture {
+        picture
+        distances {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteEuclidianDistancePicture = /* GraphQL */ `
+  subscription OnDeleteEuclidianDistancePicture {
+    onDeleteEuclidianDistancePicture {
+      id
+      picture
+      distance
+      distancePicture {
+        picture
+        distances {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateEuclidianDistances = /* GraphQL */ `
+  subscription OnCreateEuclidianDistances {
+    onCreateEuclidianDistances {
+      picture
+      distances {
+        items {
+          id
+          picture
+          distance
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateEuclidianDistances = /* GraphQL */ `
+  subscription OnUpdateEuclidianDistances {
+    onUpdateEuclidianDistances {
+      picture
+      distances {
+        items {
+          id
+          picture
+          distance
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteEuclidianDistances = /* GraphQL */ `
+  subscription OnDeleteEuclidianDistances {
+    onDeleteEuclidianDistances {
+      picture
+      distances {
+        items {
+          id
+          picture
+          distance
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const onCreatePicture = /* GraphQL */ `
   subscription OnCreatePicture {
     onCreatePicture {

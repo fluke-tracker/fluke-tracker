@@ -4,21 +4,14 @@ type Whale @model{
     pictures: [Picture] @connection(name: "PictureWhale")
 }
 
-
 type Config @model{
     id: ID!
     value: String
 }
-type EuclidianDistancePicture @model{
-    id: ID!
-    picture: String!
-    distance: Float
-    distancePicture: EuclidianDistances! @connection(name: "EuclidianDistanceDistances")
-}
 
-type EuclidianDistances @model @key(fields: ["picture"]){
-    picture: String!
-    distances: [EuclidianDistancePicture] @connection(name: "EuclidianDistanceDistances")
+type EuclidianDistance @model @key(fields: ["picture1", "picture2"]) @key(name: "byPicture2", fields: ["picture2", "picture1"], queryField: "EuclidianDistanceByPicture2"){
+    picture1: String!
+    picture2: String!
 }
 
 type Picture @model{

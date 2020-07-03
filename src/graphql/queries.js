@@ -74,6 +74,98 @@ export const listConfigs = /* GraphQL */ `
     }
   }
 `;
+export const getEuclidianDistancePicture = /* GraphQL */ `
+  query GetEuclidianDistancePicture($id: ID!) {
+    getEuclidianDistancePicture(id: $id) {
+      id
+      picture
+      distance
+      distancePicture {
+        picture
+        distances {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listEuclidianDistancePictures = /* GraphQL */ `
+  query ListEuclidianDistancePictures(
+    $filter: ModelEuclidianDistancePictureFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listEuclidianDistancePictures(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        picture
+        distance
+        distancePicture {
+          picture
+          createdAt
+          updatedAt
+        }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getEuclidianDistances = /* GraphQL */ `
+  query GetEuclidianDistances($picture: String!) {
+    getEuclidianDistances(picture: $picture) {
+      picture
+      distances {
+        items {
+          id
+          picture
+          distance
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listEuclidianDistancess = /* GraphQL */ `
+  query ListEuclidianDistancess(
+    $picture: String
+    $filter: ModelEuclidianDistancesFilterInput
+    $limit: Int
+    $nextToken: String
+    $sortDirection: ModelSortDirection
+  ) {
+    listEuclidianDistancess(
+      picture: $picture
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
+      items {
+        picture
+        distances {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
 export const getPicture = /* GraphQL */ `
   query GetPicture($id: ID!) {
     getPicture(id: $id) {
