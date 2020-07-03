@@ -19,6 +19,7 @@ import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 import UploadPage from "views/UploadPage.jsx";
 import SearchPage from "views/SearchPage.jsx";
+import Impressum from "views/impressum.jsx";
 
 var hist = createBrowserHistory();
 Amplify.configure(awsmobile);
@@ -43,6 +44,7 @@ ReactDOM.render(
         <Route path="/upload-page" component={UploadPage} />
         <Route path="/search-page/:whale_id" component={SearchPage} />
         <Route path="/search-page" component={SearchPage} />
+        <Route path="/impressum" component={Impressum} />
         <Route path="/" component={LoginPage} />
       </Switch>
     </Router>

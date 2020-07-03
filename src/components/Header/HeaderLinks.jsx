@@ -51,7 +51,27 @@ function HeaderLinks({ ...props }) {
   const { classes } = props;
   console.log('header props are,', props);
   return (
-    <List className={classes.list}>
+    <div class="header__top container">
+          { props.user ?
+    <div class="header__nav">
+              <div class="menu-all-pages-container">
+            <ul id="menu-main-menu" class="menu">
+                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
+                        class="nav-link" href={"/profile-page"}>Welcome</a></li>
+                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
+                        class="nav-link" href={"/landing-page"}>Matching Page</a></li>
+                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
+                        class="nav-link" href={"/search-page"}>Search Page</a></li>
+                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
+                        class="nav-link" href={"/impressum"}>Impressum</a></li>
+                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
+                class="nav-link"  onClick={() => Auth.signOut()} href={"/login-page"}>Logout</a></li>
+             </ul>
+    </div>
+    </div>
+: <div style={{"backgroundColor": "transparent"}}></div>}
+</div>
+    /* <List className={classes.list}>
       { props.user ?
       <ListItem className={classes.listItem}>
         <CustomDropdown
@@ -71,7 +91,7 @@ function HeaderLinks({ ...props }) {
             </Link>,
 /*            <Link to= {"/upload-page"} className={classes.dropdownLink} user={props.user}>
             Upload Page
-          </Link>,*/
+          </Link>,
              <Link to = {"/search-page"} className={classes.dropdownLink} user={props.user}>
              Search Page
            </Link>
@@ -79,23 +99,23 @@ function HeaderLinks({ ...props }) {
         />
       </ListItem>
 : <ListItem>
-  </ListItem>}
-      
-{/*         <ListItem className={classes.listItem}>
+  </ListItem>} */
+
+/*{/*         <ListItem className={classes.listItem}>
             <Link to={props.user ? "/profile-page" : "/login-page"}>
-                <Button 
+                <Button
                 href=""
                 color="transparent"
                 target="_blank"
                 style={{color: 'white'}}
                 className={classes.navLink}>{props.user ? `${props.user.name} ${props.user.surname}` : `Login`}</Button>
             </Link>
-        </ListItem>      */}         
-        {
+        </ListItem>      */ /* } */
+ /*       {
             props.user ? <Logout {...props}/> : <div></div>
         }
-        
-    </List>
+
+    </List>*/
   );
 }
 
