@@ -158,7 +158,7 @@ class LoginPage extends React.Component {
         <Header
           absolute
           color="transparent"
-          brand=""
+          brand={<img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />}
           rightLinks={<HeaderLinks user={this.state.user} state={this.state} />}
           {...rest}
         />
