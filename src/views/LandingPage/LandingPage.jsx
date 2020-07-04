@@ -547,7 +547,7 @@ authenticate_user() {
   //     });
   // }
   getimages = (image) => {
-  const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/thumbnails/'
+  const bucket_url ='https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/public/thumbnails/'
   const image_url = bucket_url+image+"thumbnail.jpg"
     return image_url
   }

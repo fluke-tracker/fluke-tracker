@@ -14,7 +14,7 @@ type EuclidianDistance @model @key(fields: ["picture1", "picture2"]) @key(name: 
     picture2: String!
 }
 
-type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "PictureByIsNew"){
+type Picture @model{
     id: ID!
     is_new: Integer
     high_res: String

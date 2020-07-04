@@ -13,7 +13,7 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from 'aws-amplify';
 import Footer from "components/Footer/Footer.jsx";
-import { createPicture,updateConfig } from 'graphql/mutations';
+import { createPicture,updateConfig,createWhale } from 'graphql/mutations';
 import { getConfig } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
 const dashboardRoutes = [];
@@ -38,9 +38,15 @@ this.state = {
            this.setState({ user: user })
           }).catch(err => console.log('currentAuthenticatedUser profilepage err', err))
   }
-  async uploadImage() {
+   async uploadImage() {
     var allowUpload = false
+    try {
     allowUpload = await this.insertToDynamo(`${this.upload.files[0].name}`,allowUpload)
+    }
+    catch(e)
+    {
+    console.log('error in uploading ',e)
+    }
     console.log('allowUpload ',allowUpload)
     if (allowUpload==true){
    try {
@@ -49,8 +55,9 @@ this.state = {
                 this.upload.files[0],
                 { contentType: this.upload.files[0].type })
       .then(result => {
+        this.uploadThumbnail()
         const image = `${this.upload.files[0].name}`
-        console.log('image name',image)
+        console.log('image uploaded',image)
         this.upload = null;
         console.log("upload success," );
         this.setState({ response: "Success uploading file!" ,imageName:""});
@@ -66,6 +73,19 @@ this.state = {
   else {
     console.log('cannot upload image')
   }
+  } 
+
+
+  async uploadThumbnail()
+  {
+    try{
+      console.log('upload thumbnail',`${this.upload.files[0].name}`+"thumbnail.jpg")
+    await Storage.put('thumbnails/'+`${this.upload.files[0].name}`+"thumbnail.jpg", 
+      this.upload.files[0], { contentType: this.upload.files[0].type });
+    }
+    catch(e){
+      console.log('cannot upload thumbnail',e)
+    }
   }
   async insertToDynamo(image,allowUpload) {
       try {
@@ -99,6 +119,16 @@ this.state = {
         } 
       }));
       console.log('insertImage output aws',insertImage)
+
+      const insertWhale = await API.graphql(graphqlOperation(createWhale, 
+        { input : 
+          {
+          id: newWhaleID,
+          name:  newWhaleID
+          }
+        }));
+        console.log('insertWhale output aws',insertWhale)
+
       console.log('updating maxwhaleID config',newWhaleID)
       const updateWhaleConfig =  await API.graphql(graphqlOperation(updateConfig, 
       {input:

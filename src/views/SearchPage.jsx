@@ -126,7 +126,7 @@ formatImages(item,whale_id){
 console.log('fetching images array from S3',item)
 return {
     src: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/cropped_images/'+ item.filename,
-    thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/thumbnails/'+ item.thumbnail,
+    thumbnail: 'https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/public/thumbnails/'+ item.thumbnail,
     thumbnailWidth: 320,
     thumbnailHeight: 174,
     tags: [{value: item.filename, title:"File name"},{value:whale_id, title:"Whale ID"}],
