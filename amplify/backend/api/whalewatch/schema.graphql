@@ -16,7 +16,7 @@ type EuclidianDistance @model @key(fields: ["picture1", "picture2"]) @key(name: 
 
 type Picture @model{
     id: ID!
-    is_new: Integer
+    is_new: Int
     high_res: String
     thumbnail: String
     filename: String
