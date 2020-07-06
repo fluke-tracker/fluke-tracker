@@ -51,15 +51,20 @@ this.state = {
     if (allowUpload==true){
    try {
     console.log('upload image to S3 bucket')
+    var options = {
+  ACL: 'public-read',
+  level:'public',
+  contentType: this.upload.files[0].type
+}
     Storage.put('embeddings/input/'+`${this.upload.files[0].name}`,
-                this.upload.files[0],
-                { contentType: this.upload.files[0].type,level: 'public' })
+                this.upload.files[0],options
+       //         { contentType: this.upload.files[0].type,level: 'public' }
+                )
       .then(result => {
         this.uploadThumbnail()
         const image = `${this.upload.files[0].name}`
-        console.log('image uploaded',image)
+        console.log('image uploaded',result)
         this.upload = null;
-        console.log("upload success," );
         this.setState({ response: "Success uploading file!" ,imageName:""});
       })
       .catch(err => {
@@ -79,9 +84,14 @@ this.state = {
   async uploadThumbnail()
   {
     try{
+      var options = {
+        ACL: 'public-read',
+        level:'public',
+        contentType: this.upload.files[0].type
+      }
       console.log('upload thumbnail',`${this.upload.files[0].name}`+"thumbnail.jpg")
     await Storage.put('thumbnails/'+`${this.upload.files[0].name}`+"thumbnail.jpg", 
-      this.upload.files[0], { contentType: this.upload.files[0].type });
+      this.upload.files[0], options);
     }
     catch(e){
       console.log('cannot upload thumbnail',e)
