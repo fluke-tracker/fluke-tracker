@@ -59,7 +59,7 @@ function HeaderLinks({ ...props }) {
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
                         class="nav-link" href={"/profile-page"}>Welcome</a></li>
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                        class="nav-link" href={"/landing-page"}>Matching Page</a></li>
+                        class="nav-link" href={"/matching-page"}>Matching Page</a></li>
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
                         class="nav-link" href={"/search-page"}>Search Page</a></li>
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a

@@ -224,7 +224,7 @@ authenticate_user() {
         this.setState({ dialogMessage: "Assigned all whales with id " + this.state.right_id + " the id " + this.state.left_id});
         setTimeout(_ => this.setState({ dialogMessage: "" }), 2000)
       }
-      API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, is_new: "false"}}));
+      API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, is_new: 1}}));
       console.log('returning matched pictures', prevState.matchedPictures);
       return {matchedPictures:  prevState.matchedPictures}
     });
@@ -432,7 +432,7 @@ authenticate_user() {
             );
             return
       }
-      API.graphql(graphqlOperation(listPictures, {filter: {is_new: {eq: true}}, limit: 5000, nextToken: nextToken})).then(result => {
+      API.graphql(graphqlOperation(listPictures, {filter: {is_new: {eq: 0}}, limit: 5000, nextToken: nextToken})).then(result => {
                 result.data.listPictures.items.forEach(id => ids.push(id.id));
                 nextToken = result.data.listPictures.nextToken;
 

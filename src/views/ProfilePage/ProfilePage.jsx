@@ -53,7 +53,7 @@ this.state = {
     console.log('upload image to S3 bucket')
     Storage.put('embeddings/input/'+`${this.upload.files[0].name}`,
                 this.upload.files[0],
-                { contentType: this.upload.files[0].type })
+                { contentType: this.upload.files[0].type,level: 'public' })
       .then(result => {
         this.uploadThumbnail()
         const image = `${this.upload.files[0].name}`
@@ -113,7 +113,7 @@ this.state = {
         geocoords: ',',
         thumbnail: image+'thumbnail.jpg',
         pictureWhaleId: newWhaleID,
-        is_new:true,
+        is_new:1,
         embedding:123,
         uploaded_by:'whalewatching'
         } 
