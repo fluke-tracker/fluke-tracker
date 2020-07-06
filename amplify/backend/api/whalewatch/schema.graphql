@@ -12,6 +12,7 @@ type Config @model{
 type EuclidianDistance @model @key(fields: ["picture1", "picture2"]) @key(name: "byPicture2", fields: ["picture2", "picture1"], queryField: "EuclidianDistanceByPicture2"){
     picture1: String!
     picture2: String!
+    distance: Float
 }
 
 type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "PictureByIsNew"){
