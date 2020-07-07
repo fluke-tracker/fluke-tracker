@@ -74,91 +74,38 @@ export const listConfigs = /* GraphQL */ `
     }
   }
 `;
-export const getEuclidianDistancePicture = /* GraphQL */ `
-  query GetEuclidianDistancePicture($id: ID!) {
-    getEuclidianDistancePicture(id: $id) {
-      id
-      picture
+export const getEuclidianDistance = /* GraphQL */ `
+  query GetEuclidianDistance($picture1: String!, $picture2: String!) {
+    getEuclidianDistance(picture1: $picture1, picture2: $picture2) {
+      picture1
+      picture2
       distance
-      distancePicture {
-        picture
-        distances {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
   }
 `;
-export const listEuclidianDistancePictures = /* GraphQL */ `
-  query ListEuclidianDistancePictures(
-    $filter: ModelEuclidianDistancePictureFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listEuclidianDistancePictures(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        picture
-        distance
-        distancePicture {
-          picture
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getEuclidianDistances = /* GraphQL */ `
-  query GetEuclidianDistances($picture: String!) {
-    getEuclidianDistances(picture: $picture) {
-      picture
-      distances {
-        items {
-          id
-          picture
-          distance
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listEuclidianDistancess = /* GraphQL */ `
-  query ListEuclidianDistancess(
-    $picture: String
-    $filter: ModelEuclidianDistancesFilterInput
+export const listEuclidianDistances = /* GraphQL */ `
+  query ListEuclidianDistances(
+    $picture1: String
+    $picture2: ModelStringKeyConditionInput
+    $filter: ModelEuclidianDistanceFilterInput
     $limit: Int
     $nextToken: String
     $sortDirection: ModelSortDirection
   ) {
-    listEuclidianDistancess(
-      picture: $picture
+    listEuclidianDistances(
+      picture1: $picture1
+      picture2: $picture2
       filter: $filter
       limit: $limit
       nextToken: $nextToken
       sortDirection: $sortDirection
     ) {
       items {
-        picture
-        distances {
-          nextToken
-        }
+        picture1
+        picture2
+        distance
         createdAt
         updatedAt
       }
@@ -442,6 +389,84 @@ export const listMatchingImages = /* GraphQL */ `
         }
         matchingImages {
           name
+        }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const euclidianDistanceByPicture2 = /* GraphQL */ `
+  query EuclidianDistanceByPicture2(
+    $picture2: String
+    $picture1: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelEuclidianDistanceFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    EuclidianDistanceByPicture2(
+      picture2: $picture2
+      picture1: $picture1
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        picture1
+        picture2
+        distance
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const pictureByIsNew = /* GraphQL */ `
+  query PictureByIsNew(
+    $is_new: Int
+    $sortDirection: ModelSortDirection
+    $filter: ModelPictureFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    PictureByIsNew(
+      is_new: $is_new
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        is_new
+        high_res
+        thumbnail
+        filename
+        whale {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        geocoords
+        date_taken
+        embedding
+        uploaded_by
+        matchLeft {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
+        }
+        matchRight {
+          match_status
+          similarity_score
+          createdAt
+          updatedAt
         }
         createdAt
         updatedAt

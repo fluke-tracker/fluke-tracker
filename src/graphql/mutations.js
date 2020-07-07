@@ -127,133 +127,43 @@ export const deleteConfig = /* GraphQL */ `
     }
   }
 `;
-export const createEuclidianDistancePicture = /* GraphQL */ `
-  mutation CreateEuclidianDistancePicture(
-    $input: CreateEuclidianDistancePictureInput!
-    $condition: ModelEuclidianDistancePictureConditionInput
+export const createEuclidianDistance = /* GraphQL */ `
+  mutation CreateEuclidianDistance(
+    $input: CreateEuclidianDistanceInput!
+    $condition: ModelEuclidianDistanceConditionInput
   ) {
-    createEuclidianDistancePicture(input: $input, condition: $condition) {
-      id
-      picture
+    createEuclidianDistance(input: $input, condition: $condition) {
+      picture1
+      picture2
       distance
-      distancePicture {
-        picture
-        distances {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
   }
 `;
-export const updateEuclidianDistancePicture = /* GraphQL */ `
-  mutation UpdateEuclidianDistancePicture(
-    $input: UpdateEuclidianDistancePictureInput!
-    $condition: ModelEuclidianDistancePictureConditionInput
+export const updateEuclidianDistance = /* GraphQL */ `
+  mutation UpdateEuclidianDistance(
+    $input: UpdateEuclidianDistanceInput!
+    $condition: ModelEuclidianDistanceConditionInput
   ) {
-    updateEuclidianDistancePicture(input: $input, condition: $condition) {
-      id
-      picture
+    updateEuclidianDistance(input: $input, condition: $condition) {
+      picture1
+      picture2
       distance
-      distancePicture {
-        picture
-        distances {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
   }
 `;
-export const deleteEuclidianDistancePicture = /* GraphQL */ `
-  mutation DeleteEuclidianDistancePicture(
-    $input: DeleteEuclidianDistancePictureInput!
-    $condition: ModelEuclidianDistancePictureConditionInput
+export const deleteEuclidianDistance = /* GraphQL */ `
+  mutation DeleteEuclidianDistance(
+    $input: DeleteEuclidianDistanceInput!
+    $condition: ModelEuclidianDistanceConditionInput
   ) {
-    deleteEuclidianDistancePicture(input: $input, condition: $condition) {
-      id
-      picture
+    deleteEuclidianDistance(input: $input, condition: $condition) {
+      picture1
+      picture2
       distance
-      distancePicture {
-        picture
-        distances {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const createEuclidianDistances = /* GraphQL */ `
-  mutation CreateEuclidianDistances(
-    $input: CreateEuclidianDistancesInput!
-    $condition: ModelEuclidianDistancesConditionInput
-  ) {
-    createEuclidianDistances(input: $input, condition: $condition) {
-      picture
-      distances {
-        items {
-          id
-          picture
-          distance
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const updateEuclidianDistances = /* GraphQL */ `
-  mutation UpdateEuclidianDistances(
-    $input: UpdateEuclidianDistancesInput!
-    $condition: ModelEuclidianDistancesConditionInput
-  ) {
-    updateEuclidianDistances(input: $input, condition: $condition) {
-      picture
-      distances {
-        items {
-          id
-          picture
-          distance
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const deleteEuclidianDistances = /* GraphQL */ `
-  mutation DeleteEuclidianDistances(
-    $input: DeleteEuclidianDistancesInput!
-    $condition: ModelEuclidianDistancesConditionInput
-  ) {
-    deleteEuclidianDistances(input: $input, condition: $condition) {
-      picture
-      distances {
-        items {
-          id
-          picture
-          distance
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
       createdAt
       updatedAt
     }

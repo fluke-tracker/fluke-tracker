@@ -391,27 +391,17 @@ authenticate_user() {
       const img2 = this.state.similar_pictures[this.state.horizontal];
       API.graphql(graphqlOperation(getPicture, { id:  this.state.new_pictures[vertical]}))
       .then( picture => {
-      console.log("get picture" + picture);
-      if(picture.data.getPicture.whale != undefined)    this.setState({left_id: picture.data.getPicture.whale.name});});
-      API.graphql(graphqlOperation(getPicture, { id:  this.state.similar_pictures[this.state.horizontal]}))
-      .then( picture =>
-      {
-          console.log("get picture");console.log(picture);
-          if(picture.data.getPicture.whale != undefined) this.setState({right_id: picture.data.getPicture.whale.name},
-                _ => console.log(picture.data.getPicture.whale))
-      });
+          console.log("get picture" + picture);
+          this.setState({left_id: picture.data.getPicture.whale.name});});
+          API.graphql(graphqlOperation(getPicture, { id:  this.state.similar_pictures[this.state.horizontal]}))
+          .then( picture =>
+              {
+                  console.log("get picture");console.log(picture);
+                  this.setState({right_id: picture.data.getPicture.whale.name},
+                        _ => console.log(picture.data.getPicture.whale))
+              }
+          );
 
-      //console.log("img1"+img1);
-      //console.log("img2"+img2);
-      /*if (img1 != this.state.left_img && img1 !== '') {
-        this.setState({ imageStatusLeft: "loading" })
-        this.setState({ left_img: img1 });
-      }
-      if (img2 != this.state.right_img && img2 !== '') {
-        this.setState({ imageStatusRight: "loading" })
-        this.setState({ right_img: img2 });
-        this.list_pictures_right_side();
-      }*/
       this.setState({
       isMatched: this.state.new_pictures[this.state.vertical] in this.state.matchedPictures &&
                 Array.from(this.state.matchedPictures[this.state.new_pictures[this.state.vertical]]).join().includes(this.state.similar_pictures[this.state.horizontal])
@@ -431,7 +421,7 @@ authenticate_user() {
                                 });
                             }
 
-    );
+    ).catch(result => this.setState({similar_pictures: ['']}));
   }
   list_pictures_left_side = (nextToken, ids, numReq) => {
       API.graphql(graphqlOperation(pictureByIsNew, {is_new: 1, limit: 5000, nextToken: nextToken})).then(result => {

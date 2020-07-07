@@ -109,115 +109,34 @@ export const onDeleteConfig = /* GraphQL */ `
     }
   }
 `;
-export const onCreateEuclidianDistancePicture = /* GraphQL */ `
-  subscription OnCreateEuclidianDistancePicture {
-    onCreateEuclidianDistancePicture {
-      id
-      picture
+export const onCreateEuclidianDistance = /* GraphQL */ `
+  subscription OnCreateEuclidianDistance {
+    onCreateEuclidianDistance {
+      picture1
+      picture2
       distance
-      distancePicture {
-        picture
-        distances {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
   }
 `;
-export const onUpdateEuclidianDistancePicture = /* GraphQL */ `
-  subscription OnUpdateEuclidianDistancePicture {
-    onUpdateEuclidianDistancePicture {
-      id
-      picture
+export const onUpdateEuclidianDistance = /* GraphQL */ `
+  subscription OnUpdateEuclidianDistance {
+    onUpdateEuclidianDistance {
+      picture1
+      picture2
       distance
-      distancePicture {
-        picture
-        distances {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
   }
 `;
-export const onDeleteEuclidianDistancePicture = /* GraphQL */ `
-  subscription OnDeleteEuclidianDistancePicture {
-    onDeleteEuclidianDistancePicture {
-      id
-      picture
+export const onDeleteEuclidianDistance = /* GraphQL */ `
+  subscription OnDeleteEuclidianDistance {
+    onDeleteEuclidianDistance {
+      picture1
+      picture2
       distance
-      distancePicture {
-        picture
-        distances {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateEuclidianDistances = /* GraphQL */ `
-  subscription OnCreateEuclidianDistances {
-    onCreateEuclidianDistances {
-      picture
-      distances {
-        items {
-          id
-          picture
-          distance
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateEuclidianDistances = /* GraphQL */ `
-  subscription OnUpdateEuclidianDistances {
-    onUpdateEuclidianDistances {
-      picture
-      distances {
-        items {
-          id
-          picture
-          distance
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteEuclidianDistances = /* GraphQL */ `
-  subscription OnDeleteEuclidianDistances {
-    onDeleteEuclidianDistances {
-      picture
-      distances {
-        items {
-          id
-          picture
-          distance
-          createdAt
-          updatedAt
-        }
-        nextToken
-      }
       createdAt
       updatedAt
     }
