@@ -156,7 +156,7 @@ class LandingPage extends React.Component {
 authenticate_user() {
 
   Auth.currentAuthenticatedUser()
-        .then(user => { 
+        .then(user => {  console.log('matchingpage user',user,user.username);
           this.setState({ user: user.username })
         }).catch(err => console.log('currentAuthenticatedUser err', err))
 }
@@ -647,8 +647,8 @@ authenticate_user() {
               <GridItem xs={12} sm={12} md={6}>
               <h4 style={{ color: 'black' }}><a href={"search-page/"+ this.state.left_id}>{this.state.similar_pictures[this.state.horizontal]}</a></h4>
       {/*  new buttons for the matching result */}
-              <Button variant="contained" onClick={() => this.acceptPicture()} color = "success"/* color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} */ size="sm">Match</Button>
-              <Button variant="contained" onClick={() => this.unacceptPicture()} color = "info"/* color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} */ size="sm">Don't match</Button>
+              <Button disabled={(this.state.user =="LisaSteiner"||this.state.user == "whalewatching")?false:true} variant="contained" onClick={() => this.acceptPicture()} color = "success"/* color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} */ size="sm">Match</Button>
+              <Button disabled={(this.state.user == "LisaSteiner"||this.state.user == "whalewatching")?false:true} variant="contained" onClick={() => this.unacceptPicture()} color = "info"/* color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} */ size="sm">Don't match</Button>
 {/*               <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button> */}
 {/*               <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button> */}
               <br/>
