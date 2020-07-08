@@ -10,6 +10,15 @@
             "StackName": "amplify-whalewatching-whaledev-213627",
             "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaledev-213627/045359c0-b19b-11ea-b135-06bc90058f1a",
             "AmplifyAppId": "d2vtiv2q3fzo2l"
+        },
+        "categories": {
+            "auth": {
+                "cognitoed159519": {},
+                "userPoolGroups": {}
+            },
+            "function": {
+                "scanPictures": {}
+            }
         }
     }
 }
