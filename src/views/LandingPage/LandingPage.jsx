@@ -182,7 +182,7 @@ class LandingPage extends React.Component {
     });
     this.setState((prevState) => {
       return {
-        vertical: Math.max(0, Math.min(this.state.new_pictures.length, prevState.vertical + 1)),
+        vertical: Math.max(0, Math.min(this.state.new_pictures.length - 1, prevState.vertical + 1)),
       };
     }, this.handleCsvData());
   }
@@ -191,7 +191,7 @@ class LandingPage extends React.Component {
       (prevState) => ({
         horizontal: Math.max(
           0,
-          Math.min(this.state.new_pictures[this.state.vertical].length, prevState.horizontal + 1)
+          Math.min(this.state.new_pictures[this.state.vertical].length - 1, prevState.horizontal + 1)
         ),
       }),
       this.handleCsvData()
@@ -466,11 +466,12 @@ class LandingPage extends React.Component {
     API.graphql(
       graphqlOperation(listEuclidianDistances, {
         picture1: this.state.new_pictures[this.state.vertical],
-      })
+        limit: 5000})
     )
       .then((result) => {
         let pictures = [];
-        result.data.listEuclidianDistances.items.forEach((picture) =>
+        console.log("XAD");
+        result.data.listEuclidianDistances.items.sort((a,b) => a.distance - b.distance).forEach((picture) =>
           pictures.push(picture.picture2)
         );
         this.setState({
