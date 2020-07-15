@@ -13,19 +13,24 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from 'aws-amplify';
 import Footer from "components/Footer/Footer.jsx";
-import { createPicture,updateConfig,createWhale } from 'graphql/mutations';
+import { createPicture, updateConfig, createWhale } from 'graphql/mutations';
 import { getConfig } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
+import exifr from 'exifr';
+
 const dashboardRoutes = [];
 class ProfilePage extends React.Component {
-    constructor(props) {
+  constructor(props) {
     super(props)
-this.state = {
-    imageName: "",
-    imageFile: "",
-    response: "",
-    user: null
-}
+    this.state = {
+      imageName: "",
+      imageFile: "",
+      response: "",
+      user: null,
+      latitude: null,
+      longitude: null,
+      imageDate: null,
+    }
     this.authenticate_user();
   }
 
@@ -33,133 +38,150 @@ this.state = {
   authenticate_user() {
 
     Auth.currentAuthenticatedUser()
-          .then(user => {
-           console.log('profilepage user',user.username);
-           this.setState({ user: user })
-          }).catch(err => console.log('currentAuthenticatedUser profilepage err', err))
+      .then(user => {
+        console.log('profilepage user', user.username);
+        this.setState({ user: user })
+      }).catch(err => console.log('currentAuthenticatedUser profilepage err', err))
   }
-   async uploadImage() {
+  async uploadImage() {
+    try {
+
+      const output = await exifr.parse(this.state.imageFile)
+      this.state.latitude = output.latitude
+      this.state.longitude = output.longitude
+      this.state.imageDate = output.DateTimeOriginal.toGMTString()
+      console.log("image output", output)
+    }
+    catch (e) {
+      this.state.latitude = null
+      this.state.longitude = null
+      this.state.imageDate = null
+      console.log('error in exifr ', e)
+
+    }
+
     var allowUpload = false
     try {
-    allowUpload = await this.insertToDynamo(`${this.upload.files[0].name}`,allowUpload)
+      allowUpload = await this.insertToDynamo(`${this.upload.files[0].name}`, allowUpload)
     }
-    catch(e)
-    {
-    console.log('error in uploading ',e)
+    catch (e) {
+      console.log('error in uploading ', e)
     }
-    console.log('allowUpload ',allowUpload)
-    if (allowUpload==true){
-   try {
-    console.log('upload image to S3 bucket')
-    var options = {
-  ACL: 'public-read',
-  level:'public',
-  contentType: this.upload.files[0].type
-}
-    Storage.put('embeddings/input/'+`${this.upload.files[0].name}`,
-                this.upload.files[0],options
-       //         { contentType: this.upload.files[0].type,level: 'public' }
-                )
-      .then(result => {
-        this.uploadThumbnail()
-        const image = `${this.upload.files[0].name}`
-        console.log('image uploaded',result)
-        this.upload = null;
-        this.setState({ response: "Success uploading file!" ,imageName:""});
-      })
-      .catch(err => {
-          console.log("error while uploading,",err );
-        this.setState({ response: `Cannot uploading file: ${err}` });
-      });
-    }catch(e) {
-      console.log("error in uploading",e);
-   } 
+    console.log('allowUpload ', allowUpload)
+    if (allowUpload == true) {
+      try {
+        console.log('upload image to S3 bucket')
+        var options = {
+          ACL: 'public-read',
+          level: 'public',
+          contentType: this.upload.files[0].type
+        }
+        Storage.put('embeddings/input/' + `${this.upload.files[0].name}`,
+          this.upload.files[0], options
+          //         { contentType: this.upload.files[0].type,level: 'public' }
+        )
+          .then(result => {
+            this.uploadThumbnail()
+            const image = `${this.upload.files[0].name}`
+            console.log('image uploaded', result)
+            this.upload = null;
+            this.setState({ response: "Success uploading file!", imageName: "" });
+          })
+          .catch(err => {
+            console.log("error while uploading,", err);
+            this.setState({ response: `Cannot uploading file: ${err}` });
+          });
+      } catch (e) {
+        console.log("error in uploading", e);
+      }
+    }
+    else {
+      console.log('cannot upload image')
+    }
   }
-  else {
-    console.log('cannot upload image')
-  }
-  } 
 
 
-  async uploadThumbnail()
-  {
-    try{
+  async uploadThumbnail() {
+    try {
       var options = {
         ACL: 'public-read',
-        level:'public',
+        level: 'public',
         contentType: this.upload.files[0].type
       }
-      console.log('upload thumbnail',`${this.upload.files[0].name}`+"thumbnail.jpg")
-    await Storage.put('thumbnails/'+`${this.upload.files[0].name}`+"thumbnail.jpg", 
-      this.upload.files[0], options);
+      console.log('upload thumbnail', `${this.upload.files[0].name}` + "thumbnail.jpg")
+      await Storage.put('thumbnails/' + `${this.upload.files[0].name}` + "thumbnail.jpg",
+        this.upload.files[0], options);
     }
-    catch(e){
-      console.log('cannot upload thumbnail',e)
+    catch (e) {
+      console.log('cannot upload thumbnail', e)
     }
   }
-  async insertToDynamo(image,allowUpload) {
-      try {
+  async insertToDynamo(image, allowUpload) {
+    try {
       console.log('getting config from dynamodb')
-      const getWhaleConfig =  await API.graphql(graphqlOperation(getConfig, {id: 'maxWhaleId'} ));
-      console.log('getConfig output aws',getWhaleConfig)
+      const getWhaleConfig = await API.graphql(graphqlOperation(getConfig, { id: 'maxWhaleId' }));
+      console.log('getConfig output aws', getWhaleConfig)
       const maxWhaleID = getWhaleConfig.data.getConfig.value
-      console.log('maxWhaleID',maxWhaleID)
-      var newWhaleID = parseInt(maxWhaleID)+1
-      }
-      catch(e)
-      {
-        allowUpload = false
-        console.log("getting config error",e)
-        this.setState({ response: `Error: while fetching AWS Config for upload: ${e}`,imageName:""});
-      }
-       try {
+      console.log('maxWhaleID', maxWhaleID)
+      var newWhaleID = parseInt(maxWhaleID) + 1
+    }
+    catch (e) {
+      allowUpload = false
+      console.log("getting config error", e)
+      this.setState({ response: `Error: while fetching AWS Config for upload: ${e}`, imageName: "" });
+    }
+    try {
       console.log('inserting image record to dynamodb')
-      console.log('newWhaleID',newWhaleID)
-      const insertImage = await API.graphql(graphqlOperation(createPicture, 
-      { input : 
+      console.log('newWhaleID', newWhaleID)
+      const insertImage = await API.graphql(graphqlOperation(createPicture,
         {
-        id: image,
-        filename: image,
-        geocoords: ',',
-        thumbnail: image+'thumbnail.jpg',
-        pictureWhaleId: newWhaleID,
-        is_new:1,
-        embedding:123,
-        uploaded_by:'whalewatching'
-        } 
-      }));
-      console.log('insertImage output aws',insertImage)
-
-      const insertWhale = await API.graphql(graphqlOperation(createWhale, 
-        { input : 
+          input:
           {
-          id: newWhaleID,
-          name:  newWhaleID
+            id: image,
+            filename: image,
+            geocoords: this.state.latitude + ',' + this.state.longitude,
+            thumbnail: image + 'thumbnail.jpg',
+            pictureWhaleId: newWhaleID,
+            is_new: 1,
+            embedding: 123,
+            uploaded_by: this.state.user.username,
+            date_taken: this.state.imageDate,
+
           }
         }));
-        console.log('insertWhale output aws',insertWhale)
+      console.log('insertImage output aws', insertImage)
 
-      console.log('updating maxwhaleID config',newWhaleID)
-      const updateWhaleConfig =  await API.graphql(graphqlOperation(updateConfig, 
-      {input:
+      const insertWhale = await API.graphql(graphqlOperation(createWhale,
         {
-          id: 'maxWhaleId',
-          value: newWhaleID
-        }
-      }));
-      console.log('updateWhaleConfig output aws',updateWhaleConfig)
+          input:
+          {
+            id: newWhaleID,
+            name: newWhaleID
+          }
+        }));
+      console.log('insertWhale output aws', insertWhale)
+
+      console.log('updating maxwhaleID config', newWhaleID)
+      const updateWhaleConfig = await API.graphql(graphqlOperation(updateConfig,
+        {
+          input:
+          {
+            id: 'maxWhaleId',
+            value: newWhaleID
+          }
+        }));
+      console.log('updateWhaleConfig output aws', updateWhaleConfig)
       allowUpload = true
-      console.log('setting allowupload as ',allowUpload)
-      
-      }
-      catch(e)
-      {
-        allowUpload = false
-        console.log("getting insertImage error",e)
-        this.setState({ response: `Error while upload. Check if Image already exists in the Database: ${e}`,imageName:"" });
-      }
-    return allowUpload   
+      console.log('setting allowupload as ', allowUpload)
+
     }
+    catch (e) {
+      allowUpload = false
+      console.log("getting insertImage error", e)
+      this.setState({ response: `Error while upload. Check if Image already exists in the Database: ${e}`, imageName: "" });
+    }
+    return allowUpload
+  }
 
   render() {
     const { classes, ...rest } = this.props;
@@ -167,74 +189,75 @@ this.state = {
     return (
       <div>
         <Header
-        color="blue"
-        brand={<img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />}
-        fixed
-        rightLinks={<HeaderLinks user={this.state.user} />}
-        changeColorOnScroll={{
-          "height": "400",
-          "color": "black"
-        }}
-        {...rest}
-      />
-      <div class="section container" style={{
-  backgroundImage: 'url(require("../assets/img/tail.jpg"))',
-  backgroundPosition: 'center',
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat'}}>
-</div>
-          <div className={classes.container}>
-    <div class="section container" style={{"paddingTop": "50px", "paddingBottom": "5px"}}>
-        <div class="row">
-            <div class="col-12">
-                <div class="article-text">
-                <h2 style={{"paddingTop": "5px"}}><strong>Whalewatching</strong></h2>
-                    <h4 style={{"paddingTop": "5px"}}><strong>What is the Whalewatching website?</strong></h4>
-                    <p style={{"paddingBottom": "5px"}}>For Whale-Lovers, you can use this website to find sperm whales and match your whale pictures with others. This website consists of the following pages: </p>
-                        <ul style={{"paddingBottom": "5px", "color":"black"}}>
-                        <li><strong>Profile Page</strong>: where you can find the basic instruction and upload your pictures after log-in</li>
-                        <li><strong>Matching Page</strong>: where you can compare two pictures and confirm whether they are the same</li>
-                        <li><strong>Search Page</strong>: where you can find the whale pictures with the same id</li>
-                        <li><strong>Impressum (?)</strong></li>
-                    </ul>
-                        </div></div></div></div>
-      </div>
-      <div className={classes.container}>
-          <div class="section container" style={{"paddingTop": "5px", "paddingBottom": "5px"}}>
-        <div class="row">
-        <div class="col-12">
-                      <div class="article-text">
-                    <h4 style={{"paddingTop": "5px"}}><strong>Upload Whale Image 🐳</strong></h4>
-                        </div></div></div></div>
-        <input
-          type="file"
-          accept="image/png, image/jpeg"
-          style={{ "display": "none"}}
-          ref={ref => (this.upload = ref)}
-          onChange={e =>
-            this.setState({
-              imageFile: this.upload.files[0],
-              imageName: this.upload.files[0].name
-            })
-          }
-          required
-        />
-        <input style={{"text-align": "center"}} value={this.state.imageName} placeholder="Select file" required/>
-        <Button
-        variant="contained"
-        color="info" size="md"
-          onClick={e => {
-            this.upload.value = null;
-            this.upload.click();
+          color="blue"
+          brand={<img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />}
+          fixed
+          rightLinks={<HeaderLinks user={this.state.user} />}
+          changeColorOnScroll={{
+            "height": "400",
+            "color": "black"
           }}
-          loading={this.state.uploading}
-        >Browse
+          {...rest}
+        />
+        <div class="section container" style={{
+          backgroundImage: 'url(require("../assets/img/tail.jpg"))',
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat'
+        }}>
+        </div>
+        <div className={classes.container}>
+          <div class="section container" style={{ "paddingTop": "50px", "paddingBottom": "5px" }}>
+            <div class="row">
+              <div class="col-12">
+                <div class="article-text">
+                  <h2 style={{ "paddingTop": "5px" }}><strong>Whalewatching</strong></h2>
+                  <h4 style={{ "paddingTop": "5px" }}><strong>What is the Whalewatching website?</strong></h4>
+                  <p style={{ "paddingBottom": "5px" }}>For Whale-Lovers, you can use this website to find sperm whales and match your whale pictures with others. This website consists of the following pages: </p>
+                  <ul style={{ "paddingBottom": "5px", "color": "black" }}>
+                    <li><strong>Profile Page</strong>: where you can find the basic instruction and upload your pictures after log-in</li>
+                    <li><strong>Matching Page</strong>: where you can compare two pictures and confirm whether they are the same</li>
+                    <li><strong>Search Page</strong>: where you can find the whale pictures with the same id</li>
+                    <li><strong>Impressum (?)</strong></li>
+                  </ul>
+                </div></div></div></div>
+        </div>
+        <div className={classes.container}>
+          <div class="section container" style={{ "paddingTop": "5px", "paddingBottom": "5px" }}>
+            <div class="row">
+              <div class="col-12">
+                <div class="article-text">
+                  <h4 style={{ "paddingTop": "5px" }}><strong>Upload Whale Image 🐳</strong></h4>
+                </div></div></div></div>
+          <input
+            type="file"
+            accept="image/png, image/jpeg"
+            style={{ "display": "none" }}
+            ref={ref => (this.upload = ref)}
+            onChange={e =>
+              this.setState({
+                imageFile: this.upload.files[0],
+                imageName: this.upload.files[0].name
+              })
+            }
+            required
+          />
+          <input style={{ "text-align": "center" }} value={this.state.imageName} placeholder="Select file" required />
+          <Button
+            variant="contained"
+            color="info" size="md"
+            onClick={e => {
+              this.upload.value = null;
+              this.upload.click();
+            }}
+            loading={this.state.uploading}
+          >Browse
         </Button>
-        <Button variant="contained" onClick={() => this.uploadImage()} color="success" size="md">Upload File</Button>
+          <Button variant="contained" onClick={() => this.uploadImage()} color="success" size="md">Upload File</Button>
 
-        <div color="red" size="sm">{!!this.state.response && <h5 style={{ color: 'red' }}>{this.state.response}</h5>}</div>
+          <div color="red" size="sm">{!!this.state.response && <h5 style={{ color: 'red' }}>{this.state.response}</h5>}</div>
 
-      </div>
+        </div>
       </div>
     );
   }

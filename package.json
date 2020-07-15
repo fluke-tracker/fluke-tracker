@@ -19,6 +19,7 @@
     "aws-amplify": "^3.0.9",
     "aws-amplify-react": "^4.1.7",
     "classnames": "2.2.6",
+    "exifr": "^5.0.2",
     "ftp-deploy": "^2.3.3",
     "history": "4.7.2",
     "jwt-decode": "^2.2.0",
