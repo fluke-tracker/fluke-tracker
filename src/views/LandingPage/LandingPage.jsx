@@ -178,7 +178,7 @@ class LandingPage extends React.Component {
 
   getCurrentNamesIds() {
     const leftPicObj = this.state.newPicsList[this.state.vertical];
-    const rightPicObj = this.state.newPicsList[this.state.horizontal];
+    const rightPicObj = this.state.simPicObj;
     const leftImgName = leftPicObj.id;
     const rightImgName = rightPicObj.id;
     const leftWhaleId = leftPicObj.whale.id;
@@ -187,87 +187,80 @@ class LandingPage extends React.Component {
     return [leftImgName, rightImgName, leftWhaleId, rightWhaleId];
   }
 
-  acceptPicture() {
+  async acceptPicture() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
-    console.log("left_img_name is: ", left_img_name);
-    console.log("right_image is: ", right_img_name);
-    console.log("ismached", this.state.isMatched);
-    this.setState((prevState) => {
-      if (prevState.matchedPictures[left_img_name] == undefined) {
-        prevState.matchedPictures[left_img_name] = new Set([right_img_name]);
+    console.log("left_img_name is: ", left_img_name, "left id is: ", leftWhaleId);
+    console.log("right_image is: ", right_img_name, "right id is: ", rightWhaleId);
 
-        //API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
-
-        //API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: rightWhaleId}}));
-        //API.graphql(graphqlOperation(updatePicture, {input:  {id: rightWhaleId, filename: left_img_name}})).then(() => console.log("created matching image")).catch(err => console.log(err));;
-        //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
+    let queryWasSuccess = false;
+    if (parseInt(rightWhaleId) < parseInt(leftWhaleId)) {
+      // assign all pictures with the left id the right id
+      queryWasSuccess = await this.changeWhaleIdOfPictures(leftWhaleId, rightWhaleId);
+      if (queryWasSuccess) {
+        this.showSnackBarAssignedIds(leftWhaleId, rightWhaleId);
       } else {
-        prevState.matchedPictures[left_img_name].add(right_img_name);
-        console.log(
-          "prevState.matchedPictures[left_img_name])::: ",
-          prevState.matchedPictures[left_img_name]
-        );
-        console.log("added_arry:", Array.from(prevState.matchedPictures[left_img_name]));
+        this.showSnackBar("Oops! An error occured! Please try again!");
       }
-      if (parseInt(rightWhaleId) < parseInt(leftWhaleId)) {
-        // assign all pictures of the left id the right id
-        API.graphql(graphqlOperation(getWhale, { id: leftWhaleId })).then((pictures) =>
-          pictures.data.getWhale.pictures.items.forEach((picture) =>
-            API.graphql(
-              graphqlOperation(updatePicture, {
-                input: { id: picture.id, pictureWhaleId: rightWhaleId },
-              })
-            )
-          )
-        );
-        this.setState({
-          dialogMessage: "Assigned all whales with id " + leftWhaleId + " the id " + rightWhaleId,
-        });
-        setTimeout((_) => this.setState({ dialogMessage: "" }), 2000);
+    } else if (parseInt(leftWhaleId) < parseInt(rightWhaleId)) {
+      // assign all pictures with the right id the left id
+      queryWasSuccess = await this.changeWhaleIdOfPictures(rightWhaleId, leftWhaleId);
+      if (queryWasSuccess) {
+        this.showSnackBarAssignedIds(rightWhaleId, leftWhaleId);
+      } else {
+        this.showSnackBar("Oops! An error occured! Please try again!");
       }
-      if (parseInt(leftWhaleId) < parseInt(rightWhaleId)) {
-        // assign all pictures of the right id the left id
-        API.graphql(graphqlOperation(getWhale, { id: rightWhaleId })).then((pictures) =>
-          pictures.data.getWhale.pictures.items.forEach((picture) =>
-            API.graphql(
-              graphqlOperation(updatePicture, {
-                input: { id: picture.id, pictureWhaleId: leftWhaleId },
-              })
-            )
-          )
-        );
-        this.setState({
-          dialogMessage: "Assigned all whales with id " + rightWhaleId + " the id " + leftWhaleId,
-        });
-        setTimeout((_) => this.setState({ dialogMessage: "" }), 2000);
-      }
-      API.graphql(graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 1 } }));
-      console.log("returning matched pictures", prevState.matchedPictures);
-      return { matchedPictures: prevState.matchedPictures };
-    });
-    if (left_img_name && right_img_name) {
-      console.log("commented");
-      //   const url = 'http://localhost:3000/accept/' + left_img_name + '/' + right_img_name;
-      //   var _this = this;
-      //   fetch(url, { credentials: "same-origin", 'headers': { 'Authorization': 'Bearer ' + Cookies.read('token') } })
-      //     .then(function (response) {
-      //       if (response.ok) {
-      //         return response.text();
-      //       }
-      //       if (response.status == 401) { _this.props.dispatch(logout()) };
-      //       throw new Error('Error message.');
-      //     })
-      //     .then(function (data) {
-      //       _this.setState({ dialogMessage: "Picture combination saved!" });
-      //       setTimeout(_ => _this.setState({ dialogMessage: "" }), 1000);
-
-      //     })
-      //     .catch(function (err) {
-      //       console.log("failed to load ", url, err.message);
-      //     });
-      // }
     }
+
+    // make sure that is_new is only set if everything was successful (note that this if also implicitly check left != right)
+    if (queryWasSuccess) {
+      API.graphql(graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } }));
+    }
+
+    // console.log("returning matched pictures", prevState.matchedPictures);
+    // return { matchedPictures: prevState.matchedPictures };
+  }
+
+  async changeWhaleIdOfPictures(fromId, toId) {
+    console.log("IN changeWhaleIdOfPictures");
+    let successfulOp = false;
+    try {
+      const whaleObjs = await API.graphql(graphqlOperation(getWhale, { id: fromId }));
+      console.log("AFTER GRAPHQL query");
+      whaleObjs.data.getWhale.pictures.items.forEach((picture) => {
+        console.log("UPDATE PIC to new whale id");
+        API.graphql(
+          graphqlOperation(updatePicture, {
+            input: { id: picture.id, pictureWhaleId: toId },
+          })
+        );
+      });
+      successfulOp = true;
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log("END of changeWhaleIdOfPictures");
+    return new Promise((resolve) => {
+      setTimeout(function() {
+        resolve(successfulOp); // Rückgabewert der Funktion
+        console.log("Promise returned: ", successfulOp);
+      });
+    });
+  }
+
+  showSnackBarAssignedIds(fromId, toId) {
+    this.showSnackBar("Assigned all whales with ID " + fromId + " the ID " + toId, 5000);
+  }
+
+  /**
+   * A Snackbar with message will appear for timeout milliseconds.
+   **/
+  showSnackBar(message, timeout) {
+    this.setState({
+      dialogMessage: message,
+    });
+    setTimeout((_) => this.setState({ dialogMessage: "" }), timeout);
   }
 
   unacceptPicture() {
@@ -313,26 +306,6 @@ class LandingPage extends React.Component {
           graphqlOperation(updateConfig, { input: { id: "maxWhaleId", value: newMaxWhaleId } })
         );
       });
-    }
-
-    if (left_img_name && right_img_name) {
-      // const url = 'http://localhost:3000/unaccept/' + left_img_name + '/' + right_img_name;
-      // var _this = this;
-      // fetch(url, { credentials: "same-origin", 'headers': { 'Authorization': 'Bearer ' + Cookies.read('token') } })
-      //   .then(function (response) {
-      //     if (response.ok) {
-      //       return response.text();
-      //     }
-      //     if (response.status == 401) { _this.props.dispatch(logout()) };
-      //     throw new Error('Error message.');
-      //   })
-      //   .then(function (data) {
-      //     _this.setState({ dialogMessage: "Picture combination removed!" });
-      //     setTimeout(_ => _this.setState({ dialogMessage: "" }), 1000);
-      //   })
-      //   .catch(function (err) {
-      //     console.log("failed to load ", url, err.message);
-      //   });
     }
   }
 
