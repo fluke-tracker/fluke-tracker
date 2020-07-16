@@ -145,27 +145,35 @@ class LandingPage extends React.Component {
   }
 
   go_left() {
-    this.setState({ simPicObj: undefined, horizontal: Math.max(0, this.state.horizontal - 1) });
+    if (this.state.horizontal > 0) {
+      this.setState({ simPicObj: undefined, horizontal: this.state.horizontal - 1 });
+    }
   }
   go_up() {
-    this.setState({
-      simPicObj: undefined,
-      vertical: Math.max(0, this.state.vertical - 1),
-      horizontal: 0,
-    });
+    if (this.state.vertical > 0) {
+      this.setState({
+        simPicObj: undefined,
+        vertical: this.state.vertical - 1,
+        horizontal: 0,
+      });
+    }
   }
   go_down() {
-    this.setState({
-      simPicObj: undefined,
-      vertical: Math.min(this.state.newPicsList.length - 1, this.state.vertical + 1),
-      horizontal: 0,
-    });
+    if (this.state.vertical < this.state.newPicsList.length - 1) {
+      this.setState({
+        simPicObj: undefined,
+        vertical: this.state.vertical + 1,
+        horizontal: 0,
+      });
+    }
   }
   go_right() {
-    this.setState({
-      simPicObj: undefined,
-      horizontal: Math.min(this.state.similar_pictures.length - 1, this.state.horizontal + 1),
-    });
+    if (this.state.horizontal < this.state.similar_pictures.length - 1) {
+      this.setState({
+        simPicObj: undefined,
+        horizontal: Math.min(this.state.similar_pictures.length - 1, this.state.horizontal + 1),
+      });
+    }
   }
 
   getCurrentNamesIds() {
