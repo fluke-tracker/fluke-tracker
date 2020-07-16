@@ -146,25 +146,26 @@ class LandingPage extends React.Component {
 
   go_left() {
     this.setState({ simPicObj: undefined, horizontal: Math.max(0, this.state.horizontal - 1) });
-    /*this.setState(
-      (prevState) => ({
-        horizontal: Math.max(0, prevState.horizontal - 1),
-      }),
-      this.handleCsvData()
-    );*/
   }
   go_up() {
-    this.setState({ vertical: Math.max(0, this.state.vertical - 1), horizontal: 0 });
+    this.setState({
+      simPicObj: undefined,
+      vertical: Math.max(0, this.state.vertical - 1),
+      horizontal: 0,
+    });
   }
   go_down() {
     this.setState({
       simPicObj: undefined,
-      vertical: Math.max(0, this.state.vertical + 1),
+      vertical: Math.min(this.state.newPicsList.length - 1, this.state.vertical + 1),
       horizontal: 0,
     });
   }
   go_right() {
-    this.setState({ simPicObj: undefined, horizontal: Math.max(0, this.state.horizontal + 1) });
+    this.setState({
+      simPicObj: undefined,
+      horizontal: Math.min(this.state.similar_pictures.length - 1, this.state.horizontal + 1),
+    });
   }
 
   getCurrentNamesIds() {
@@ -469,14 +470,15 @@ class LandingPage extends React.Component {
       const result = await API.graphql(
         graphqlOperation(listEuclidianDistances, {
           picture1: this.state.newPicsList[this.state.vertical].id,
+          limit: 5000,
         })
       );
       console.log("got result");
       console.log(result);
       let pictures = [];
-      result.data.listEuclidianDistances.items.forEach((picture) =>
-        pictures.push(picture.picture2)
-      );
+      result.data.listEuclidianDistances.items
+        .sort((a, b) => a.distance - b.distance)
+        .forEach((picture) => pictures.push(picture.picture2));
 
       console.log(pictures);
       returnValue = pictures;
