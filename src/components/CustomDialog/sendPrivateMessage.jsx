@@ -8,7 +8,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import { updatePicture } from "graphql/mutations";
 
-export default function SetWhaleDialog(props) {
+export default function SendPrivateMessage(props) {
   const [open, setOpen] = React.useState(false);
   let id;
   const handleClickOpen = () => {
@@ -22,13 +22,13 @@ export default function SetWhaleDialog(props) {
   };
   const handleCloseOk = () => {
     setOpen(false);
-    props.function(id);
+    console.log(props.function(id));
   };
 
   return (
     <div>
-      <Button size="sm" variant="contained" color="white" onClick={handleClickOpen}>
-        Set ID
+      <Button size="sm" onClick={handleClickOpen}>
+        Contact Picture Owner
       </Button>
       <Dialog
         open={open}
@@ -36,17 +36,39 @@ export default function SetWhaleDialog(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Set ID manually"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Send a message to the picture owner"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description"></DialogContentText>
           <TextField
-            id="standard-number"
-            label="Number"
-            type="number"
+            id="name"
+            label="Name"
+            type="text"
             onChange={myChangeHandler}
             InputLabelProps={{
               shrink: true,
             }}
+          />
+          <TextField
+            id="email"
+            label="Email"
+            type="text"
+            onChange={myChangeHandler}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <br />
+          <br />
+          <TextField
+            id="message"
+            label="Message"
+            type="text"
+            onChange={myChangeHandler}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            multiline
+            rows={3}
           />
         </DialogContent>
         <DialogActions>

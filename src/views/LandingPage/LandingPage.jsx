@@ -21,9 +21,8 @@ import Parallax from "components/Parallax/Parallax.jsx";
 import Snackbar from "@material-ui/core/Snackbar";
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import Gallery from "react-grid-gallery";
+import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoComponent.jsx";
 
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { connect } from "react-redux";
 
 // Sections for this page
@@ -54,7 +53,6 @@ import { updateConfig } from "graphql/mutations";
 import { getMatchingImage } from "graphql/queries";
 import { getPicture } from "graphql/queries";
 import { pictureByIsNew } from "graphql/queries";
-import { listPictures } from "graphql/customQueries";
 import { getWhale } from "graphql/queries";
 import { createWhale } from "graphql/mutations";
 import { listWhales } from "graphql/queries";
@@ -77,25 +75,6 @@ const papaparseOptions = {
 
 const dashboardRoutes = [];
 
-class ImageComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: true,
-    };
-  }
-
-  render() {
-    return (
-      <img
-        {...this.props.imageProps}
-        onLoad={this.props.item.onLoad}
-        onError={this.props.item.onError}
-      />
-    );
-  }
-}
-
 class LandingPage extends React.Component {
   constructor(props) {
     super(props);
@@ -106,32 +85,33 @@ class LandingPage extends React.Component {
       dialogMessage: "",
       right_img: "",
       left_img: "",
-      left_id: "",
-      right_id: "",
       is_loaded: new Set(),
       matchedPictures: {},
       image_id: {},
       isMatched: "",
       user: null,
-      new_pictures: [""],
       similar_pictures: [""],
+      newPicsList: [],
+      simPicObj: undefined,
     };
+
+    // BINDING FUNCTIONS
     this.acceptPicture = this.acceptPicture.bind(this);
     this.unacceptPicture = this.unacceptPicture.bind(this);
-    this.go_up.bind(this);
-    this.go_down.bind(this);
-    this.go_left.bind(this);
-    this.go_right.bind(this);
+
+    this.go_up = this.go_up.bind(this);
+    this.go_down = this.go_down.bind(this);
+    this.go_left = this.go_left.bind(this);
+    this.go_right = this.go_right.bind(this);
+
     this.onPick = this.onPick.bind(this);
     this.handleCsvData = this.handleCsvData.bind(this);
-    this.list_pictures_left_side = this.list_pictures_left_side.bind(this);
+    this.fetchNewPicturesList = this.fetchNewPicturesList.bind(this);
     this.loadMatches = this.loadMatches.bind(this);
+
     this._handleKeyDown = this._handleKeyDown.bind(this);
 
-    this.list_pictures_left_side(undefined, [], 0);
-    this.loadMatches();
-    //this.handleForce = (data, fileInfo) => this.setState({ whale_csv: data }, this.handleCsvData);
-    //this.handleForce.bind(this);
+    // function uses async code => no blocking
     this.authenticate_user();
   }
 
@@ -140,78 +120,78 @@ class LandingPage extends React.Component {
   }
   go_newId() {
     console.log("new id code goes here");
+  }
+  go_manualId(pId) {
+    console.log("manual id code goes here, id: " + pId);
+    const vert = this.state.vertical;
+    const leftImgFileName = this.state.newPicsList[vert].id;
 
-    // API.graphql(graphqlOperation(updateConfig, {id: "maxWhaleId"}));
+    /*API.graphql(
+      graphqlOperation(updatePicture, { input: { id: leftImgFileName, pictureWhaleId: pId } })
+    );*/
+
+    const updatedList = [...this.state.newPicsList];
+    updatedList[vert].whale.id = pId;
+    this.setState({ newPicsList: updatedList });
   }
-  go_manualId(id) {
-    console.log("manual id code goes here, id: " + id);
-    const left_img_name = this.state.new_pictures[this.state.vertical];
-    const right_img_name = this.state.similar_pictures[this.state.horizontal];
-    API.graphql(
-      graphqlOperation(updatePicture, { input: { id: left_img_name, pictureWhaleId: id } })
-    );
-    this.setState({ left_id: id });
-  }
+
   authenticate_user() {
     Auth.currentAuthenticatedUser()
       .then((user) => {
-        console.log("matchingpage user", user, user.username);
+        console.log("MATCHINGPAGE user", user, user.username);
         this.setState({ user: user.username });
       })
       .catch((err) => console.log("currentAuthenticatedUser err", err));
   }
+
   go_left() {
-    this.setState(
+    this.setState({ simPicObj: undefined, horizontal: Math.max(0, this.state.horizontal - 1) });
+    /*this.setState(
       (prevState) => ({
         horizontal: Math.max(0, prevState.horizontal - 1),
       }),
       this.handleCsvData()
-    );
+    );*/
   }
   go_up() {
-    this.setState(
-      (prevState) => ({
-        vertical: Math.max(0, prevState.vertical - 1),
-      }),
-      this.handleCsvData()
-    );
+    this.setState({ vertical: Math.max(0, this.state.vertical - 1), horizontal: 0 });
   }
   go_down() {
-    this.setState((prevState, props) => {
-      return { horizontal: 0 };
+    this.setState({
+      simPicObj: undefined,
+      vertical: Math.max(0, this.state.vertical + 1),
+      horizontal: 0,
     });
-    this.setState((prevState) => {
-      return {
-        vertical: Math.max(0, Math.min(this.state.new_pictures.length, prevState.vertical + 1)),
-      };
-    }, this.handleCsvData());
   }
   go_right() {
-    this.setState(
-      (prevState) => ({
-        horizontal: Math.max(
-          0,
-          Math.min(this.state.new_pictures[this.state.vertical].length, prevState.horizontal + 1)
-        ),
-      }),
-      this.handleCsvData()
-    );
+    this.setState({ simPicObj: undefined, horizontal: Math.max(0, this.state.horizontal + 1) });
+  }
+
+  getCurrentNamesIds() {
+    const leftPicObj = this.state.newPicsList[this.state.vertical];
+    const rightPicObj = this.state.newPicsList[this.state.horizontal];
+    const leftImgName = leftPicObj.id;
+    const rightImgName = rightPicObj.id;
+    const leftWhaleId = leftPicObj.whale.id;
+    const rightWhaleId = rightPicObj.whale.id;
+
+    return [leftImgName, rightImgName, leftWhaleId, rightWhaleId];
   }
 
   acceptPicture() {
-    const left_img_name = this.state.new_pictures[this.state.vertical];
-    const right_img_name = this.state.similar_pictures[this.state.horizontal];
+    const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
+
     console.log("left_img_name is: ", left_img_name);
     console.log("right_image is: ", right_img_name);
     console.log("ismached", this.state.isMatched);
     this.setState((prevState) => {
       if (prevState.matchedPictures[left_img_name] == undefined) {
         prevState.matchedPictures[left_img_name] = new Set([right_img_name]);
-        console.log(this.state.left_id, this.state.right_id);
+
         //API.graphql(graphqlOperation(createMatchingImage, { input: { image: {name: left_img_name}, matchingImages: {name: right_img_name} }} )).then( () => console.log("created matching image"));
 
-        //API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: this.state.right_id}}));
-        //API.graphql(graphqlOperation(updatePicture, {input:  {id: this.state.right_id, filename: left_img_name}})).then(() => console.log("created matching image")).catch(err => console.log(err));;
+        //API.graphql(graphqlOperation(updatePicture, {input:  {id: left_img_name, pictureWhaleId: rightWhaleId}}));
+        //API.graphql(graphqlOperation(updatePicture, {input:  {id: rightWhaleId, filename: left_img_name}})).then(() => console.log("created matching image")).catch(err => console.log(err));;
         //API.graphql(graphqlOperation(createMatch, {input: { matchPicture1Id: left_img_name, matchPicture2Id: right_img_name, match_status: "match" }} )).then( () => {console.log("created matching image");this.handleCsvData();});
       } else {
         prevState.matchedPictures[left_img_name].add(right_img_name);
@@ -221,37 +201,35 @@ class LandingPage extends React.Component {
         );
         console.log("added_arry:", Array.from(prevState.matchedPictures[left_img_name]));
       }
-      if (parseInt(this.state.right_id) < parseInt(this.state.left_id)) {
+      if (parseInt(rightWhaleId) < parseInt(leftWhaleId)) {
         // assign all pictures of the left id the right id
-        API.graphql(graphqlOperation(getWhale, { id: this.state.left_id })).then((pictures) =>
+        API.graphql(graphqlOperation(getWhale, { id: leftWhaleId })).then((pictures) =>
           pictures.data.getWhale.pictures.items.forEach((picture) =>
             API.graphql(
               graphqlOperation(updatePicture, {
-                input: { id: picture.id, pictureWhaleId: this.state.right_id },
+                input: { id: picture.id, pictureWhaleId: rightWhaleId },
               })
             )
           )
         );
         this.setState({
-          dialogMessage:
-            "Assigned all whales with id " + this.state.left_id + " the id " + this.state.right_id,
+          dialogMessage: "Assigned all whales with id " + leftWhaleId + " the id " + rightWhaleId,
         });
         setTimeout((_) => this.setState({ dialogMessage: "" }), 2000);
       }
-      if (parseInt(this.state.left_id) < parseInt(this.state.right_id)) {
+      if (parseInt(leftWhaleId) < parseInt(rightWhaleId)) {
         // assign all pictures of the right id the left id
-        API.graphql(graphqlOperation(getWhale, { id: this.state.right_id })).then((pictures) =>
+        API.graphql(graphqlOperation(getWhale, { id: rightWhaleId })).then((pictures) =>
           pictures.data.getWhale.pictures.items.forEach((picture) =>
             API.graphql(
               graphqlOperation(updatePicture, {
-                input: { id: picture.id, pictureWhaleId: this.state.left_id },
+                input: { id: picture.id, pictureWhaleId: leftWhaleId },
               })
             )
           )
         );
         this.setState({
-          dialogMessage:
-            "Assigned all whales with id " + this.state.right_id + " the id " + this.state.left_id,
+          dialogMessage: "Assigned all whales with id " + rightWhaleId + " the id " + leftWhaleId,
         });
         setTimeout((_) => this.setState({ dialogMessage: "" }), 2000);
       }
@@ -284,8 +262,8 @@ class LandingPage extends React.Component {
   }
 
   unacceptPicture() {
-    const left_img_name = this.state.new_pictures[this.state.vertical];
-    const right_img_name = this.state.similar_pictures[this.state.horizontal];
+    const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
+
     this.setState((prevState) => {
       console.log("left img id: ", prevState.image_id[left_img_name]);
       prevState.matchedPictures[left_img_name].delete(right_img_name);
@@ -307,11 +285,11 @@ class LandingPage extends React.Component {
       return prevState.matchedPictures;
     });
 
-    if (this.state.left_id != this.state.right_id) {
+    if (leftWhaleId != rightWhaleId) {
       API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" })).then((result) => {
         const maxWhaleId = result.data.getConfig.value;
         const newMaxWhaleId = (parseInt(maxWhaleId) + 1).toString();
-        const left_img_name = this.state.new_pictures[this.state.vertical];
+        const left_img_name = this.state.newPicsList[this.state.vertical];
         API.graphql(
           graphqlOperation(createWhale, { input: { id: maxWhaleId, name: maxWhaleId } })
         ).then((result) =>
@@ -349,24 +327,29 @@ class LandingPage extends React.Component {
     }
   }
 
-  handleLeftImageLoaded(image) {
-    this.setState({ imageStatusLeft: "loaded" });
-    this.setState((prevState) => {
-      return prevState.is_loaded.add(this.state.new_pictures[this.state.vertical]);
-    });
-  }
-  handleRightImageLoaded() {
-    this.setState({ imageStatusRight: "loaded" });
-    this.setState((prevState) => {
-      return prevState.is_loaded.add(this.state.similar_pictures[this.state.horizontal]);
-    });
-  }
-  handleLeftImageErrored() {
-    this.setState({ imageStatusLeft: "failed to load" });
-  }
+  navigationAction(direction) {
+    let withOutError = true;
+    switch (direction) {
+      case "left":
+        this.go_left();
+        break;
+      case "right":
+        this.go_right();
+        break;
+      case "down":
+        this.go_down();
+        break;
+      case "up":
+        this.go_up();
+        break;
+      default:
+        withOutError = false;
+        break;
+    }
 
-  handleRightImageErrored() {
-    this.setState({ imageStatusRight: "failed to load" });
+    /*withOutError
+      ? this.handleCsvData()
+      : console.log("Error in navigationAction: Couldn't find case: " + direction);*/
   }
 
   _handleKeyDown = (event) => {
@@ -380,7 +363,7 @@ class LandingPage extends React.Component {
     //console.log(event);
     switch (event.keyCode) {
       case M_KEY:
-        const left_img = this.state.new_pictures[this.state.vertical];
+        const left_img = this.state.newPicsList[this.state.vertical];
         const right_img = this.state.similar_pictures[this.state.horizontal];
         if (
           left_img in this.state.matchedPictures &&
@@ -390,7 +373,6 @@ class LandingPage extends React.Component {
         } else {
           this.acceptPicture();
         }
-
         break;
       case LEFT_ARROW_KEY:
         this.go_left();
@@ -415,6 +397,27 @@ class LandingPage extends React.Component {
   // componentWillMount deprecated in React 16.3
   componentDidMount() {
     document.addEventListener("keydown", this._handleKeyDown);
+
+    this.fetchNewPicturesList(undefined, [], 0);
+    this.loadMatches();
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.newPicsList !== this.state.newPicsList) {
+      console.log("IN UPDATE");
+      console.log(prevState.newPicsList);
+      console.log(this.state.newPicsList);
+      const fetchedSimPics = this.fetchSimilarPictures();
+      this.processNewSimilarPics(await fetchedSimPics);
+    }
+
+    if (prevState.vertical !== this.state.vertical) {
+      this.processNewSimilarPics(await this.fetchSimilarPictures());
+    } else if (prevState.horizontal !== this.state.horizontal) {
+      /* this means vertical didn't change, only horizontal did */
+      const newSimPic = this.fetchPictureObject(this.state.similar_pictures[this.state.horizontal]);
+      this.processNewSimPicObj(await newSimPic);
+    }
   }
 
   componentWillUnmount() {
@@ -427,75 +430,129 @@ class LandingPage extends React.Component {
   }
 
   handleCsvData() {
-    const vertical = this.state.vertical;
-    const horizontal = this.state.horizontal;
-
-    const img1 = this.state.new_pictures[vertical];
-    const img2 = this.state.similar_pictures[this.state.horizontal];
-    API.graphql(graphqlOperation(getPicture, { id: this.state.new_pictures[vertical] })).then(
-      (picture) => {
-        console.log("get picture" + picture);
-        this.setState({ left_id: picture.data.getPicture.whale.name });
-      }
-    );
-    API.graphql(
-      graphqlOperation(getPicture, { id: this.state.similar_pictures[this.state.horizontal] })
-    ).then((picture) => {
-      console.log("get picture");
+    const currentImgIdLeft = this.state.newPicsList[this.state.vertical].id;
+    const currentImgIdRight = this.state.similar_pictures[this.state.horizontal];
+    // TODO add functionality to differentiate between the left and right side to optimize performance
+    /*API.graphql(graphqlOperation(getPicture, { id: currentImgIdLeft })).then((picture) => {
+      console.log("get picture left" + picture.data.getPicture);
+      console.log(picture.data.getPicture);
+      this.setState({ leftWhaleId: picture.data.getPicture.whale.id });
+    });
+    API.graphql(graphqlOperation(getPicture, { id: currentImgIdRight })).then((picture) => {
+      console.log("get picture right");
       console.log(picture);
-      this.setState({ right_id: picture.data.getPicture.whale.name }, (_) =>
+      this.setState({ rightWhaleId: picture.data.getPicture.whale.id }, (_) =>
         console.log(picture.data.getPicture.whale)
       );
-    });
+    });*/
 
-    this.setState(
+    // is isMatched still needed?
+    /*this.setState(
       {
         isMatched:
-          this.state.new_pictures[this.state.vertical] in this.state.matchedPictures &&
-          Array.from(this.state.matchedPictures[this.state.new_pictures[this.state.vertical]])
+          this.state.newPicsList[this.state.vertical].id in this.state.matchedPictures &&
+          Array.from(this.state.matchedPictures[this.state.newPicsList[this.state.vertical].id])
             .join()
             .includes(this.state.similar_pictures[this.state.horizontal]),
       },
       (data) => console.log(data)
-    );
-    this.list_pictures_right_side();
+    );*/
+    this.fetchSimilarPictures();
   }
 
-  list_pictures_right_side() {
+  async fetchSimilarPictures() {
     // TODO add second request with picture2 and add pictures
-    API.graphql(
-      graphqlOperation(listEuclidianDistances, {
-        picture1: this.state.new_pictures[this.state.vertical],
-      })
-    )
-      .then((result) => {
-        let pictures = [];
-        result.data.listEuclidianDistances.items.forEach((picture) =>
-          pictures.push(picture.picture2)
-        );
-        this.setState({
-          similar_pictures: pictures,
-        });
-      })
-      .catch((result) => this.setState({ similar_pictures: [""] }));
-  }
+    let returnValue = undefined;
+    console.log("IN fetchSimilar");
+    console.log(this.state.newPicsList[this.state.vertical].id);
+    try {
+      const result = await API.graphql(
+        graphqlOperation(listEuclidianDistances, {
+          picture1: this.state.newPicsList[this.state.vertical].id,
+        })
+      );
+      console.log("got result");
+      console.log(result);
+      let pictures = [];
+      result.data.listEuclidianDistances.items.forEach((picture) =>
+        pictures.push(picture.picture2)
+      );
 
-  list_pictures_left_side = (nextToken, ids, numReq) => {
-    API.graphql(
-      graphqlOperation(pictureByIsNew, { is_new: 1, limit: 5000, nextToken: nextToken })
-    ).then((result) => {
-      result.data.PictureByIsNew.items.forEach((id) => ids.push(id.id));
-      nextToken = result.data.PictureByIsNew.nextToken;
+      console.log(pictures);
+      returnValue = pictures;
+      console.log(returnValue);
+    } catch (error) {
+      console.log("ERROR IN fetchSimilarPictures");
+      console.log(error);
+      returnValue = -1;
+    }
 
-      this.setState({ new_pictures: ids }, (result) => {
-        this.list_pictures_right_side();
+    return new Promise((resolve) => {
+      setTimeout(function() {
+        resolve(returnValue); // Rückgabewert der Funktion
+        console.log("Promise returned");
+        console.log(returnValue);
       });
     });
-  };
+  }
+
+  async processNewSimilarPics(picArray) {
+    console.log("IN processNewSimilarPics");
+    if (picArray !== -1 && picArray.length >= 1) {
+      const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal]);
+      this.processNewSimPicObj(await simPicObjTemp);
+      this.setState({ similar_pictures: picArray });
+    }
+  }
+
+  processNewSimPicObj(simPicObjNew) {
+    if (simPicObjNew !== -1) {
+      console.log("AFTER await");
+      console.log(simPicObjNew);
+      this.setState({ simPicObj: simPicObjNew });
+    }
+  }
+
+  async fetchPictureObject(picId) {
+    console.log("AT BEGINNING OF FETCHPICTUREOBJECT");
+    let returnValue = undefined;
+    try {
+      const result = await API.graphql(graphqlOperation(getPicture, { id: picId }));
+      console.log("PROCESS PIC OBJ RESULT");
+      console.log(result);
+      returnValue = result.data.getPicture;
+    } catch (error) {
+      console.log("IN CATCH");
+      console.log(error);
+      returnValue = -1;
+    }
+
+    return new Promise((resolve) => {
+      resolve(returnValue); // Rückgabewert der Funktion
+      console.log("Promise returned");
+      console.log(returnValue);
+    });
+  }
+
+  async fetchNewPicturesList(nextToken, pics, numReq) {
+    console.log("AT BEGINNING OF FETCHNEWPICTURESLIST");
+    try {
+      const result = await API.graphql(
+        graphqlOperation(pictureByIsNew, { is_new: 1, limit: 2000, nextToken: nextToken })
+      );
+      result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
+      nextToken = result.data.PictureByIsNew.nextToken;
+
+      console.log("IN PROCESSING - SETTING STATE");
+      console.log(pics);
+      this.setState({ newPicsList: pics });
+    } catch (error) {
+      console.log("IN CATCH");
+      console.log(error);
+    }
+  }
 
   loadMatches = () => {
-    console.log("load matches");
-
     API.graphql(graphqlOperation(listMatchs)).then((response) => {
       console.log(response);
       const imgArr = {};
@@ -506,64 +563,9 @@ class LandingPage extends React.Component {
         }
         imgArr[match.picture1.filename].add(match.picture2.filename);
       });
-      console.log("imgArr");
-      console.log(imgArr);
+
       this.setState({ matchedPictures: imgArr });
     });
-  };
-
-  /*   signout = () =>{
-    const currentUser = Auth.userPool.getCurrentUser();
-    console.log('currentUser',currentUser)
-    try {
-       currentUser.signOut()
-      console.log('signout success');
-   }
-   catch(e) {
-    console.log('signout failed',e);
-    }
-  }  */
-  // loadMatches = (url) => {
-  //   var _this = this;
-  //   fetch(url, { credentials: "same-origin", 'headers': { 'token': 'Bearer ' + Cookies.read('token') } })
-  //     .then(function (response) {
-  //       // console.log(url + " -> " + response.ok);
-  //       if (response.ok) {
-  //         return response.text();
-  //       }
-  //       if (response.status == 401) { console.log("not authorized!") };
-  //       throw new Error('Error message.');
-  //     })
-  //     .then(function (data) {
-  //       /* when csv is downloaded it is converted into arrays and saved in whale_csv var */
-  //       this.setState(() => {
-  //         const json=JSON.parse(data); const matchedPictures = {};
-  //        Object.keys(json.matchedPictures).forEach(
-  //          left => {
-  //            if (left in matchedPictures) {json.matchedPictures[left].forEach(right => matchedPictures[left].add(right))}
-  //            else {matchedPictures[left] = new Set(json.matchedPictures[left])}
-  //           })
-  //           console.log(matchedPictures);
-  //           return { matchedPictures:  matchedPictures}
-  //         });
-  //     }.bind(this))
-  //     .catch(function (err) {
-  //       console.log("failed to load ", url, err.message);
-  //     });
-  // }
-
-  getimages = (image) => {
-    const bucket_url =
-      "https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/public/thumbnails/";
-    const image_url = bucket_url + image + "thumbnail.jpg";
-    return image_url;
-  };
-
-  getimagescropped = (image) => {
-    const bucket_url =
-      "https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/cropped_images/";
-    const image_url = bucket_url + image;
-    return image_url;
   };
 
   render() {
@@ -602,7 +604,7 @@ class LandingPage extends React.Component {
                   <GridItem xs={12} sm={12} md={6}>
                     <LinearProgress
                       variant="determinate"
-                      value={(this.state.vertical / (this.state.new_pictures.length - 1)) * 100}
+                      value={(this.state.vertical / (this.state.newPicsList.length - 1)) * 100}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
@@ -614,87 +616,32 @@ class LandingPage extends React.Component {
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
-                    <strong>New Image Number: </strong>{" "}
+                    <strong>New Image Number: </strong>
                     <Badge color="success">{this.state.vertical}</Badge>
                     <br />
-                    <strong>Assigned Whale Id:</strong>{" "}
-                    <Badge color="info">{this.state.left_id}</Badge>
                     <br />
-                    {this.state.is_loaded.has(this.state.new_pictures[this.state.vertical]) ? (
-                      ""
-                    ) : (
-                      <CircularProgress />
-                    )}
-                    <Gallery
-                      thumbnailImageComponent={ImageComponent}
-                      images={[
-                        {
-                          tags: [],
-                          onError: this.handleLeftImageErrored.bind(this),
-                          onLoad: this.handleLeftImageLoaded.bind(this),
-                          src: this.getimagescropped(this.state.new_pictures[this.state.vertical]),
-                          thumbnailWidth: 480,
-                          thumbnailHeight: 320,
-                          thumbnail: this.getimages(this.state.new_pictures[this.state.vertical]),
-                        },
-                      ]}
-                      rowHeight={240}
-                      enableLightbox={true}
-                      backdropClosesModal
-                      enableImageSelection={false}
-                    />
+                    <ImageWithInfoComponent picObj={this.state.newPicsList[this.state.vertical]} />
                     <br />
                   </GridItem>
-
                   <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
                     <strong>Best Matching Picture Number:</strong>
                     <Badge color="success">{this.state.horizontal}</Badge>
                     <br />
-                    <strong>Whale Id:</strong> <Badge color="info">{this.state.right_id}</Badge>
                     <br />
-                    {this.state.is_loaded.has(
-                      this.state.similar_pictures[this.state.horizontal]
-                    ) ? (
-                      ""
-                    ) : (
-                      <CircularProgress />
-                    )}
-                    <Gallery
-                      thumbnailImageComponent={ImageComponent}
-                      images={[
-                        {
-                          tags: [],
-                          onError: this.handleRightImageErrored.bind(this),
-                          onLoad: this.handleRightImageLoaded.bind(this),
-                          src: this.getimagescropped(
-                            this.state.similar_pictures[this.state.horizontal]
-                          ),
-                          thumbnailWidth: 480,
-                          thumbnailHeight: 320,
-                          thumbnail: this.getimages(
-                            this.state.similar_pictures[this.state.horizontal]
-                          ),
-                        },
-                      ]}
-                      rowHeight={240}
-                      enableLightbox={true}
-                      backdropClosesModal
-                      enableImageSelection={false}
-                    />
-                    <br />
+                    <ImageWithInfoComponent picObj={this.state.simPicObj} />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
-                    <h4 style={{ color: "black" }}>
-                      <a href={"search-page/" + this.state.left_id}>
-                        {this.state.new_pictures[this.state.vertical]}
-                      </a>{" "}
-                    </h4>
-                    <Button variant="contained" onClick={() => this.go_up()} color="info" size="sm">
+                    <Button
+                      variant="contained"
+                      onClick={() => this.navigationAction("up")}
+                      color="info"
+                      size="sm"
+                    >
                       &#9650;
                     </Button>
                     <Button
                       variant="contained"
-                      onClick={() => this.go_down()}
+                      onClick={() => this.navigationAction("down")}
                       color="info"
                       size="sm"
                     >
@@ -713,7 +660,7 @@ class LandingPage extends React.Component {
                       <ImagePicker
                         images={imageList.map((image, i) => ({ src: image, value: i }))}
                         onPick={this.onPick}
-                        onLoad="console.log('ASDASD')"
+                        onLoad="console.log('loaded onPick')"
                       />
                     </div>
                     <Snackbar
@@ -723,11 +670,6 @@ class LandingPage extends React.Component {
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
-                    <h4 style={{ color: "black" }}>
-                      <a href={"search-page/" + this.state.left_id}>
-                        {this.state.similar_pictures[this.state.horizontal]}
-                      </a>
-                    </h4>
                     {/*  new buttons for the matching result */}
                     <Button
                       disabled={
@@ -761,7 +703,7 @@ class LandingPage extends React.Component {
                     {/*  next pictures */}
                     <Button
                       variant="contained"
-                      onClick={() => this.go_left()}
+                      onClick={() => this.navigationAction("left")}
                       color="info"
                       size="sm"
                     >
@@ -769,7 +711,7 @@ class LandingPage extends React.Component {
                     </Button>
                     <Button
                       variant="contained"
-                      onClick={() => this.go_right()}
+                      onClick={() => this.navigationAction("right")}
                       color="info"
                       size="sm"
                     >
@@ -780,6 +722,7 @@ class LandingPage extends React.Component {
                     {/*        <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Log Out</Button>
                             <SignOut/> */}
                   </GridItem>
+                  <br />
                 </GridContainer>
               </div>
             </div>

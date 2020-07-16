@@ -9,9 +9,9 @@ import { login } from "./store/actions";
 import Cookies from "./utils/Cookies";
 
 import "./assets/scss/material-kit-react.scss?v=1.4.0";
-import Amplify from 'aws-amplify';
+import Amplify from "aws-amplify";
 import awsmobile from "./aws-exports";
-import { Auth } from 'aws-amplify';
+import { Auth } from "aws-amplify";
 // pages for this product
 import Components from "views/Components/Components.jsx";
 import LandingPage from "views/LandingPage/LandingPage.jsx";
@@ -19,19 +19,18 @@ import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 import UploadPage from "views/UploadPage.jsx";
 import SearchPage from "views/SearchPage.jsx";
+import SecretContactPage from "views/SecretContactPage.jsx";
 import Impressum from "views/impressum.jsx";
 
 var hist = createBrowserHistory();
 Amplify.configure(awsmobile);
 const token = Cookies.read("token");
 
-
 if (token) {
   const user = jwtDecode(token);
-console.log('token present user,', user);
+  console.log("token present user,", user);
   store.dispatch(login(user));
 }
-
 
 ReactDOM.render(
   <Provider store={store}>
@@ -44,6 +43,7 @@ ReactDOM.render(
         <Route path="/upload-page" component={UploadPage} />
         <Route path="/search-page/:whale_id" component={SearchPage} />
         <Route path="/search-page" component={SearchPage} />
+        <Route path="/contact-owner" component={SecretContactPage} />
         <Route path="/impressum" component={Impressum} />
         <Route path="/" component={LoginPage} />
       </Switch>
