@@ -215,6 +215,8 @@ class LandingPage extends React.Component {
     // make sure that is_new is only set if everything was successful (note that this if also implicitly check left != right)
     if (queryWasSuccess) {
       API.graphql(graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } }));
+      this.fetchNewPicturesList(undefined, [], 0);
+      this.loadMatches();
     }
 
     // console.log("returning matched pictures", prevState.matchedPictures);
@@ -266,28 +268,20 @@ class LandingPage extends React.Component {
   unacceptPicture() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
-    this.setState((prevState) => {
-      console.log("left img id: ", prevState.image_id[left_img_name]);
-      prevState.matchedPictures[left_img_name].delete(right_img_name);
-      console.log("array after deletion", prevState.matchedPictures[left_img_name]);
-      //API.graphql(graphqlOperation(updateMatchingImage, {input: {id: prevState.image_id[left_img_name], image:  {name: left_img_name}, matchingImages: {name: Array.from(prevState.matchedPictures[left_img_name])} }} )).then( () => console.log("deletin matching image")).catch(err => console.log(err));
       API.graphql(
         graphqlOperation(createMatch, {
           input: {
             matchPicture1Id: left_img_name,
             matchPicture2Id: right_img_name,
-            match_status: "match",
+            match_status: "no_match",
           },
         })
       ).then(() => {
-        console.log("created matching image");
-        this.handleCsvData();
+        console.log("created matching pair");
       });
 
-      return prevState.matchedPictures;
-    });
 
-    if (leftWhaleId != rightWhaleId) {
+    if (leftWhaleId == rightWhaleId) {
       API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" })).then((result) => {
         const maxWhaleId = result.data.getConfig.value;
         const newMaxWhaleId = (parseInt(maxWhaleId) + 1).toString();
