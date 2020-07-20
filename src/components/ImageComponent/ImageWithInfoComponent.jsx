@@ -54,14 +54,16 @@ const ImageWithInfoComponent = (props) => {
   };
 
   const openSearchPage = () => {
-    window.location.href = "/search-page/" + picObj.whale.id;
+    const url = "/search-page/" + picObj.whale.id;
+    window.open(url, "_blank");
   };
 
   if (typeof picObj !== "undefined") {
+    const whaleId = picObj.whale.id;
     picInfosItems = (
       <div>
         <strong>Whale ID: </strong>
-        <Badge color="info">{picObj.whale.id}</Badge>
+        <Badge color="info">{whaleId == -1 ? "-" : whaleId}</Badge>
         <Button size="sm" onClick={openSearchPage}>
           Show more pictures
         </Button>

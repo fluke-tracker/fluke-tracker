@@ -283,7 +283,7 @@ class LandingPage extends React.Component {
         },
       })
     ).then(() => {
-      console.log("created matching pair");
+      console.log("Created a new 'NO MATCH' pair");
     });
 
     if (leftWhaleId == rightWhaleId) {
