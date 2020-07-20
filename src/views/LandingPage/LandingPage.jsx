@@ -212,15 +212,15 @@ class LandingPage extends React.Component {
       }
     }
 
-    // make sure that is_new is only set if everything was successful (note that this if also implicitly check left != right)
+    // make sure that is_new is only set if everything was successful (NOTE that this if also implicitly check left != right)
     if (queryWasSuccess) {
-      API.graphql(graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } }));
+      // we need to be sure that the updatePicture operation finished before starting the fetchNewPicturesList function
+      await API.graphql(
+        graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } })
+      );
       this.fetchNewPicturesList(undefined, [], 0);
       this.loadMatches();
     }
-
-    // console.log("returning matched pictures", prevState.matchedPictures);
-    // return { matchedPictures: prevState.matchedPictures };
   }
 
   async changeWhaleIdOfPictures(fromId, toId) {
@@ -229,14 +229,20 @@ class LandingPage extends React.Component {
     try {
       const whaleObjs = await API.graphql(graphqlOperation(getWhale, { id: fromId }));
       console.log("AFTER GRAPHQL query");
-      whaleObjs.data.getWhale.pictures.items.forEach((picture) => {
+      let resultsPromiseArray = [];
+      whaleObjs.data.getWhale.pictures.items.forEach(async (picture) => {
         console.log("UPDATE PIC to new whale id");
-        API.graphql(
-          graphqlOperation(updatePicture, {
-            input: { id: picture.id, pictureWhaleId: toId },
-          })
+        resultsPromiseArray.push(
+          API.graphql(
+            graphqlOperation(updatePicture, {
+              input: { id: picture.id, pictureWhaleId: toId },
+            })
+          )
         );
       });
+      // all the update operations are send to the DB and then await Promise.all() waits for all of them to finish
+      await Promise.all(resultsPromiseArray);
+      console.log("AFTER Promise.all ", resultsPromiseArray);
       successfulOp = true;
     } catch (error) {
       console.log(error);
@@ -268,18 +274,17 @@ class LandingPage extends React.Component {
   unacceptPicture() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
-      API.graphql(
-        graphqlOperation(createMatch, {
-          input: {
-            matchPicture1Id: left_img_name,
-            matchPicture2Id: right_img_name,
-            match_status: "no_match",
-          },
-        })
-      ).then(() => {
-        console.log("created matching pair");
-      });
-
+    API.graphql(
+      graphqlOperation(createMatch, {
+        input: {
+          matchPicture1Id: left_img_name,
+          matchPicture2Id: right_img_name,
+          match_status: "no_match",
+        },
+      })
+    ).then(() => {
+      console.log("created matching pair");
+    });
 
     if (leftWhaleId == rightWhaleId) {
       API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" })).then((result) => {
