@@ -194,7 +194,7 @@ class LandingPage extends React.Component {
     console.log("right_image is: ", right_img_name, "right id is: ", rightWhaleId);
 
     let queryWasSuccess = false;
-    if (parseInt(rightWhaleId) < parseInt(leftWhaleId)) {
+    if (parseInt(leftWhaleId) === -1 || parseInt(rightWhaleId) < parseInt(leftWhaleId)) {
       // assign all pictures with the left id the right id
       queryWasSuccess = await this.changeWhaleIdOfPictures(leftWhaleId, rightWhaleId);
       if (queryWasSuccess) {
@@ -444,21 +444,43 @@ class LandingPage extends React.Component {
   async fetchSimilarPictures() {
     // TODO add second request with picture2 and add pictures
     let returnValue = undefined;
+    const leftImgId = this.state.newPicsList[this.state.vertical].id;
     console.log("IN fetchSimilar");
-    console.log(this.state.newPicsList[this.state.vertical].id);
+    console.log(leftImgId);
     try {
-      const result = await API.graphql(
+      // query where picture1 = leftImgId
+      const query1 = API.graphql(
         graphqlOperation(listEuclidianDistances, {
-          picture1: this.state.newPicsList[this.state.vertical].id,
+          picture1: leftImgId,
           limit: 5000,
         })
       );
-      console.log("got result");
-      console.log(result);
+      // query where picture2 = leftImgId
+      /*const query2 = API.graphql(
+        graphqlOperation(listEuclidianDistances, {
+          picture2: leftImgId,
+          limit: 5000,
+        })
+      );*/
+
+      const result1 = await query1;
+      //const result2 = await query2;
+
+      console.log("GOT result1");
+      console.log(result1);
+      console.log("GOT result2");
+      //console.log(result2);
+
+      // concatinate both arrays
+      let resultsAllItems = await result1.data.listEuclidianDistances.items.concat(
+        //result2.data.listEuclidianDistances.items
+        []
+      );
+
       let pictures = [];
-      result.data.listEuclidianDistances.items
+      resultsAllItems
         .sort((a, b) => a.distance - b.distance)
-        .forEach((picture) => pictures.push(picture.picture2));
+        .forEach((pic) => pictures.push(pic.picture2));
 
       console.log(pictures);
       returnValue = pictures;
@@ -470,11 +492,9 @@ class LandingPage extends React.Component {
     }
 
     return new Promise((resolve) => {
-      setTimeout(function() {
-        resolve(returnValue); // Rückgabewert der Funktion
-        console.log("Promise returned");
-        console.log(returnValue);
-      });
+      resolve(returnValue); // Rückgabewert der Funktion
+      console.log("Promise returned");
+      console.log(returnValue);
     });
   }
 
