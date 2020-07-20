@@ -21,6 +21,7 @@ import Parallax from "components/Parallax/Parallax.jsx";
 import Snackbar from "@material-ui/core/Snackbar";
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoComponent.jsx";
 
 import { connect } from "react-redux";
@@ -200,7 +201,7 @@ class LandingPage extends React.Component {
       if (queryWasSuccess) {
         this.showSnackBarAssignedIds(leftWhaleId, rightWhaleId);
       } else {
-        this.showSnackBar("Oops! An error occured! Please try again!");
+        this.showSnackBar("Oops! An error occured! Please try again!", 5000);
       }
     } else if (parseInt(leftWhaleId) < parseInt(rightWhaleId)) {
       // assign all pictures with the right id the left id
@@ -208,7 +209,7 @@ class LandingPage extends React.Component {
       if (queryWasSuccess) {
         this.showSnackBarAssignedIds(rightWhaleId, leftWhaleId);
       } else {
-        this.showSnackBar("Oops! An error occured! Please try again!");
+        this.showSnackBar("Oops! An error occured! Please try again!", 5000);
       }
     }
 
@@ -223,29 +224,52 @@ class LandingPage extends React.Component {
     }
   }
 
+  /**
+   * This function assigns the toId to every picture object that currently holds fromId as its whaleId.
+   * In case of fromId being -1 we only change the ID of the picture currently displayed as it was not attached to a
+   * "real" whale yet and therefore would break the DB if assigning the new ID to every -1 picture.
+   *
+   * @param {number} fromId ID that should be changed
+   * @param {number} toId ID the fromId should be changed to
+   */
   async changeWhaleIdOfPictures(fromId, toId) {
     console.log("IN changeWhaleIdOfPictures");
     let successfulOp = false;
     try {
-      const whaleObjs = await API.graphql(graphqlOperation(getWhale, { id: fromId }));
-      console.log("AFTER GRAPHQL query");
       let resultsPromiseArray = [];
-      whaleObjs.data.getWhale.pictures.items.forEach(async (picture) => {
-        console.log("UPDATE PIC to new whale id");
+      // -1 has to be handled specially to only set the ID of one picture and not every picture that has -1 as whale ID
+      if (fromId == -1) {
+        console.log("IN -1 case");
+        // NOTE this only works if we can be sure that on the right side can't be any picture displayed with is_new = 1
+        const picObjId = this.state.newPicsList[this.state.vertical].id;
         resultsPromiseArray.push(
           API.graphql(
             graphqlOperation(updatePicture, {
-              input: { id: picture.id, pictureWhaleId: toId },
+              input: { id: picObjId, pictureWhaleId: toId },
             })
           )
         );
-      });
+      } else {
+        console.log("IN NOT -1 case");
+        const whaleObjs = await API.graphql(graphqlOperation(getWhale, { id: fromId }));
+        whaleObjs.data.getWhale.pictures.items.forEach((picture) => {
+          resultsPromiseArray.push(
+            API.graphql(
+              graphqlOperation(updatePicture, {
+                input: { id: picture.id, pictureWhaleId: toId },
+              })
+            )
+          );
+        });
+      }
+      console.log("AFTER GRAPHQL query");
+
       // all the update operations are send to the DB and then await Promise.all() waits for all of them to finish
       await Promise.all(resultsPromiseArray);
       console.log("AFTER Promise.all ", resultsPromiseArray);
       successfulOp = true;
     } catch (error) {
-      console.log(error);
+      console.log("ERROR in DB queries in changeWhaleIdOfPictures: ", error);
     }
 
     console.log("END of changeWhaleIdOfPictures");
@@ -258,7 +282,14 @@ class LandingPage extends React.Component {
   }
 
   showSnackBarAssignedIds(fromId, toId) {
-    this.showSnackBar("Assigned all whales with ID " + fromId + " the ID " + toId, 5000);
+    if (fromId != -1) {
+      this.showSnackBar(
+        "Successfully assigned all whales with ID " + fromId + " the ID " + toId,
+        5000
+      );
+    } else {
+      this.showSnackBar("Successfully assigned whale ID " + toId, 5000);
+    }
   }
 
   /**
@@ -388,6 +419,7 @@ class LandingPage extends React.Component {
       console.log("IN UPDATE");
       console.log(prevState.newPicsList);
       console.log(this.state.newPicsList);
+      this.doubleCheckVertical();
       const fetchedSimPics = this.fetchSimilarPictures();
       this.processNewSimilarPics(await fetchedSimPics);
     }
@@ -403,6 +435,16 @@ class LandingPage extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener("keydown", this._handleKeyDown);
+  }
+
+  /**
+   * Makes sure that this.state.vertical does not become greater than the length of the array.
+   * This could happen when matching an image that then disappears from the left side.
+   */
+  doubleCheckVertical() {
+    this.setState({
+      vertical: Math.min(this.state.vertical, this.state.newPicsList.length),
+    });
   }
 
   onPick(image) {
@@ -500,9 +542,11 @@ class LandingPage extends React.Component {
 
   async processNewSimilarPics(picArray) {
     console.log("IN processNewSimilarPics");
-    if (picArray !== -1 && picArray.length >= 1) {
-      const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal]);
-      this.processNewSimPicObj(await simPicObjTemp);
+    if (picArray !== -1) {
+      if (picArray.length >= 1) {
+        const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal]);
+        this.processNewSimPicObj(await simPicObjTemp);
+      }
       this.setState({ similar_pictures: picArray });
     }
   }
@@ -619,18 +663,30 @@ class LandingPage extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
                     <strong>New Image Number: </strong>
-                    <Badge color="success">{this.state.vertical}</Badge>
+                    <Badge color="success">{this.state.vertical + 1}</Badge>
                     <br />
                     <br />
                     <ImageWithInfoComponent picObj={this.state.newPicsList[this.state.vertical]} />
                     <br />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
-                    <strong>Best Matching Picture Number:</strong>
-                    <Badge color="success">{this.state.horizontal}</Badge>
+                    <strong>Best Matching Picture Number: </strong>
+                    <Badge color="success">{this.state.horizontal + 1}</Badge>
                     <br />
                     <br />
-                    <ImageWithInfoComponent picObj={this.state.simPicObj} />
+                    {this.state.similar_pictures.length === 0 ? (
+                      <div style={{ textAlign: "center", marginTop: 100 }}>
+                        Still computing similar images.
+                        <br />
+                        <br />
+                        <CircularProgress />
+                        <br />
+                        <br />
+                        Please come back in a few minutes.
+                      </div>
+                    ) : (
+                      <ImageWithInfoComponent picObj={this.state.simPicObj} />
+                    )}
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <Button
