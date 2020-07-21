@@ -59,7 +59,7 @@ import { createWhale } from "graphql/mutations";
 import { listWhales } from "graphql/queries";
 import { createPicture } from "graphql/mutations";
 import { updatePicture } from "graphql/mutations";
-import { listEuclidianDistances } from "graphql/queries";
+import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/queries";
 
 //import awsconfig from 'aws-exports';
 import Amplify, { Storage } from "aws-amplify";
@@ -305,9 +305,11 @@ class LandingPage extends React.Component {
   unacceptPicture() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
+    const constructedId = left_img_name + "_" + right_img_name;
     API.graphql(
       graphqlOperation(createMatch, {
         input: {
+          id: constructedId,
           matchPicture1Id: left_img_name,
           matchPicture2Id: right_img_name,
           match_status: "no_match",
@@ -315,6 +317,7 @@ class LandingPage extends React.Component {
       })
     ).then(() => {
       console.log("Created a new 'NO MATCH' pair");
+      this.showSnackBar("Successfully saved 'no match' between the two pictures", 5000);
     });
 
     if (leftWhaleId == rightWhaleId) {
@@ -497,9 +500,9 @@ class LandingPage extends React.Component {
           limit: 5000,
         })
       );
-      // query where picture2 = leftImgId
+      //query where picture2 = leftImgId
       /*const query2 = API.graphql(
-        graphqlOperation(listEuclidianDistances, {
+        graphqlOperation(euclidianDistanceByPicture2, {
           picture2: leftImgId,
           limit: 5000,
         })
