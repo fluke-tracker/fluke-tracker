@@ -31,6 +31,7 @@ type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "Pictu
 }
 
 type Match @model{
+    id: ID!
     picture1: Picture! @connection(name: "MatchLeftPicture")
     picture2: Picture! @connection(name: "MatchRightPicture")
     match_status: String
