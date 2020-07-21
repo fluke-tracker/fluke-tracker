@@ -321,6 +321,8 @@ class LandingPage extends React.Component {
       this.showSnackBar("Successfully saved 'no match' between the two pictures", 5000);
     });
 
+    // this can never happen due to the fact that a picture with an assigned ID won't be on the left side
+    /*
     if (leftWhaleId == rightWhaleId) {
       API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" })).then((result) => {
         const maxWhaleId = result.data.getConfig.value;
@@ -340,7 +342,7 @@ class LandingPage extends React.Component {
           graphqlOperation(updateConfig, { input: { id: "maxWhaleId", value: newMaxWhaleId } })
         );
       });
-    }
+    }*/
   }
 
   navigationAction(direction) {
@@ -432,8 +434,12 @@ class LandingPage extends React.Component {
       this.processNewSimilarPics(await this.fetchSimilarPictures());
     } else if (prevState.horizontal !== this.state.horizontal) {
       /* this means vertical didn't change, only horizontal did */
-      const newSimPic = this.fetchPictureObject(this.state.similar_pictures[this.state.horizontal].picture2);
-      await this.setState({ distance: this.state.similar_pictures[this.state.horizontal].distance });
+      const newSimPic = this.fetchPictureObject(
+        this.state.similar_pictures[this.state.horizontal].picture2
+      );
+      await this.setState({
+        distance: this.state.similar_pictures[this.state.horizontal].distance,
+      });
       this.processNewSimPicObj(await newSimPic);
     }
   }
@@ -525,9 +531,7 @@ class LandingPage extends React.Component {
       );
 
       let pictures = [];
-      resultsAllItems
-        .sort((a, b) => a.distance - b.distance)
-        .forEach((pic) => pictures.push(pic));
+      resultsAllItems.sort((a, b) => a.distance - b.distance).forEach((pic) => pictures.push(pic));
 
       console.log(pictures);
       returnValue = pictures;
@@ -692,7 +696,10 @@ class LandingPage extends React.Component {
                         Please come back in a few minutes.
                       </div>
                     ) : (
-                      <ImageWithInfoComponent picObj={this.state.simPicObj} distance={this.state.distance} />
+                      <ImageWithInfoComponent
+                        picObj={this.state.simPicObj}
+                        distance={this.state.distance}
+                      />
                     )}
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
