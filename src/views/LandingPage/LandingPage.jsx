@@ -94,6 +94,7 @@ class LandingPage extends React.Component {
       similar_pictures: [""],
       newPicsList: [],
       simPicObj: undefined,
+      distance: null,
     };
 
     // BINDING FUNCTIONS
@@ -428,7 +429,8 @@ class LandingPage extends React.Component {
       this.processNewSimilarPics(await this.fetchSimilarPictures());
     } else if (prevState.horizontal !== this.state.horizontal) {
       /* this means vertical didn't change, only horizontal did */
-      const newSimPic = this.fetchPictureObject(this.state.similar_pictures[this.state.horizontal]);
+      const newSimPic = this.fetchPictureObject(this.state.similar_pictures[this.state.horizontal].picture2);
+      await this.setState({ distance: this.state.similar_pictures[this.state.horizontal].distance });
       this.processNewSimPicObj(await newSimPic);
     }
   }
@@ -522,7 +524,7 @@ class LandingPage extends React.Component {
       let pictures = [];
       resultsAllItems
         .sort((a, b) => a.distance - b.distance)
-        .forEach((pic) => pictures.push(pic.picture2));
+        .forEach((pic) => pictures.push(pic));
 
       console.log(pictures);
       returnValue = pictures;
@@ -542,9 +544,11 @@ class LandingPage extends React.Component {
 
   async processNewSimilarPics(picArray) {
     console.log("IN processNewSimilarPics");
+    await this.setState({ distance: null });
     if (picArray !== -1) {
       if (picArray.length >= 1) {
-        const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal]);
+        const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal].picture2);
+        this.setState({ distance: picArray[this.state.horizontal].distance });
         this.processNewSimPicObj(await simPicObjTemp);
       }
       this.setState({ similar_pictures: picArray });
@@ -685,7 +689,7 @@ class LandingPage extends React.Component {
                         Please come back in a few minutes.
                       </div>
                     ) : (
-                      <ImageWithInfoComponent picObj={this.state.simPicObj} />
+                      <ImageWithInfoComponent picObj={this.state.simPicObj} distance={this.state.distance} />
                     )}
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>

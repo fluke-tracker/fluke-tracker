@@ -14,6 +14,7 @@ const ImageWithInfoComponent = (props) => {
   console.log(props);
 
   const picObj = props.picObj;
+  const distance = props.distance;
   const [loadedPictures, setLoadedPictures] = React.useState(new Set());
   let imageStatus = "";
   let filename = "";
@@ -79,6 +80,10 @@ const ImageWithInfoComponent = (props) => {
         <strong>Date: </strong>
         <Badge color="info">{picObj.date_taken}</Badge>
         <br />
+        {
+            distance != null ? <div><strong>Distance: </strong><Badge color="info">{distance.toFixed(2)}</Badge></div>:
+                <br/>
+        }
       </div>
     );
 
