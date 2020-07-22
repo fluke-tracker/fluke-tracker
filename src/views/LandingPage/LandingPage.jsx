@@ -378,36 +378,28 @@ class LandingPage extends React.Component {
     const M_KEY = 77;
     const U_KEY = 85;
 
-    //console.log(event);
     switch (event.keyCode) {
       case M_KEY:
-        const left_img = this.state.newPicsList[this.state.vertical];
-        const right_img = this.state.similar_pictures[this.state.horizontal];
-        if (
-          left_img in this.state.matchedPictures &&
-          this.state.matchedPictures[left_img].has(right_img)
-        ) {
-          this.unacceptPicture();
-        } else {
-          this.acceptPicture();
-        }
+        this.acceptPicture();
+        break;
+      case U_KEY:
+        this.unacceptPicture();
+        this.go_right();
         break;
       case LEFT_ARROW_KEY:
         this.go_left();
-
         break;
       case RIGHT_ARROW_KEY:
         this.go_right();
-
         break;
       case DOWN_ARROW_KEY:
         this.go_down();
         break;
       case UP_ARROW_KEY:
         this.go_up();
-
         break;
       default:
+        console.log("WARNING! Key code of pressed key did not match.");
         break;
     }
   };
@@ -437,7 +429,7 @@ class LandingPage extends React.Component {
       const newSimPic = this.fetchPictureObject(
         this.state.similar_pictures[this.state.horizontal].picture2
       );
-      await this.setState({
+      this.setState({
         distance: this.state.similar_pictures[this.state.horizontal].distance,
       });
       this.processNewSimPicObj(await newSimPic);
@@ -530,12 +522,10 @@ class LandingPage extends React.Component {
         []
       );
 
-      let pictures = [];
-      resultsAllItems.sort((a, b) => a.distance - b.distance).forEach((pic) => pictures.push(pic));
+      resultsAllItems.sort((a, b) => a.distance - b.distance);
+      let first100Pictures = resultsAllItems.slice(0, 100);
 
-      console.log(pictures);
-      returnValue = pictures;
-      console.log(returnValue);
+      returnValue = first100Pictures;
     } catch (error) {
       console.log("ERROR IN fetchSimilarPictures");
       console.log(error);

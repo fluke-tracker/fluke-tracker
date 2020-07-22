@@ -61,10 +61,14 @@ const ImageWithInfoComponent = (props) => {
 
   if (typeof picObj !== "undefined") {
     const whaleId = picObj.whale.id;
+    const geocoords = picObj.geocoords;
+    const geocoordsErrs = new Set(["undefined,undefined", ",", null]);
+    const date = picObj.date_taken;
+    const dateErrs = new Set(["", " ", null]);
     picInfosItems = (
       <div>
         <strong>Whale ID: </strong>
-        <Badge color="info">{whaleId == -1 ? "-" : whaleId}</Badge>
+        <Badge color="info">{parseInt(whaleId) === -1 ? "-" : whaleId}</Badge>
         <Button size="sm" onClick={openSearchPage}>
           Show more pictures
         </Button>
@@ -74,16 +78,20 @@ const ImageWithInfoComponent = (props) => {
         <SendPrivateMessage />
         <br />
         <strong>Coordinates / Place: </strong>
-        <Badge color="info">{picObj.geocoords}</Badge>
+        <Badge color="info">{geocoordsErrs.has(geocoords) ? "-" : geocoords}</Badge>
         <Button size="sm">Open map</Button>
         <br />
         <strong>Date: </strong>
-        <Badge color="info">{picObj.date_taken}</Badge>
+        <Badge color="info">{dateErrs.has(date) ? "-" : date}</Badge>
         <br />
-        {
-            distance != null ? <div><strong>Distance: </strong><Badge color="info">{distance.toFixed(2)}</Badge></div>:
-                <br/>
-        }
+        {distance != null ? (
+          <div>
+            <strong>Distance: </strong>
+            <Badge color="info">{distance.toFixed(2)}</Badge>
+          </div>
+        ) : (
+          <br />
+        )}
       </div>
     );
 
