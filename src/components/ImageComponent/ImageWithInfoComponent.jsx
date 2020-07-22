@@ -59,10 +59,23 @@ const ImageWithInfoComponent = (props) => {
     window.open(url, "_blank");
   };
 
-  if (typeof picObj !== "undefined") {
-    const whaleId = picObj.whale.id;
+  const openMapPage = () => {
+    const url = "https://www.google.de/maps/search/" + getGeocoordsParsed();
+    window.open(url, "_blank");
+  };
+
+  const getGeocoordsParsed = () => {
     const geocoords = picObj.geocoords;
     const geocoordsErrs = new Set(["undefined,undefined", ",", null]);
+    if (geocoordsErrs.has(geocoords)) {
+      return "-";
+    } else {
+      return geocoords;
+    }
+  };
+
+  if (typeof picObj !== "undefined") {
+    const whaleId = picObj.whale.id;
     const date = picObj.date_taken;
     const dateErrs = new Set(["", " ", null]);
     picInfosItems = (
@@ -78,8 +91,10 @@ const ImageWithInfoComponent = (props) => {
         <SendPrivateMessage />
         <br />
         <strong>Coordinates / Place: </strong>
-        <Badge color="info">{geocoordsErrs.has(geocoords) ? "-" : geocoords}</Badge>
-        <Button size="sm">Open map</Button>
+        <Badge color="info">{getGeocoordsParsed()}</Badge>
+        <Button size="sm" onClick={openMapPage}>
+          Open map
+        </Button>
         <br />
         <strong>Date: </strong>
         <Badge color="info">{dateErrs.has(date) ? "-" : date}</Badge>
