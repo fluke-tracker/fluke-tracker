@@ -15,6 +15,7 @@ const ImageWithInfoComponent = (props) => {
 
   const picObj = props.picObj;
   const distance = props.distance;
+  const adminFlag = props.adminFlag;
   const [loadedPictures, setLoadedPictures] = React.useState(new Set());
   let imageStatus = "";
   let filename = "";
@@ -82,18 +83,28 @@ const ImageWithInfoComponent = (props) => {
       <div>
         <strong>Whale ID: </strong>
         <Badge color="info">{parseInt(whaleId) === -1 ? "-" : whaleId}</Badge>
-        <Button size="sm" onClick={openSearchPage}>
-          Show more pictures
-        </Button>
+        {adminFlag ? (
+          <Button size="sm" onClick={openSearchPage}>
+            Show more pictures
+          </Button>
+        ) : (
+          ""
+        )}
         <br />
-        <strong>Picture owner: </strong>
-        <Badge color="info">{picObj.uploaded_by}</Badge>
-        <SendPrivateMessage />
-        <br />
+        {adminFlag ? (
+          <div>
+            <strong>Picture owner: </strong>
+            <Badge color="info">{picObj.uploaded_by}</Badge>
+            <SendPrivateMessage />
+            <br />
+          </div>
+        ) : (
+          ""
+        )}
         <strong>Coordinates / Place: </strong>
         <Badge color="info">{getGeocoordsParsed()}</Badge>
         <Button size="sm" onClick={openMapPage}>
-          Open map
+          Open in map
         </Button>
         <br />
         <strong>Date: </strong>
