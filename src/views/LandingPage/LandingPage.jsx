@@ -12,6 +12,7 @@ import CSVReader from "react-csv-reader";
 import Header from "components/Header/Header.jsx";
 import Footer from "components/Footer/Footer.jsx";
 import SetWhaleDialog from "components/CustomDialog/SetWhaleID.jsx";
+import SetMaxWhaleIdAutoDialog from "components/CustomDialog/SetMaxWhaleIdAutoDialog.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Badge from "components/Badge/Badge.jsx";
@@ -100,6 +101,8 @@ class LandingPage extends React.Component {
     this.acceptPicture = this.acceptPicture.bind(this);
     this.unacceptPicture = this.unacceptPicture.bind(this);
 
+    this.go_manualId = this.go_manualId.bind(this);
+
     this.go_up = this.go_up.bind(this);
     this.go_down = this.go_down.bind(this);
     this.go_left = this.go_left.bind(this);
@@ -122,18 +125,25 @@ class LandingPage extends React.Component {
   go_newId() {
     console.log("new id code goes here");
   }
-  go_manualId(pId) {
-    console.log("manual id code goes here, id: " + pId);
-    const vert = this.state.vertical;
-    const leftImgFileName = this.state.newPicsList[vert].id;
+  async go_manualId(pId) {
+    console.log("IN goManualId");
+    const leftImgFileName = this.state.newPicsList[this.state.vertical].id;
+    const idOrFalse = await this.createAndAssignNewWhaleId(leftImgFileName);
 
-    /*API.graphql(
-      graphqlOperation(updatePicture, { input: { id: leftImgFileName, pictureWhaleId: pId } })
-    );*/
+    if (idOrFalse === false) {
+      this.showSnackBar("Ooops, an error occured! Please try again!", 5000);
+    } else {
+      this.showSnackBar(
+        "Successfully created and assigned whale ID " +
+          idOrFalse +
+          " to picture " +
+          leftImgFileName,
+        5000
+      );
+    }
 
-    const updatedList = [...this.state.newPicsList];
-    updatedList[vert].whale.id = pId;
-    this.setState({ newPicsList: updatedList });
+    this.fetchNewPicturesList(undefined, [], 0);
+    this.loadMatches();
   }
 
   authenticate_user() {
@@ -175,6 +185,51 @@ class LandingPage extends React.Component {
         horizontal: Math.min(this.state.similar_pictures.length - 1, this.state.horizontal + 1),
       });
     }
+  }
+
+  /**
+   * 1. Creates new whale entry with the current max whale ID
+   * 2. Updates the picture ID to the max whale ID
+   * 3. Increments the max whale ID by one
+   *
+   * The awaits in the first two graphQL calls are necessary to ensure data consistency.
+   *
+   * @param {string} picFileName
+   */
+  async createAndAssignNewWhaleId(picFileName) {
+    let idOrFalse;
+    try {
+      // look up current max whale ID
+      const result = await API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" }));
+      const currentMaxWhaleId = result.data.getConfig.value;
+
+      // create new whale with the current max whale ID
+      await API.graphql(
+        graphqlOperation(createWhale, { input: { id: currentMaxWhaleId, name: currentMaxWhaleId } })
+      );
+
+      //update picture with ID of the newly created whale
+      await API.graphql(
+        graphqlOperation(updatePicture, {
+          input: { id: picFileName, is_new: 0, pictureWhaleId: currentMaxWhaleId },
+        })
+      );
+      idOrFalse = currentMaxWhaleId;
+
+      // increment max whale id
+      const newMaxWhaleId = (parseInt(currentMaxWhaleId) + 1).toString();
+      API.graphql(
+        graphqlOperation(updateConfig, { input: { id: "maxWhaleId", value: newMaxWhaleId } })
+      );
+    } catch (error) {
+      idOrFalse = false;
+      console.log("ERROR in createAndAssignNewWhaleId: ", error);
+    }
+
+    return new Promise((resolve) => {
+      resolve(idOrFalse); // Rückgabewert der Funktion
+      console.log("Promise returned: ", idOrFalse);
+    });
   }
 
   getCurrentNamesIds() {
@@ -274,10 +329,8 @@ class LandingPage extends React.Component {
 
     console.log("END of changeWhaleIdOfPictures");
     return new Promise((resolve) => {
-      setTimeout(function() {
-        resolve(successfulOp); // Rückgabewert der Funktion
-        console.log("Promise returned: ", successfulOp);
-      });
+      resolve(successfulOp); // Rückgabewert der Funktion
+      console.log("Promise returned: ", successfulOp);
     });
   }
 
@@ -675,7 +728,7 @@ class LandingPage extends React.Component {
                     <br />
                     {this.state.similar_pictures.length === 0 ? (
                       <div style={{ textAlign: "center", marginTop: 100 }}>
-                        Still computing similar images.
+                        Computing similar images.
                         <br />
                         <br />
                         <CircularProgress />
@@ -691,6 +744,7 @@ class LandingPage extends React.Component {
                     )}
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
+                    <SetMaxWhaleIdAutoDialog function={this.go_manualId}></SetMaxWhaleIdAutoDialog>
                     <Button
                       variant="contained"
                       onClick={() => this.navigationAction("up")}
@@ -715,7 +769,6 @@ class LandingPage extends React.Component {
                     >
                       Bad picture
                     </Button>
-                    <SetWhaleDialog function={this.go_manualId.bind(this)}></SetWhaleDialog>
                     <div>
                       <ImagePicker
                         images={imageList.map((image, i) => ({ src: image, value: i }))}
