@@ -94,7 +94,6 @@ class LandingPage extends React.Component {
       similar_pictures: [""],
       newPicsList: [],
       simPicObj: undefined,
-      distance: null,
     };
 
     // BINDING FUNCTIONS
@@ -429,9 +428,9 @@ class LandingPage extends React.Component {
       const newSimPic = this.fetchPictureObject(
         this.state.similar_pictures[this.state.horizontal].picture2
       );
-      this.setState({
+      /*this.setState({
         distance: this.state.similar_pictures[this.state.horizontal].distance,
-      });
+      });*/
       this.processNewSimPicObj(await newSimPic);
     }
   }
@@ -541,11 +540,9 @@ class LandingPage extends React.Component {
 
   async processNewSimilarPics(picArray) {
     console.log("IN processNewSimilarPics");
-    await this.setState({ distance: null });
     if (picArray !== -1) {
       if (picArray.length >= 1) {
         const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal].picture2);
-        this.setState({ distance: picArray[this.state.horizontal].distance });
         this.processNewSimPicObj(await simPicObjTemp);
       }
       this.setState({ similar_pictures: picArray });
@@ -664,7 +661,8 @@ class LandingPage extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
                     <strong>New Image Number: </strong>
-                    <Badge color="success">{this.state.vertical + 1}</Badge>
+                    <Badge color="success">{this.state.vertical + 1}</Badge> of{" "}
+                    <Badge color="success">{this.state.newPicsList.length}</Badge>
                     <br />
                     <br />
                     <ImageWithInfoComponent picObj={this.state.newPicsList[this.state.vertical]} />
@@ -688,7 +686,7 @@ class LandingPage extends React.Component {
                     ) : (
                       <ImageWithInfoComponent
                         picObj={this.state.simPicObj}
-                        distance={this.state.distance}
+                        distance={this.state.similar_pictures[this.state.horizontal].distance}
                       />
                     )}
                   </GridItem>
