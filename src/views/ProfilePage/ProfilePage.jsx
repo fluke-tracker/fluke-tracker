@@ -40,7 +40,10 @@ class ProfilePage extends React.Component {
         console.log("profilepage user", user.username);
         this.setState({ user: user });
       })
-      .catch((err) => console.log("currentAuthenticatedUser profilepage err", err));
+      .catch((err) => {
+        console.log("currentAuthenticatedUser profilepage er pushing to login page", err);
+        this.props.history.push("/login-page");
+      });
   }
   async uploadImage() {
     try {
@@ -200,6 +203,8 @@ class ProfilePage extends React.Component {
           }}
           {...rest}
         />
+      {this.state.user != null ? (
+        <div>
         <div
           class="section container"
           style={{
@@ -297,7 +302,11 @@ class ProfilePage extends React.Component {
             {!!this.state.response && <h5 style={{ color: "red" }}>{this.state.response}</h5>}
           </div>
         </div>
-      </div>
+        </div>
+      ) : (
+       <div></div>
+      )}
+    </div>
     );
   }
 }

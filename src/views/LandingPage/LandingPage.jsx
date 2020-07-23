@@ -142,7 +142,10 @@ class LandingPage extends React.Component {
         console.log("MATCHINGPAGE user", user, user.username);
         this.setState({ user: user.username });
       })
-      .catch((err) => console.log("currentAuthenticatedUser err", err));
+      .catch((err) => {
+        console.log("currentAuthenticatedUser landing page err redirect to login", err);
+        this.props.history.push("/login-page");
+      });
   }
 
   go_left() {
@@ -631,7 +634,8 @@ class LandingPage extends React.Component {
           }}
           {...rest}
         />
-
+        {this.state.user != null ? (
+         <div>
         <div className={classes.container}>
           <div class="section container" style={{ paddingTop: "150px", paddingBottom: "5px" }}>
             <div class="row">
@@ -741,9 +745,9 @@ class LandingPage extends React.Component {
                         {" "}
                         Match
                       </Button>
-                    ) : 
+                    ) : (
                       <div></div>
-                    }
+                    )}
                     {this.state.user == "LisaSteiner" || this.state.user == "whalewatching" ? (
                       <Button
                         variant="contained"
@@ -753,9 +757,9 @@ class LandingPage extends React.Component {
                       >
                         Don't match
                       </Button>
-                    ) : 
+                    ) : (
                       <div></div>
-                    }
+                    )}
                     {/*               <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button> */}
                     {/*               <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button> */}
                     <br />
@@ -787,6 +791,9 @@ class LandingPage extends React.Component {
             </div>
           </div>
         </div>
+       </div> ) : (
+       <div></div>
+      )}  
       </div>
     );
   }
