@@ -733,32 +733,31 @@ class LandingPage extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     {/*  new buttons for the matching result */}
-                    <Button
-                      disabled={
-                        this.state.user == "LisaSteiner" || this.state.user == "whalewatching"
-                          ? false
-                          : true
-                      }
-                      variant="contained"
-                      onClick={() => this.acceptPicture()}
-                      color="success"
-                      /* color={this.state.isMatched ? "grey" : "success"} disabled = {this.state.isMatched} */ size="sm"
-                    >
-                      Match
-                    </Button>
-                    <Button
-                      disabled={
-                        this.state.user == "LisaSteiner" || this.state.user == "whalewatching"
-                          ? false
-                          : true
-                      }
-                      variant="contained"
-                      onClick={() => this.unacceptPicture()}
-                      color="info"
-                      /* color={this.state.isMatched ? "warning" : "grey"}  disabled = {!this.state.isMatched} */ size="sm"
-                    >
-                      Don't match
-                    </Button>
+                    {this.state.user == "LisaSteiner" || this.state.user == "whalewatching" ? (
+                      <Button
+                        variant="contained"
+                        onClick={() => this.acceptPicture()}
+                        color="success"
+                        size="sm"
+                      >
+                        {" "}
+                        Match
+                      </Button>
+                    ) : 
+                      <div></div>
+                    }
+                    {this.state.user == "LisaSteiner" || this.state.user == "whalewatching" ? (
+                      <Button
+                        variant="contained"
+                        onClick={() => this.unacceptPicture()}
+                        color="info"
+                        size="sm"
+                      >
+                        Don't match
+                      </Button>
+                    ) : 
+                      <div></div>
+                    }
                     {/*               <Button variant="contained" onClick={() => this.go_decideLater()}color="decideLater" size="sm">Decide later</Button> */}
                     {/*               <Button variant="contained" onClick={() => this.go_newId()}color="newId" size="sm">New ID</Button> */}
                     <br />
