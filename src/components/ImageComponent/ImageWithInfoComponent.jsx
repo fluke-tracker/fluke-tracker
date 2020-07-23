@@ -66,7 +66,7 @@ const ImageWithInfoComponent = (props) => {
 
   const getGeocoordsParsed = () => {
     const geocoords = picObj.geocoords;
-    const geocoordsErrs = new Set(["undefined,undefined", ",", null]);
+    const geocoordsErrs = new Set(["undefined,undefined", ",", null, "null,null"]);
     if (geocoordsErrs.has(geocoords)) {
       return "-";
     } else {
