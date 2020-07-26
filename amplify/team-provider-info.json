@@ -17,7 +17,33 @@
                 "userPoolGroups": {}
             },
             "function": {
-                "scanPictures": {}
+                "scanPictures": {},
+                "S3Triggereb38f992": {}
+            }
+        }
+    },
+    "whaleprod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-whalewatching-whaleprod-154848-authRole",
+            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-154848-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-154848-authRole",
+            "Region": "eu-central-1",
+            "DeploymentBucketName": "amplify-whalewatching-whaleprod-154848-deployment",
+            "UnauthRoleName": "amplify-whalewatching-whaleprod-154848-unauthRole",
+            "StackName": "amplify-whalewatching-whaleprod-154848",
+            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaleprod-154848/bc942ff0-cf46-11ea-8119-064a8d32fc9e",
+            "AmplifyAppId": "d2vtiv2q3fzo2l"
+        },
+        "categories": {
+            "auth": {
+                "cognitoed159519": {},
+                "userPoolGroups": {}
+            },
+            "function": {
+                "S3Triggereb38f992": {},
+                "scanPictures": {},
+                "S3AndCloudFront": {},
+                "whalewatch": {}
             }
         }
     }
