@@ -82,7 +82,6 @@ class LandingPage extends React.Component {
     this.unacceptPicture = this.unacceptPicture.bind(this);
 
     this.go_manualId = this.go_manualId.bind(this);
-
     this.go_up = this.go_up.bind(this);
     this.go_down = this.go_down.bind(this);
     this.go_left = this.go_left.bind(this);
