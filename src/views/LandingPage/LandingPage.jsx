@@ -43,30 +43,16 @@ import { MuiThemeProvider } from "@material-ui/core";
 // aws stuff
 import API, { graphqlOperation } from "@aws-amplify/api";
 import PubSub from "@aws-amplify/pubsub";
-import { createMatchingImage } from "graphql/mutations";
-import { updateMatchingImage } from "graphql/mutations";
-import { deleteMatchingImage } from "graphql/mutations";
-import { createMatch } from "graphql/mutations";
-import { listMatchingImages } from "graphql/queries";
-import { listMatchs } from "graphql/queries";
-import { getConfig } from "graphql/queries";
-import { updateConfig } from "graphql/mutations";
 
-import { getMatchingImage } from "graphql/queries";
-import { getPicture } from "graphql/queries";
-import { pictureByIsNew } from "graphql/queries";
-import { getWhale } from "graphql/queries";
-import { createWhale } from "graphql/mutations";
-import { listWhales } from "graphql/queries";
-import { createPicture } from "graphql/mutations";
-import { updatePicture } from "graphql/mutations";
+// graphql stuff
+import { listMatchs, getConfig, getWhale } from "graphql/queries";
+import { createMatch, createWhale, updateConfig, updatePicture } from "graphql/mutations";
+import { pictureByIsNewFiltered, getPictureFiltered } from "graphql/customQueries";
 import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/queries";
 
 //import awsconfig from 'aws-exports';
 import Amplify, { Storage } from "aws-amplify";
 import { Auth } from "aws-amplify";
-
-var imageList = [];
 
 const papaparseOptions = {
   header: false,
@@ -74,8 +60,6 @@ const papaparseOptions = {
   sokipEmptyLines: true,
   transformHeader: (header) => header.toLowerCase().replace(/\W/g, "_"),
 };
-
-const dashboardRoutes = [];
 
 class LandingPage extends React.Component {
   constructor(props) {
@@ -85,11 +69,7 @@ class LandingPage extends React.Component {
       horizontal: 0,
       vertical: 0,
       dialogMessage: "",
-      right_img: "",
-      left_img: "",
-      is_loaded: new Set(),
       matchedPictures: {},
-      image_id: {},
       isMatched: "",
       user: null,
       similar_pictures: [""],
@@ -108,8 +88,6 @@ class LandingPage extends React.Component {
     this.go_left = this.go_left.bind(this);
     this.go_right = this.go_right.bind(this);
 
-    this.onPick = this.onPick.bind(this);
-    this.handleCsvData = this.handleCsvData.bind(this);
     this.fetchNewPicturesList = this.fetchNewPicturesList.bind(this);
     this.loadMatches = this.loadMatches.bind(this);
 
@@ -417,12 +395,9 @@ class LandingPage extends React.Component {
         break;
       default:
         withOutError = false;
+        console.log("Error in navigationAction: Couldn't find case: " + direction);
         break;
     }
-
-    /*withOutError
-      ? this.handleCsvData()
-      : console.log("Error in navigationAction: Couldn't find case: " + direction);*/
   }
 
   _handleKeyDown = (event) => {
@@ -484,9 +459,6 @@ class LandingPage extends React.Component {
       const newSimPic = this.fetchPictureObject(
         this.state.similar_pictures[this.state.horizontal].picture2
       );
-      /*this.setState({
-        distance: this.state.similar_pictures[this.state.horizontal].distance,
-      });*/
       this.processNewSimPicObj(await newSimPic);
     }
   }
@@ -505,44 +477,13 @@ class LandingPage extends React.Component {
     });
   }
 
-  onPick(image) {
-    this.handleCsvData();
-    this.setState({ image: null });
-  }
-
-  handleCsvData() {
-    const currentImgIdLeft = this.state.newPicsList[this.state.vertical].id;
-    const currentImgIdRight = this.state.similar_pictures[this.state.horizontal];
-    // TODO add functionality to differentiate between the left and right side to optimize performance
-    /*API.graphql(graphqlOperation(getPicture, { id: currentImgIdLeft })).then((picture) => {
-      console.log("get picture left" + picture.data.getPicture);
-      console.log(picture.data.getPicture);
-      this.setState({ leftWhaleId: picture.data.getPicture.whale.id });
-    });
-    API.graphql(graphqlOperation(getPicture, { id: currentImgIdRight })).then((picture) => {
-      console.log("get picture right");
-      console.log(picture);
-      this.setState({ rightWhaleId: picture.data.getPicture.whale.id }, (_) =>
-        console.log(picture.data.getPicture.whale)
-      );
-    });*/
-
-    // is isMatched still needed?
-    /*this.setState(
-      {
-        isMatched:
-          this.state.newPicsList[this.state.vertical].id in this.state.matchedPictures &&
-          Array.from(this.state.matchedPictures[this.state.newPicsList[this.state.vertical].id])
-            .join()
-            .includes(this.state.similar_pictures[this.state.horizontal]),
-      },
-      (data) => console.log(data)
-    );*/
-    this.fetchSimilarPictures();
-  }
-
+  /**
+   * Executes two listEuclidianDistances graphQL-queries: One with the leftImgId as picture1; one with the leftImgId as picture2
+   * Then concatenates and sorts the two result-arrays and shortens the concatenation to the 100 most similar pictures (smallest distance).
+   * Returns this array as a Promise.
+   */
   async fetchSimilarPictures() {
-    // TODO add second request with picture2 and add pictures
+    // TODO activate second request with picture2 and add pictures
     let returnValue = undefined;
     const leftImgId = this.state.newPicsList[this.state.vertical].id;
     console.log("IN fetchSimilar");
@@ -617,7 +558,7 @@ class LandingPage extends React.Component {
     console.log("AT BEGINNING OF FETCHPICTUREOBJECT");
     let returnValue = undefined;
     try {
-      const result = await API.graphql(graphqlOperation(getPicture, { id: picId }));
+      const result = await API.graphql(graphqlOperation(getPictureFiltered, { id: picId }));
       console.log("PROCESS PIC OBJ RESULT");
       console.log(result);
       returnValue = result.data.getPicture;
@@ -638,7 +579,8 @@ class LandingPage extends React.Component {
     console.log("AT BEGINNING OF FETCHNEWPICTURESLIST");
     try {
       const result = await API.graphql(
-        graphqlOperation(pictureByIsNew, { is_new: 1, limit: 2000, nextToken: nextToken })
+        // retrieving only the necessary information, therefore using the pictureByIsNewFiltered query
+        graphqlOperation(pictureByIsNewFiltered, { is_new: 1, limit: 2000, nextToken: nextToken })
       );
       result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
       nextToken = result.data.PictureByIsNew.nextToken;
@@ -790,13 +732,6 @@ class LandingPage extends React.Component {
                         ) : (
                           ""
                         )}
-                        <div>
-                          <ImagePicker
-                            images={imageList.map((image, i) => ({ src: image, value: i }))}
-                            onPick={this.onPick}
-                            onLoad="console.log('loaded onPick')"
-                          />
-                        </div>
                         <Snackbar
                           open={dialogMessage !== ""}
                           message={dialogMessage}
