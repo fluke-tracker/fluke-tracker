@@ -60,12 +60,17 @@ const ImageGallery = (props) => {
             onError: handleImageErrored,
             onLoad: handleImageLoaded,
             src: getimagescropped(filename),
-            thumbnailWidth: 480,
-            thumbnailHeight: 320,
-            thumbnail: getimages(filename),
+            // setting it to undefined results in keeping the ratio if it's smaller than
+            // 490px in width and breaking the ratio if it's wider than 490px
+            thumbnailWidth: undefined,
+            thumbnailHeight: undefined,
+            thumbnail: getimagescropped(filename),
           },
         ]}
-        rowHeight={240}
+        // setting the row height to 125 seemed reasonable after loolking at the sizes of the cropped images
+        // they are always 1024 wide and mostly have a height between 230 and 270
+        // we display a widht of 491.1 => height approx. 125
+        rowHeight={125}
         enableLightbox={true}
         backdropClosesModal
         enableImageSelection={false}
