@@ -23,17 +23,22 @@ const ImageWithInfoComponent = (props) => {
   };
 
   const openMapPage = () => {
-    const url = "https://www.google.de/maps/search/" + getGeocoordsParsed();
+    const url = "https://www.google.de/maps/search/" + getGeocoordsParsed(true);
     window.open(url, "_blank");
   };
 
-  const getGeocoordsParsed = () => {
+  const getGeocoordsParsed = (detailed) => {
     const geocoords = picObj.geocoords;
     const geocoordsErrs = new Set(["undefined,undefined", ",", null, "null,null"]);
     if (geocoordsErrs.has(geocoords)) {
       return "-";
     } else {
-      return geocoords;
+      let coordResult = geocoords;
+      if (!detailed) {
+        const [firstCoord, secondCoord] = geocoords.split(",");
+        coordResult = parseFloat(firstCoord).toFixed(7) + ", " + parseFloat(secondCoord).toFixed(7);
+      }
+      return coordResult;
     }
   };
 
@@ -53,18 +58,14 @@ const ImageWithInfoComponent = (props) => {
           ""
         )}
         <br />
-        {adminFlag ? (
-          <div>
-            <strong>Picture owner: </strong>
-            <Badge color="info">{picObj.uploaded_by}</Badge>
-            <SendPrivateMessage />
-            <br />
-          </div>
-        ) : (
-          ""
-        )}
+        <div>
+          <strong>Picture owner: </strong>
+          <Badge color="info">{picObj.uploaded_by}</Badge>
+          {/*<SendPrivateMessage />*/}
+          <br />
+        </div>
         <strong>Coordinates / Place: </strong>
-        <Badge color="info">{getGeocoordsParsed()}</Badge>
+        <Badge color="info">{getGeocoordsParsed(false)}</Badge>
         <Button size="sm" onClick={openMapPage}>
           Open in map
         </Button>
@@ -74,8 +75,8 @@ const ImageWithInfoComponent = (props) => {
         <br />
         {distance != null ? (
           <div>
-            <strong>Distance: </strong>
-            <Badge color="info">{distance.toFixed(2)}</Badge>
+            <strong>Similarity-Score: </strong>
+            <Badge color="info">{(2 - distance).toFixed(2)}</Badge>
           </div>
         ) : (
           <br />
