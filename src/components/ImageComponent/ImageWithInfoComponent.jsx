@@ -13,6 +13,8 @@ const ImageWithInfoComponent = (props) => {
   const picObj = props.picObj;
   const distance = props.distance;
   const adminFlag = props.adminFlag;
+  // handler that will be called after the image has loaded
+  const notifyLoadHandler = props.notifyLoadHandler;
 
   let filename = undefined;
   let picInfosItems = <br />;
@@ -85,7 +87,7 @@ const ImageWithInfoComponent = (props) => {
     );
     filename = picObj.filename;
   }
-  const imageGallery = <ImageGallery filename={filename} />;
+  const imageGallery = <ImageGallery filename={filename} notifyLoadHandler={notifyLoadHandler} />;
 
   return (
     <div>

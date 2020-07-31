@@ -1,24 +1,16 @@
 import React from "react";
-// nodejs library that concatenates classes
-import classNames from "classnames";
+
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-import { logout } from "../../store/actions";
-
-// @material-ui/icons
 
 // core components
-import CSVReader from "react-csv-reader";
 import Header from "components/Header/Header.jsx";
-import Footer from "components/Footer/Footer.jsx";
-import SetWhaleDialog from "components/CustomDialog/SetWhaleID.jsx";
 import SetMaxWhaleIdAutoDialog from "components/CustomDialog/SetMaxWhaleIdAutoDialog.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Badge from "components/Badge/Badge.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import Parallax from "components/Parallax/Parallax.jsx";
 import Snackbar from "@material-ui/core/Snackbar";
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -27,59 +19,37 @@ import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoCompo
 
 import { connect } from "react-redux";
 
-// Sections for this page
-import ProductSection from "./Sections/ProductSection.jsx";
-import TeamSection from "./Sections/TeamSection.jsx";
-import WorkSection from "./Sections/WorkSection.jsx";
-
-import ImagePicker from "react-image-picker";
 import "react-image-picker/dist/index.css";
-import Cookies from "utils/Cookies";
-import { withAuthenticator, SignOut } from "aws-amplify-react";
-
-//import images from local
-import { MuiThemeProvider } from "@material-ui/core";
 
 // aws stuff
 import API, { graphqlOperation } from "@aws-amplify/api";
-import PubSub from "@aws-amplify/pubsub";
 
 // graphql stuff
-import { listMatchs, getConfig, getWhale } from "graphql/queries";
+import { getConfig, getWhale } from "graphql/queries";
 import { createMatch, createWhale, updateConfig, updatePicture } from "graphql/mutations";
 import { pictureByIsNewFiltered, getPictureFiltered } from "graphql/customQueries";
 import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/queries";
 
-//import awsconfig from 'aws-exports';
-import Amplify, { Storage } from "aws-amplify";
 import { Auth } from "aws-amplify";
-
-const papaparseOptions = {
-  header: false,
-  dynamicTyping: true,
-  sokipEmptyLines: true,
-  transformHeader: (header) => header.toLowerCase().replace(/\W/g, "_"),
-};
 
 class LandingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: null,
       horizontal: 0,
       vertical: 0,
       dialogMessage: "",
-      matchedPictures: {},
-      isMatched: "",
       user: null,
-      similar_pictures: [""],
+      similar_pictures: [undefined],
       newPicsList: [],
       simPicObj: undefined,
+      // first array value represents left img, second one the right img
+      picsLoaded: [false, false],
     };
 
     // BINDING FUNCTIONS
-    this.acceptPicture = this.acceptPicture.bind(this);
-    this.unacceptPicture = this.unacceptPicture.bind(this);
+    this.matchPicture = this.matchPicture.bind(this);
+    this.unmatchPictures = this.unmatchPictures.bind(this);
 
     this.go_manualId = this.go_manualId.bind(this);
 
@@ -89,7 +59,7 @@ class LandingPage extends React.Component {
     this.go_right = this.go_right.bind(this);
 
     this.fetchNewPicturesList = this.fetchNewPicturesList.bind(this);
-    this.loadMatches = this.loadMatches.bind(this);
+    this.picLoadHandler = this.picLoadHandler.bind(this);
 
     this._handleKeyDown = this._handleKeyDown.bind(this);
 
@@ -97,12 +67,33 @@ class LandingPage extends React.Component {
     this.authenticate_user();
   }
 
-  go_badPicture() {
-    console.log("bad picture code goes here");
+  authenticate_user() {
+    Auth.currentAuthenticatedUser()
+      .then((user) => {
+        console.log("MATCHINGPAGE user", user, user.username);
+        this.setState({ user: user.username });
+      })
+      .catch((err) => {
+        console.log("currentAuthenticatedUser landing page err redirect to login", err);
+        this.props.history.push("/login-page");
+      });
   }
-  go_newId() {
-    console.log("new id code goes here");
+
+  picLoadHandler(filename) {
+    console.log("NOTIFY HANDLER CALLED");
+    // check if left image was the loaded one
+    if (filename === this.state.newPicsList[this.state.vertical].filename) {
+      this.setState({ picsLoaded: [true, this.state.picsLoaded[1]] });
+    }
+    // check if right image was the loaded one
+    else if (
+      typeof this.state.simPicObj !== "undefined" &&
+      filename === this.state.simPicObj.filename
+    ) {
+      this.setState({ picsLoaded: [this.state.picsLoaded[0], true] });
+    }
   }
+
   async go_manualId(pId) {
     console.log("IN goManualId");
     const leftImgFileName = this.state.newPicsList[this.state.vertical].id;
@@ -119,32 +110,28 @@ class LandingPage extends React.Component {
         5000
       );
     }
-
     this.fetchNewPicturesList(undefined, [], 0);
-    this.loadMatches();
   }
 
-  authenticate_user() {
-    Auth.currentAuthenticatedUser()
-      .then((user) => {
-        console.log("MATCHINGPAGE user", user, user.username);
-        this.setState({ user: user.username });
-      })
-      .catch((err) => {
-        console.log("currentAuthenticatedUser landing page err redirect to login", err);
-        this.props.history.push("/login-page");
-      });
+  go_badPicture() {
+    console.log("bad picture code goes here");
   }
 
   go_left() {
     if (this.state.horizontal > 0) {
-      this.setState({ simPicObj: undefined, horizontal: this.state.horizontal - 1 });
+      this.setState({
+        picsLoaded: [this.state.picsLoaded[0], false],
+        simPicObj: undefined,
+        horizontal: this.state.horizontal - 1,
+      });
     }
   }
   go_up() {
     if (this.state.vertical > 0) {
       this.setState({
+        picsLoaded: [false, false],
         simPicObj: undefined,
+        similar_pictures: [undefined],
         vertical: this.state.vertical - 1,
         horizontal: 0,
       });
@@ -153,7 +140,9 @@ class LandingPage extends React.Component {
   go_down() {
     if (this.state.vertical < this.state.newPicsList.length - 1) {
       this.setState({
+        picsLoaded: [false, false],
         simPicObj: undefined,
+        similar_pictures: [undefined],
         vertical: this.state.vertical + 1,
         horizontal: 0,
       });
@@ -162,6 +151,7 @@ class LandingPage extends React.Component {
   go_right() {
     if (this.state.horizontal < this.state.similar_pictures.length - 1) {
       this.setState({
+        picsLoaded: [this.state.picsLoaded[0], false],
         simPicObj: undefined,
         horizontal: Math.min(this.state.similar_pictures.length - 1, this.state.horizontal + 1),
       });
@@ -213,6 +203,9 @@ class LandingPage extends React.Component {
     });
   }
 
+  /**
+   * Returns the ID's and names of the left and right whale / picture.
+   */
   getCurrentNamesIds() {
     const leftPicObj = this.state.newPicsList[this.state.vertical];
     const rightPicObj = this.state.simPicObj;
@@ -224,7 +217,7 @@ class LandingPage extends React.Component {
     return [leftImgName, rightImgName, leftWhaleId, rightWhaleId];
   }
 
-  async acceptPicture() {
+  async matchPicture() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
     console.log("left_img_name is: ", left_img_name, "left id is: ", leftWhaleId);
@@ -256,7 +249,6 @@ class LandingPage extends React.Component {
         graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } })
       );
       this.fetchNewPicturesList(undefined, [], 0);
-      this.loadMatches();
     }
   }
 
@@ -336,9 +328,10 @@ class LandingPage extends React.Component {
     setTimeout((_) => this.setState({ dialogMessage: "" }), timeout);
   }
 
-  unacceptPicture() {
+  unmatchPictures() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
+    // to have a unique ID with concatenate the two file names
     const constructedId = left_img_name + "_" + right_img_name;
     API.graphql(
       graphqlOperation(createMatch, {
@@ -410,23 +403,23 @@ class LandingPage extends React.Component {
 
     switch (event.keyCode) {
       case M_KEY:
-        this.acceptPicture();
+        this.matchPicture();
         break;
       case U_KEY:
-        this.unacceptPicture();
-        this.go_right();
+        this.unmatchPictures();
+        this.navigationAction("right");
         break;
       case LEFT_ARROW_KEY:
-        this.go_left();
+        this.navigationAction("left");
         break;
       case RIGHT_ARROW_KEY:
-        this.go_right();
+        this.navigationAction("right");
         break;
       case DOWN_ARROW_KEY:
-        this.go_down();
+        this.navigationAction("down");
         break;
       case UP_ARROW_KEY:
-        this.go_up();
+        this.navigationAction("up");
         break;
       default:
         console.log("WARNING! Key code of pressed key did not match.");
@@ -439,22 +432,27 @@ class LandingPage extends React.Component {
     document.addEventListener("keydown", this._handleKeyDown);
 
     this.fetchNewPicturesList(undefined, [], 0);
-    this.loadMatches();
   }
 
   async componentDidUpdate(prevProps, prevState) {
+    console.log("IN UPDATE");
+    console.log(prevState);
+    console.log(this.state);
+
+    // will be entered every time a match happened / the whole page was refreshed
     if (prevState.newPicsList !== this.state.newPicsList) {
-      console.log("IN UPDATE");
-      console.log(prevState.newPicsList);
-      console.log(this.state.newPicsList);
+      console.log("IN newPicsList UPDATE");
+
       this.doubleCheckVertical();
       const fetchedSimPics = this.fetchSimilarPictures();
       this.processNewSimilarPics(await fetchedSimPics);
     }
 
     if (prevState.vertical !== this.state.vertical) {
+      console.log("IN VERTICAL CHANGE");
       this.processNewSimilarPics(await this.fetchSimilarPictures());
     } else if (prevState.horizontal !== this.state.horizontal) {
+      console.log("IN HORIZONTAL CHANGE");
       /* this means vertical didn't change, only horizontal did */
       const newSimPic = this.fetchPictureObject(
         this.state.similar_pictures[this.state.horizontal].picture2
@@ -472,9 +470,12 @@ class LandingPage extends React.Component {
    * This could happen when matching an image that then disappears from the left side.
    */
   doubleCheckVertical() {
-    this.setState({
-      vertical: Math.min(this.state.vertical, this.state.newPicsList.length),
-    });
+    const vert = this.state.vertical;
+    if (vert !== Math.min(vert, this.state.newPicsList.length)) {
+      this.setState({
+        vertical: Math.min(vert, this.state.newPicsList.length),
+      });
+    }
   }
 
   /**
@@ -539,17 +540,21 @@ class LandingPage extends React.Component {
     console.log("IN processNewSimilarPics");
     if (picArray !== -1) {
       if (picArray.length >= 1) {
-        const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal].picture2);
-        this.processNewSimPicObj(await simPicObjTemp);
+        const simPicObjTemp = await this.fetchPictureObject(
+          picArray[this.state.horizontal].picture2
+        );
+        if (simPicObjTemp !== -1) {
+          this.setState({ similar_pictures: picArray, simPicObj: simPicObjTemp });
+        }
+      } else {
+        this.setState({ similar_pictures: picArray });
       }
-      this.setState({ similar_pictures: picArray });
     }
   }
 
   processNewSimPicObj(simPicObjNew) {
     if (simPicObjNew !== -1) {
-      console.log("AFTER await");
-      console.log(simPicObjNew);
+      console.log("PROCESS NEW SIM PIC", simPicObjNew);
       this.setState({ simPicObj: simPicObjNew });
     }
   }
@@ -587,30 +592,16 @@ class LandingPage extends React.Component {
 
       console.log("IN PROCESSING - SETTING STATE");
       console.log(pics);
-      this.setState({ newPicsList: pics });
+      this.setState({ similar_pictures: [undefined], newPicsList: pics });
     } catch (error) {
       console.log("IN CATCH");
       console.log(error);
     }
   }
 
-  loadMatches = () => {
-    API.graphql(graphqlOperation(listMatchs)).then((response) => {
-      console.log(response);
-      const imgArr = {};
-      response.data.listMatchs.items.forEach((match) => {
-        if (match.picture1.filename in imgArr) {
-        } else {
-          imgArr[match.picture1.filename] = new Set();
-        }
-        imgArr[match.picture1.filename].add(match.picture2.filename);
-      });
-
-      this.setState({ matchedPictures: imgArr });
-    });
-  };
-
   render() {
+    console.log("IN RENDER", this.state);
+
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
 
@@ -670,6 +661,7 @@ class LandingPage extends React.Component {
                         <ImageWithInfoComponent
                           picObj={this.state.newPicsList[this.state.vertical]}
                           adminFlag={adminFlag}
+                          notifyLoadHandler={this.picLoadHandler}
                         />
                         <br />
                       </GridItem>
@@ -691,8 +683,14 @@ class LandingPage extends React.Component {
                         ) : (
                           <ImageWithInfoComponent
                             picObj={this.state.simPicObj}
-                            distance={this.state.similar_pictures[this.state.horizontal].distance}
+                            distance={
+                              typeof this.state.similar_pictures[this.state.horizontal] ===
+                              "undefined"
+                                ? undefined
+                                : this.state.similar_pictures[this.state.horizontal].distance
+                            }
                             adminFlag={adminFlag}
+                            notifyLoadHandler={this.picLoadHandler}
                           />
                         )}
                       </GridItem>
@@ -722,9 +720,10 @@ class LandingPage extends React.Component {
                         </Button>
                         {adminFlag ? (
                           <Button
+                            disabled={!this.state.picsLoaded[0]}
                             variant="contained"
                             onClick={() => this.go_badPicture()}
-                            color="badPicture"
+                            color="warning"
                             size="sm"
                           >
                             Bad picture
@@ -743,17 +742,18 @@ class LandingPage extends React.Component {
                         {adminFlag ? (
                           <div>
                             <Button
+                              disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
                               variant="contained"
-                              onClick={() => this.acceptPicture()}
+                              onClick={() => this.matchPicture()}
                               color="success"
                               size="sm"
                             >
-                              {" "}
                               Match
                             </Button>
                             <Button
+                              disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
                               variant="contained"
-                              onClick={() => this.unacceptPicture()}
+                              onClick={() => this.unmatchPictures()}
                               color="info"
                               size="sm"
                             >
@@ -779,10 +779,6 @@ class LandingPage extends React.Component {
                         >
                           &#10148;
                         </Button>
-                        {/*               <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Signout</Button>
-              <SignOut/> */}
-                        {/*        <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Log Out</Button>
-                            <SignOut/> */}
                       </GridItem>
                       <br />
                     </GridContainer>

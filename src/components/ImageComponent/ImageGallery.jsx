@@ -1,23 +1,24 @@
 import ImageComponent from "./ImageComponent.jsx";
+import getS3Bucket from "../../utils/utilFunctions";
 
 import * as React from "react";
 import { useState, useEffect } from "react";
 import Gallery from "react-grid-gallery";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import getS3Bucket from "../../utils/utilFunctions";
 
 const ImageGallery = (props) => {
   const [s3BucketPath, setS3BucketPath] = useState("");
   const [loadedPictures, setLoadedPictures] = useState(new Set());
   let imageStatus = "";
   const filename = props.filename;
+  // handler that will be called after the image has loaded
+  const notifyLoadHandler = props.notifyLoadHandler;
 
   useEffect(() => {
-    // Create an scoped async function in the hook
     async function getS3BucketAsync() {
       const s3Path = await getS3Bucket();
       setS3BucketPath(s3Path);
-    } // Execute the created function directly
+    }
     getS3BucketAsync();
   }, []);
 
@@ -32,6 +33,7 @@ const ImageGallery = (props) => {
     setLoadedPictures(newSet);
     imageStatus = "loaded picture successfully";
     console.log(imageStatus);
+    notifyLoadHandler(filename);
   };
 
   const handleImageErrored = () => {
