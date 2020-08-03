@@ -726,6 +726,7 @@ class LandingPage extends React.Component {
                         {adminFlag ? (
                           <SetMaxWhaleIdAutoDialog
                             function={this.go_manualId}
+                            disabled={!this.state.picsLoaded[0]}
                           ></SetMaxWhaleIdAutoDialog>
                         ) : (
                           ""
