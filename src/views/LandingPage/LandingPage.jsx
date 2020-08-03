@@ -271,7 +271,7 @@ class LandingPage extends React.Component {
       let resultsPromiseArray = [];
       // -1 has to be handled specially to only set the ID of one picture and not every picture that has -1 as whale ID
       if (fromId == -1) {
-        if (toId != -1) {
+        if (toId == -1) {
           // handle the case when on the left AND right side are images with ID = -1
           // 1. give right pic a new ID
           let idOrFalse = await this.createAndAssignNewWhaleId(
@@ -329,6 +329,11 @@ class LandingPage extends React.Component {
     if (fromId != -1) {
       this.showSnackBar(
         "Successfully assigned all whales with ID " + fromId + " the ID " + toId,
+        5000
+      );
+    } else if (fromId == -1 && toId == -1) {
+      this.showSnackBar(
+        "Successfully created a new whale ID and assigned it to both pictures",
         5000
       );
     } else {
