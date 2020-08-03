@@ -79,6 +79,10 @@ class LandingPage extends React.Component {
       });
   }
 
+  /**
+   * This function is passed to the components that are loading the actual image.
+   * These components will then call this function so we can activate the matching buttons accordingly.
+   */
   picLoadHandler(filename) {
     console.log("NOTIFY HANDLER CALLED");
     // check if left image was the loaded one
@@ -268,15 +272,23 @@ class LandingPage extends React.Component {
       // -1 has to be handled specially to only set the ID of one picture and not every picture that has -1 as whale ID
       if (fromId == -1) {
         console.log("IN -1 case");
-        // NOTE this only works if we can be sure that on the right side can't be any picture displayed with is_new = 1
-        const picObjId = this.state.newPicsList[this.state.vertical].id;
-        resultsPromiseArray.push(
-          API.graphql(
-            graphqlOperation(updatePicture, {
-              input: { id: picObjId, pictureWhaleId: toId },
-            })
-          )
-        );
+        if (toId != -1) {
+          // NOTE this only works if we can be sure that on the right side can't be any picture displayed with is_new = 1
+          const picObjId = this.state.newPicsList[this.state.vertical].id;
+          resultsPromiseArray.push(
+            API.graphql(
+              graphqlOperation(updatePicture, {
+                input: { id: picObjId, pictureWhaleId: toId },
+              })
+            )
+          );
+        } else {
+          // handle the case when on the right side is an image with ID = -1
+          // -> get the current max ID and assign it to both images
+          // 1. give right pic a new ID
+          // 2. do a recursive call with the new right ID
+          // 3. -> successful end
+        }
       } else {
         console.log("IN NOT -1 case");
         const whaleObjs = await API.graphql(graphqlOperation(getWhale, { id: fromId }));
@@ -455,7 +467,7 @@ class LandingPage extends React.Component {
       console.log("IN HORIZONTAL CHANGE");
       /* this means vertical didn't change, only horizontal did */
       const newSimPic = this.fetchPictureObject(
-        this.state.similar_pictures[this.state.horizontal].picture2
+        this.state.similar_pictures[this.state.horizontal].simPicName
       );
       this.processNewSimPicObj(await newSimPic);
     }
@@ -520,9 +532,19 @@ class LandingPage extends React.Component {
       );
 
       resultsAllItems.sort((a, b) => a.distance - b.distance);
-      let first100Pictures = resultsAllItems.slice(0, 100);
+      let resultsFirst100 = resultsAllItems.slice(0, 100);
 
-      returnValue = first100Pictures;
+      let filteredFirst100 = [];
+      // extract only the relevant file name out of the tupel
+      resultsFirst100.forEach((elem) => {
+        if (elem.picture1 === leftImgId) {
+          filteredFirst100.push({ simPicName: elem.picture2, distance: elem.distance });
+        } else {
+          filteredFirst100.push({ simPicName: elem.picture1, distance: elem.distance });
+        }
+      });
+
+      returnValue = filteredFirst100;
     } catch (error) {
       console.log("ERROR IN fetchSimilarPictures");
       console.log(error);
@@ -541,7 +563,7 @@ class LandingPage extends React.Component {
     if (picArray !== -1) {
       if (picArray.length >= 1) {
         const simPicObjTemp = await this.fetchPictureObject(
-          picArray[this.state.horizontal].picture2
+          picArray[this.state.horizontal].simPicName
         );
         if (simPicObjTemp !== -1) {
           this.setState({ similar_pictures: picArray, simPicObj: simPicObjTemp });
