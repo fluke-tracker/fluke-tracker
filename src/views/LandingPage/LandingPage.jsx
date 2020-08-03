@@ -271,9 +271,21 @@ class LandingPage extends React.Component {
       let resultsPromiseArray = [];
       // -1 has to be handled specially to only set the ID of one picture and not every picture that has -1 as whale ID
       if (fromId == -1) {
-        console.log("IN -1 case");
         if (toId != -1) {
-          // NOTE this only works if we can be sure that on the right side can't be any picture displayed with is_new = 1
+          // handle the case when on the left AND right side are images with ID = -1
+          // 1. give right pic a new ID
+          let idOrFalse = await this.createAndAssignNewWhaleId(
+            this.state.similar_pictures[this.state.horizontal].simPicName
+          );
+          // now assign the new ID of the right picture to the left picture by performing a recursive call
+          if (idOrFalse !== false) {
+            const tempRes = await this.changeWhaleIdOfPictures(-1, idOrFalse);
+            if (!tempRes) return false;
+          } else {
+            return false;
+          }
+        } else {
+          // this only works if on the right side is not a picture displayed with is_new = 1
           const picObjId = this.state.newPicsList[this.state.vertical].id;
           resultsPromiseArray.push(
             API.graphql(
@@ -282,12 +294,6 @@ class LandingPage extends React.Component {
               })
             )
           );
-        } else {
-          // handle the case when on the right side is an image with ID = -1
-          // -> get the current max ID and assign it to both images
-          // 1. give right pic a new ID
-          // 2. do a recursive call with the new right ID
-          // 3. -> successful end
         }
       } else {
         console.log("IN NOT -1 case");
