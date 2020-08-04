@@ -13,12 +13,13 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from "aws-amplify";
 import Footer from "components/Footer/Footer.jsx";
-import { getWhale } from "graphql/queries";
-import { getPicture } from "graphql/queries";
+import { getWhale, listWhales, getPicture } from "graphql/queries";
+import { updatePicture } from "graphql/mutations";
 import API, { graphqlOperation } from "@aws-amplify/api";
 import { render } from "react-dom";
 import Gallery from "react-grid-gallery";
-import { listWhales } from "graphql/queries";
+import Snackbar from "@material-ui/core/Snackbar";
+
 const dashboardRoutes = [];
 const IMAGES = [];
 class UploadPage extends React.Component {
@@ -29,12 +30,62 @@ class UploadPage extends React.Component {
       user: null,
       IMAGES: [],
       noData: false,
+      selectedImages: [],
+      dialogMessage: "",
     };
+    this.onSelectImage = this.onSelectImage.bind(this);
+    this.getSelectedImages = this.getSelectedImages.bind(this);
+
     if (props.match.params.whale_id) {
       this.state.searchInput = props.match.params.whale_id;
       this.searchWhales(this.state);
     }
     this.authenticate_user();
+  }
+  onSelectImage(index, image) {
+    console.log("index", index);
+    console.log("image", image);
+    var images = this.state.IMAGES.slice();
+    var img = images[index];
+    if (img.hasOwnProperty("isSelected")) img.isSelected = !img.isSelected;
+    else img.isSelected = true;
+    this.setState({
+      IMAGES: images,
+    });
+    console.log("state images", this.state.IMAGES);
+  }
+
+  async getSelectedImages() {
+    try {
+      let queryWasSuccess = false;
+      console.log("setting whaleid of images -1 and is_new flag as false");
+      for (var i = 0; i < this.state.IMAGES.length; i++)
+        if (this.state.IMAGES[i].isSelected == true) {
+          console.log("rematching selected images", this.state.IMAGES[i].caption);
+          const selected_image_name = this.state.IMAGES[i].caption;
+          queryWasSuccess = await API.graphql(
+            graphqlOperation(updatePicture, {
+              input: { id: selected_image_name, is_new: 1, pictureWhaleId: -1 },
+            })
+          );
+          if (queryWasSuccess) {
+            console.log("Successfully assigned whales ", selected_image_name);
+            this.showSnackBar("Whale " + selected_image_name + " can now be Re-Matched", 5000);
+          }
+        }
+    } catch (e) {
+      console.log("error while re-setting whaleID and is_new flag");
+    }
+  }
+
+  /**
+   * A Snackbar with message will appear for timeout milliseconds.
+   **/
+  showSnackBar(message, timeout) {
+    this.setState({
+      dialogMessage: message,
+    });
+    setTimeout((_) => this.setState({ dialogMessage: "" }), timeout);
   }
 
   authenticate_user() {
@@ -140,6 +191,7 @@ class UploadPage extends React.Component {
     };
   }
   render() {
+    const { dialogMessage } = this.state;
     const { classes, ...rest } = this.props;
     const searchInput = this.state.searchInput;
     return (
@@ -194,15 +246,17 @@ class UploadPage extends React.Component {
               />
               <button>Search Whale</button>
               <button onClick={this.handleAlternate.bind(this)}>Display Random Whale</button>
+              <button onClick={this.getSelectedImages.bind(this)}>Re-Match Whale</button>
               <Gallery
                 images={this.state.IMAGES}
                 rowHeight={174}
                 enableLightbox={true}
                 backdropClosesModal
-                enableImageSelection={false}
+                onSelectImage={this.onSelectImage}
               />
             </form>
             {this.state.noData && <p style={{ color: "red" }}>No Results Found!</p>}
+            <Snackbar open={dialogMessage !== ""} message={dialogMessage} autoHideDuration={4000} />
           </div>
         ) : (
           <div></div>
