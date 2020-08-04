@@ -529,6 +529,15 @@ class LandingPage extends React.Component {
       );*/
 
       const result1 = await query1;
+      console.log("LLLLLLLLLLLLLLLLLL", result1);
+      // check if the result that came back here is still the one we're looking for (in case it's an empty array we assume it is the right one)
+      if (
+        result1.data.listEuclidianDistances.items.length > 0 &&
+        result1.data.listEuclidianDistances.items[0].picture1 !=
+          this.state.newPicsList[this.state.vertical].id
+      ) {
+        return -1;
+      }
       //const result2 = await query2;
 
       console.log("GOT result1");
