@@ -41,7 +41,8 @@ class LandingPage extends React.Component {
       dialogMessage: "",
       user: null,
       similar_pictures: [undefined],
-      newPicsList: [],
+      // newPicsList needs to be initialized with "undefined" object to prevent showing the error message "No pics available" in the first seconds
+      newPicsList: [undefined],
       simPicObj: undefined,
       // first array value represents left img, second one the right img
       picsLoaded: [false, false],
@@ -369,29 +370,6 @@ class LandingPage extends React.Component {
       console.log("Created a new 'NO MATCH' pair");
       this.showSnackBar("Successfully saved 'no match' between the two pictures", 5000);
     });
-
-    // this can never happen due to the fact that a picture with an assigned ID won't be on the left side
-    /*
-    if (leftWhaleId == rightWhaleId) {
-      API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" })).then((result) => {
-        const maxWhaleId = result.data.getConfig.value;
-        const newMaxWhaleId = (parseInt(maxWhaleId) + 1).toString();
-        const left_img_name = this.state.newPicsList[this.state.vertical];
-        API.graphql(
-          graphqlOperation(createWhale, { input: { id: maxWhaleId, name: maxWhaleId } })
-        ).then((result) =>
-          API.graphql(
-            graphqlOperation(updatePicture, {
-              input: { id: left_img_name, pictureWhaleId: maxWhaleId },
-            })
-          )
-        );
-
-        API.graphql(
-          graphqlOperation(updateConfig, { input: { id: "maxWhaleId", value: newMaxWhaleId } })
-        );
-      });
-    }*/
   }
 
   navigationAction(direction) {
@@ -467,8 +445,10 @@ class LandingPage extends React.Component {
       console.log("IN newPicsList UPDATE");
 
       this.doubleCheckVertical();
-      const fetchedSimPics = this.fetchSimilarPictures();
-      this.processNewSimilarPics(await fetchedSimPics);
+      if (this.state.newPicsList.length > 0) {
+        const fetchedSimPics = this.fetchSimilarPictures();
+        this.processNewSimilarPics(await fetchedSimPics);
+      }
     }
 
     if (prevState.vertical !== this.state.vertical) {
@@ -642,7 +622,7 @@ class LandingPage extends React.Component {
   }
 
   render() {
-    console.log("IN RENDER", this.state);
+    console.log("IN RENDER", this.state, this.state.newPicsList);
 
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
@@ -676,155 +656,171 @@ class LandingPage extends React.Component {
                         <strong>Do these whales match?</strong>
                       </h2>
                     </div>
-                    <GridContainer>
-                      <GridItem xs={12} sm={12} md={12} space={10}>
-                        <br />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={(this.state.vertical / (this.state.newPicsList.length - 1)) * 100}
-                        />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={
-                            (this.state.horizontal / (this.state.similar_pictures.length - 1)) * 100
-                          }
-                        />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
-                        <strong>New Image Number: </strong>
-                        <Badge color="success">{this.state.vertical + 1}</Badge> of{" "}
-                        <Badge color="success">{this.state.newPicsList.length}</Badge>
-                        <br />
-                        <br />
-                        <ImageWithInfoComponent
-                          picObj={this.state.newPicsList[this.state.vertical]}
-                          adminFlag={adminFlag}
-                          notifyLoadHandler={this.picLoadHandler}
-                        />
-                        <br />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
-                        <strong>Best Matching Picture Number: </strong>
-                        <Badge color="success">{this.state.horizontal + 1}</Badge>
-                        <br />
-                        <br />
-                        {this.state.similar_pictures.length === 0 ? (
-                          <div style={{ textAlign: "center", marginTop: 100 }}>
-                            Computing similar images.
-                            <br />
-                            <br />
-                            <CircularProgress />
-                            <br />
-                            <br />
-                            Please come back in a few minutes.
-                          </div>
-                        ) : (
-                          <ImageWithInfoComponent
-                            picObj={this.state.simPicObj}
-                            distance={
-                              typeof this.state.similar_pictures[this.state.horizontal] ===
-                              "undefined"
-                                ? undefined
-                                : this.state.similar_pictures[this.state.horizontal].distance
+                    {this.state.newPicsList.length > 0 ? (
+                      <GridContainer>
+                        <GridItem xs={12} sm={12} md={12} space={10}>
+                          <br />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={
+                              (this.state.vertical / (this.state.newPicsList.length - 1)) * 100
                             }
+                          />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={
+                              (this.state.horizontal / (this.state.similar_pictures.length - 1)) *
+                              100
+                            }
+                          />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                          <strong>New Image Number: </strong>
+                          <Badge color="success">{this.state.vertical + 1}</Badge> of{" "}
+                          <Badge color="success">{this.state.newPicsList.length}</Badge>
+                          <br />
+                          <br />
+                          <ImageWithInfoComponent
+                            picObj={this.state.newPicsList[this.state.vertical]}
                             adminFlag={adminFlag}
                             notifyLoadHandler={this.picLoadHandler}
                           />
-                        )}
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        {adminFlag ? (
-                          <SetMaxWhaleIdAutoDialog
-                            function={this.go_manualId}
-                            disabled={!this.state.picsLoaded[0]}
-                          ></SetMaxWhaleIdAutoDialog>
-                        ) : (
-                          ""
-                        )}
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("up")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#9650;
-                        </Button>
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("down")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#9660;
-                        </Button>
-                        {adminFlag ? (
+                          <br />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                          <strong>Best Matching Picture Number: </strong>
+                          <Badge color="success">{this.state.horizontal + 1}</Badge>
+                          <br />
+                          <br />
+                          {this.state.similar_pictures.length === 0 ? (
+                            <div style={{ textAlign: "center", marginTop: 100 }}>
+                              Computing similar images.
+                              <br />
+                              <br />
+                              <CircularProgress />
+                              <br />
+                              <br />
+                              Please come back in a few minutes.
+                            </div>
+                          ) : (
+                            <ImageWithInfoComponent
+                              picObj={this.state.simPicObj}
+                              distance={
+                                typeof this.state.similar_pictures[this.state.horizontal] ===
+                                "undefined"
+                                  ? undefined
+                                  : this.state.similar_pictures[this.state.horizontal].distance
+                              }
+                              adminFlag={adminFlag}
+                              notifyLoadHandler={this.picLoadHandler}
+                            />
+                          )}
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          {adminFlag ? (
+                            <SetMaxWhaleIdAutoDialog
+                              function={this.go_manualId}
+                              disabled={!this.state.picsLoaded[0]}
+                            ></SetMaxWhaleIdAutoDialog>
+                          ) : (
+                            ""
+                          )}
                           <Button
-                            disabled={!this.state.picsLoaded[0]}
                             variant="contained"
-                            onClick={() => this.go_badPicture()}
-                            color="warning"
+                            onClick={() => this.navigationAction("up")}
+                            color="info"
                             size="sm"
                           >
-                            Bad picture
+                            &#9650;
                           </Button>
-                        ) : (
-                          ""
-                        )}
-                        <Snackbar
-                          open={dialogMessage !== ""}
-                          message={dialogMessage}
-                          autoHideDuration={4000}
-                        />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        {/*  new buttons for the matching result */}
-                        {adminFlag ? (
-                          <div>
+                          <Button
+                            variant="contained"
+                            onClick={() => this.navigationAction("down")}
+                            color="info"
+                            size="sm"
+                          >
+                            &#9660;
+                          </Button>
+                          {adminFlag ? (
                             <Button
-                              disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                              disabled={!this.state.picsLoaded[0]}
                               variant="contained"
-                              onClick={() => this.matchPicture()}
-                              color="success"
+                              onClick={() => this.go_badPicture()}
+                              color="warning"
                               size="sm"
                             >
-                              Match
+                              Bad picture
                             </Button>
-                            <Button
-                              disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
-                              variant="contained"
-                              onClick={() => this.unmatchPictures()}
-                              color="info"
-                              size="sm"
-                            >
-                              Don't match
-                            </Button>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("left")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#9664;
-                        </Button>
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("right")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#10148;
-                        </Button>
-                      </GridItem>
-                      <br />
-                    </GridContainer>
+                          ) : (
+                            ""
+                          )}
+                          <Snackbar
+                            open={dialogMessage !== ""}
+                            message={dialogMessage}
+                            autoHideDuration={4000}
+                          />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          {/*  new buttons for the matching result */}
+                          {adminFlag ? (
+                            <div>
+                              <Button
+                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                variant="contained"
+                                onClick={() => this.matchPicture()}
+                                color="success"
+                                size="sm"
+                              >
+                                Match
+                              </Button>
+                              <Button
+                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                variant="contained"
+                                onClick={() => this.unmatchPictures()}
+                                color="info"
+                                size="sm"
+                              >
+                                Don't match
+                              </Button>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          <Button
+                            variant="contained"
+                            onClick={() => this.navigationAction("left")}
+                            color="info"
+                            size="sm"
+                          >
+                            &#9664;
+                          </Button>
+                          <Button
+                            variant="contained"
+                            onClick={() => this.navigationAction("right")}
+                            color="info"
+                            size="sm"
+                          >
+                            &#10148;
+                          </Button>
+                        </GridItem>
+                        <br />
+                      </GridContainer>
+                    ) : (
+                      <GridContainer>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                          <br />
+                          We are sorry, there are currently no unmatched pictures.
+                          <br />
+                          <br />
+                          Please upload a new image and come back to this page.
+                          <br />
+                        </GridItem>
+                      </GridContainer>
+                    )}
                   </div>
                 </div>
               </div>

@@ -25,31 +25,40 @@ import CustomInput from "components/CustomInput/CustomInput.jsx";
 // assets
 import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
 import image from "assets/img/bg.jpg";
-import { Authenticator, Greetings } from 'aws-amplify-react';
-import { Auth } from 'aws-amplify';
-import { ConfirmSignIn, ConfirmSignUp, ForgotPassword, RequireNewPassword, SignIn, SignUp, VerifyContact, withAuthenticator } from 'aws-amplify-react';
+import { Authenticator, Greetings } from "aws-amplify-react";
+import { Auth } from "aws-amplify";
+import {
+  ConfirmSignIn,
+  ConfirmSignUp,
+  ForgotPassword,
+  RequireNewPassword,
+  SignIn,
+  SignUp,
+  VerifyContact,
+  withAuthenticator,
+} from "aws-amplify-react";
 
 //amplify
-import Amplify,{ Storage } from 'aws-amplify';
+import Amplify, { Storage } from "aws-amplify";
 //import awsconfig from 'aws-exports';
 
 //Amplify.configure(awsconfig);
 
 const AlwaysOn = (props) => {
   return (
-      <div>
-          <div>I am always here to show current auth state: {props.authState}</div>
-          <button onClick={() => props.onStateChange('signUp')}>Show Sign Up</button>
-      </div>
-  )
-}
+    <div>
+      <div>I am always here to show current auth state: {props.authState}</div>
+      <button onClick={() => props.onStateChange("signUp")}>Show Sign Up</button>
+    </div>
+  );
+};
 
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     // we use this to make the card to appear after the page has been rendered
     this.state = {
-/*         cardAnimaton: "cardHidden",
+      /*         cardAnimaton: "cardHidden",
         email: {
             value: "",
             errors: []
@@ -58,9 +67,9 @@ class LoginPage extends React.Component {
             value: "",
             errors: []
         } */
-     user: null 
+      user: null,
     };
-/*     this.handleInputChange = this.handleInputChange.bind(this);
+    /*     this.handleInputChange = this.handleInputChange.bind(this);
     this.submitForm = this.submitForm.bind(this); */
   }
 
@@ -74,17 +83,17 @@ class LoginPage extends React.Component {
     );
   }
   handleInputChange(e) {
-      const {name, value} = e.target;
+    const { name, value } = e.target;
 
-      this.setState(state => ({ [name]: { ...this.state[name], value } }));
+    this.setState((state) => ({ [name]: { ...this.state[name], value } }));
   }
   loginRedirect(authState) {
     if (authState == "signedIn") {
       const _this = this;
       Auth.currentSession()
-      .then(data => console.log('current session data', data))
-      .catch(err => console.log('current session err', err));
-/*       Auth.currentAuthenticatedUser()
+        .then((data) => console.log("current session data", data))
+        .catch((err) => console.log("current session err", err));
+      /*       Auth.currentAuthenticatedUser()
         .then(user => 
           {
             const email = user.attribues.email;
@@ -94,16 +103,17 @@ class LoginPage extends React.Component {
           )
         .catch(err => console.log('error,err',err)); */
 
-        Auth.currentAuthenticatedUser()
-        .then(user => { 
-         console.log('loginpage user',user.username);
-          this.setState({ user: user.username })
-          this.props.history.push('/profile-page')
-        }).catch(err => console.log('currentAuthenticatedUser err', err))     
+      Auth.currentAuthenticatedUser()
+        .then((user) => {
+          console.log("loginpage user", user.username);
+          this.setState({ user: user.username });
+          this.props.history.push("/profile-page");
+        })
+        .catch((err) => console.log("currentAuthenticatedUser err", err));
     }
-    }
-    
-/*   submitForm(e){
+  }
+
+  /*   submitForm(e){
     console.log("inside submit form");
     e.preventDefault();
 
@@ -158,7 +168,9 @@ class LoginPage extends React.Component {
         <Header
           absolute
           color="transparent"
-          brand={<img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />}
+          brand={
+            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
+          }
           rightLinks={<HeaderLinks user={this.state.user} state={this.state} />}
           {...rest}
         />
@@ -167,22 +179,26 @@ class LoginPage extends React.Component {
           style={{
             backgroundImage: "url(" + image + ")",
             backgroundSize: "cover",
-            backgroundPosition: "top center"
+            backgroundPosition: "top center",
           }}
         >
           <div className={classes.container}>
             <GridContainer justify="left">
               <GridItem xs={12} sm={12} md={6}>
-                <Card className={classes[this.state.cardAnimaton]}
-                style={{
-            backgroundColor: "transparent",
-            color: "white",
-            boxShadow: "none",
-            fontSize: "120%",
-            lineHeight: "1.6"
-          }}>
-                <h3><strong>Welcome to the whalewatching</strong></h3>
-  {/*               <form onSubmit={this.submitForm} className={classes.form}>
+                <Card
+                  className={classes[this.state.cardAnimaton]}
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "white",
+                    boxShadow: "none",
+                    fontSize: "120%",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  <h3>
+                    <strong>Welcome to the whalewatching</strong>
+                  </h3>
+                  {/*               <form onSubmit={this.submitForm} className={classes.form}>
                 {   <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
                     </CardHeader>
@@ -200,9 +216,12 @@ class LoginPage extends React.Component {
                     </CardFooter>
                   
                 </Card> */}
-                 {/*     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
+                  {/*     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
                     </Authenticator>   */}
-                     <Authenticator hide={[Greetings]}onStateChange={(authState) => this.loginRedirect(authState)}></Authenticator>
+                  <Authenticator
+                    hide={[Greetings, SignUp]}
+                    onStateChange={(authState) => this.loginRedirect(authState)}
+                  ></Authenticator>
                 </Card>
               </GridItem>
             </GridContainer>
@@ -214,5 +233,5 @@ class LoginPage extends React.Component {
   }
 }
 
-const LoginPageContainer = connect(dispatch => ({ dispatch }))(LoginPage);
+const LoginPageContainer = connect((dispatch) => ({ dispatch }))(LoginPage);
 export default withStyles(loginPageStyle)(LoginPageContainer);
