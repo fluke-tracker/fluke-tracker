@@ -114,7 +114,7 @@ function HeaderLinks({ ...props }) {
                   user={props.user}
                 >
                   <a class="nav-link" href={"/impressum"} style={{ color: "white" }}>
-                    Impressum
+                    Imprint
                   </a>
                 </li>
               </ul>
