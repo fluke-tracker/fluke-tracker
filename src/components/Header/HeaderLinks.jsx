@@ -51,7 +51,7 @@ function HeaderLinks({ ...props }) {
   const { classes } = props;
   console.log('header props are,', props);
   return (
-    <div class="header__top container">
+    <div class="header__top container" style={{backgroundColor: "transparent"}}>
           { props.user ?
     <div class="header__nav">
               <div class="menu-all-pages-container">
@@ -59,9 +59,9 @@ function HeaderLinks({ ...props }) {
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
                         class="nav-link" href={"/profile-page"}>Welcome</a></li>
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                        class="nav-link" href={"/matching-page"}>Matching Page</a></li>
+                        class="nav-link" href={"/matching-page"}>Match Whales</a></li>
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                        class="nav-link" href={"/search-page"}>Search Page</a></li>
+                        class="nav-link" href={"/search-page"}>Browse Pictures</a></li>
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
                         class="nav-link" href={"/impressum"}>Impressum</a></li>
                 <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
@@ -69,7 +69,14 @@ function HeaderLinks({ ...props }) {
              </ul>
     </div>
     </div>
-: <div style={{"backgroundColor": "transparent"}}></div>}
+: <div style={{backgroundColor: "transparent"}}><div class="header__nav">
+              <div class="menu-all-pages-container">
+            <ul id="menu-main-menu" class="menu">
+                                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
+                        class="nav-link" href={"/impressum"} style={{color: "white"}}>Impressum</a></li>
+             </ul>
+    </div>
+    </div></div>}
 </div>
     /* <List className={classes.list}>
       { props.user ?
