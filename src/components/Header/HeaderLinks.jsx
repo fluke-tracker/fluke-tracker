@@ -66,7 +66,7 @@ function HeaderLinks({ ...props }) {
                 user={props.user}
               >
                 <a class="nav-link" href={"/profile-page"}>
-                  Welcome
+                  Welcome & Upload
                 </a>
               </li>
               <li
@@ -90,7 +90,7 @@ function HeaderLinks({ ...props }) {
                 user={props.user}
               >
                 <a class="nav-link" href={"/impressum"}>
-                  Impressum
+                  Imprint
                 </a>
               </li>
               <li

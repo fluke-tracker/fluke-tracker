@@ -745,7 +745,7 @@ class LandingPage extends React.Component {
                           >
                             &#9660;
                           </Button>
-                          {adminFlag ? (
+                          {/*adminFlag ? (
                             <Button
                               style={{ marginLeft: "10px" }}
                               disabled={!this.state.picsLoaded[0]}
@@ -757,7 +757,7 @@ class LandingPage extends React.Component {
                             </Button>
                           ) : (
                             ""
-                          )}
+                          )*/}
                           <Snackbar
                             open={dialogMessage !== ""}
                             message={dialogMessage}

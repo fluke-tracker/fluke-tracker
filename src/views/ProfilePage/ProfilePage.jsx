@@ -210,7 +210,7 @@ class ProfilePage extends React.Component {
                 backgroundRepeat: "no-repeat",
               }}
             ></div>
-            <div className={classes.container} >
+            <div className={classes.container}>
               <div class="section container" style={{ paddingTop: "50px", paddingBottom: "5px" }}>
                 <div class="row">
                   <div class="col-12">
@@ -225,7 +225,7 @@ class ProfilePage extends React.Component {
                         For Whale-Lovers, you can use this website to find sperm whales and match
                         your whale pictures with others. (new text comes)
                       </p>
-                     </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -243,19 +243,20 @@ class ProfilePage extends React.Component {
                       </p>
                       <ul style={{ paddingBottom: "0px", color: "black" }}>
                         <li>
-                          Image must be ventral side of the animal in an upright (or as close to vertical as possible) position.
+                          Image must be ventral side of the animal in an upright (or as close to
+                          vertical as possible) position.
                         </li>
                         <li>
-                          If the image is taken from the front of the animal, then the image must be flipped horizontally before uploading.
+                          If the image is taken from the front of the animal, then the image must be
+                          flipped horizontally before uploading.
                         </li>
                         <li>
-                          If the image is taken on the lifting of the fluke, the image has to be flipped vertically, so the trailing edge is on the top of the image.
+                          If the image is taken on the lifting of the fluke, the image has to be
+                          flipped vertically, so the trailing edge is on the top of the image.
                         </li>
                         <li>
-                          Please do not upload dorsal fin or head images as this will confuse the algorithm.
-                        </li>
-                        <li>
-                        Ask if the crop has been done correctly. If not, then the submitter may have to crop their own photo and re-submit, in which case, I guess they might have to say this is a cropped image. Like the dead whale, was already a cropped image, but the program cropped it further.
+                          Please do not upload dorsal fin or head images as this will confuse the
+                          algorithm.
                         </li>
                       </ul>
                     </div>
@@ -263,52 +264,52 @@ class ProfilePage extends React.Component {
                 </div>
               </div>
               <div style={{ paddingRight: "15px", paddingLeft: "15px" }}>
-              <input
-                type="file"
-                accept="image/jpeg"
-                style={{ display: "none" }}
-                ref={(ref) => (this.upload = ref)}
-                onChange={(e) =>
-                  this.setState({
-                    imageFile: this.upload.files[0],
-                    imageName: this.upload.files[0].name,
-                  })
-                }
-                required
-              />
-              <input
-                style={{ "text-align": "center" }}
-                value={this.state.imageName}
-                placeholder="Select file"
-                required
-              />
-              <Button
-                style={{ marginLeft: "10px" }}
-                variant="contained"
-                color="info"
-                size="md"
-                onClick={(e) => {
-                  this.upload.value = null;
-                  this.upload.click();
-                }}
-                loading={this.state.uploading}
-              >
-                Browse
-              </Button>
-              <Button
-                style={{ marginLeft: "10px" }}
-                variant="contained"
-                onClick={() => this.uploadImage()}
-                color="success"
-                size="md"
-              >
-                Upload File
-              </Button>
+                <input
+                  type="file"
+                  accept="image/jpeg"
+                  style={{ display: "none" }}
+                  ref={(ref) => (this.upload = ref)}
+                  onChange={(e) =>
+                    this.setState({
+                      imageFile: this.upload.files[0],
+                      imageName: this.upload.files[0].name,
+                    })
+                  }
+                  required
+                />
+                <input
+                  style={{ "text-align": "center" }}
+                  value={this.state.imageName}
+                  placeholder="Select file"
+                  required
+                />
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  variant="contained"
+                  color="info"
+                  size="md"
+                  onClick={(e) => {
+                    this.upload.value = null;
+                    this.upload.click();
+                  }}
+                  loading={this.state.uploading}
+                >
+                  Browse
+                </Button>
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  variant="contained"
+                  onClick={() => this.uploadImage()}
+                  color="success"
+                  size="md"
+                >
+                  Upload File
+                </Button>
 
-              <div color="red" size="sm">
-                {!!this.state.response && (
-                  <h5 style={{ color: this.state.responseColor }}>{this.state.response}</h5>
-                )}
+                <div color="red" size="sm">
+                  {!!this.state.response && (
+                    <h5 style={{ color: this.state.responseColor }}>{this.state.response}</h5>
+                  )}
                 </div>
               </div>
             </div>
