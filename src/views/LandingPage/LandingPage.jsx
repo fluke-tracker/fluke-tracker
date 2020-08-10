@@ -369,6 +369,7 @@ class LandingPage extends React.Component {
     ).then(() => {
       console.log("Created a new 'NO MATCH' pair");
       this.showSnackBar("Successfully saved 'no match' between the two pictures", 5000);
+      this.navigationAction("right");
     });
   }
 
@@ -635,7 +636,7 @@ class LandingPage extends React.Component {
         <Header
           color="blue"
           brand={
-            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
+            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}

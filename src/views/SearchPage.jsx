@@ -59,7 +59,7 @@ class SearchPage extends React.Component {
     try {
       let queryWasSuccess = false;
       console.log("setting whaleid of images -1 and is_new flag as false");
-      for (var i = 0; i < this.state.IMAGES.length; i++)
+      for (var i = 0; i < this.state.IMAGES.length; i++) {
         if (this.state.IMAGES[i].isSelected == true) {
           console.log("rematching selected images", this.state.IMAGES[i].caption);
           const selected_image_name = this.state.IMAGES[i].caption;
@@ -70,9 +70,11 @@ class SearchPage extends React.Component {
           );
           if (queryWasSuccess) {
             console.log("Successfully assigned whales ", selected_image_name);
-            this.showSnackBar("Whale " + selected_image_name + " can now be Re-Matched", 5000);
+            this.showSnackBar("Picture '" + selected_image_name + "' can now be re-matched", 5000);
           }
         }
+      }
+      this.searchWhales(this.state);
     } catch (e) {
       console.log("error while re-setting whaleID and is_new flag");
     }
@@ -247,7 +249,7 @@ class SearchPage extends React.Component {
 
             <input
               type="text"
-              style={{ "text-align": "center" }}
+              style={{ "text-align": "center", borderRadius: "5px" }}
               name="searchInput"
               placeholder="whale ID / image name"
               value={this.state.searchInput}
