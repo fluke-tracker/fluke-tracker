@@ -168,9 +168,7 @@ class LoginPage extends React.Component {
         <Header
           absolute
           color="transparent"
-          brand={
-            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
-          }
+          brand=""
           rightLinks={<HeaderLinks user={this.state.user} state={this.state} />}
           {...rest}
         />
@@ -180,25 +178,28 @@ class LoginPage extends React.Component {
             backgroundImage: "url(" + image + ")",
             backgroundSize: "cover",
             backgroundPosition: "top center",
+            opacity: 0.8
           }}
         >
           <div className={classes.container}>
             <GridContainer justify="left">
               <GridItem xs={12} sm={12} md={6}>
-                <Card
-                  className={classes[this.state.cardAnimaton]}
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "white",
-                    boxShadow: "none",
-                    fontSize: "120%",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  <h3>
-                    <strong>Welcome to the whalewatching</strong>
-                  </h3>
-                  {/*               <form onSubmit={this.submitForm} className={classes.form}>
+                <Card className={classes[this.state.cardAnimaton]}
+                style={{
+            backgroundColor: "black",
+            color: "black",
+            boxShadow: "5px 10px",
+            fontSize: "100%",
+            lineHeight: "1.6",
+            border: "1px solid"
+          }}>
+          <div className={classes.container} style={{paddingTop: "0px"}}>
+                <h3><strong>Welcome to the FlukeTracker</strong></h3>
+                 <h4 style={{ paddingBottom: "5px" }}><strong>
+                        For Whale-Lovers, you can use this website to find sperm whales and match
+                        your whale pictures with others.</strong>
+                      </h4>
+  {/*               <form onSubmit={this.submitForm} className={classes.form}>
                 {   <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
                     </CardHeader>
@@ -218,10 +219,8 @@ class LoginPage extends React.Component {
                 </Card> */}
                   {/*     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
                     </Authenticator>   */}
-                  <Authenticator
-                    hide={[Greetings, SignUp]}
-                    onStateChange={(authState) => this.loginRedirect(authState)}
-                  ></Authenticator>
+                     <Authenticator hide={[Greetings]}onStateChange={(authState) => this.loginRedirect(authState)}></Authenticator>
+                </div>
                 </Card>
               </GridItem>
             </GridContainer>

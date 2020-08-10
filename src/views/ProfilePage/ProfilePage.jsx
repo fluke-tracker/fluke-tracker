@@ -185,7 +185,7 @@ class ProfilePage extends React.Component {
     const { classes, ...rest } = this.props;
 
     return (
-      <div>
+      <div style={{ backgroundColor: "rgb(170,223,255)", minHeight: "100vh" }}>
         <Header
           color="blue"
           brand={
@@ -194,7 +194,7 @@ class ProfilePage extends React.Component {
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
-            height: "400",
+            height: "200",
             color: "black",
           }}
           {...rest}
@@ -210,40 +210,22 @@ class ProfilePage extends React.Component {
                 backgroundRepeat: "no-repeat",
               }}
             ></div>
-            <div className={classes.container}>
+            <div className={classes.container} >
               <div class="section container" style={{ paddingTop: "50px", paddingBottom: "5px" }}>
                 <div class="row">
                   <div class="col-12">
                     <div class="article-text">
-                      <h2 style={{ paddingTop: "5px" }}>
-                        <strong>Whalewatching</strong>
-                      </h2>
-                      <h4 style={{ paddingTop: "5px" }}>
-                        <strong>What is the Whalewatching website?</strong>
+                      <h1 style={{ paddingTop: "5px" }}>
+                        <strong>FlukeTracker</strong>
+                      </h1>
+                      <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
+                        <strong>What is the FlukeTracker website?</strong>
                       </h4>
                       <p style={{ paddingBottom: "5px" }}>
                         For Whale-Lovers, you can use this website to find sperm whales and match
-                        your whale pictures with others. This website consists of the following
-                        pages:{" "}
+                        your whale pictures with others. (new text comes)
                       </p>
-                      <ul style={{ paddingBottom: "5px", color: "black" }}>
-                        <li>
-                          <strong>Profile Page</strong>: where you can find the basic instruction
-                          and upload your pictures after log-in
-                        </li>
-                        <li>
-                          <strong>Matching Page</strong>: where you can compare two pictures and
-                          confirm whether they are the same
-                        </li>
-                        <li>
-                          <strong>Search Page</strong>: where you can find the whale pictures with
-                          the same id
-                        </li>
-                        <li>
-                          <strong>Imprint (?)</strong>
-                        </li>
-                      </ul>
-                    </div>
+                     </div>
                   </div>
                 </div>
               </div>
@@ -253,13 +235,34 @@ class ProfilePage extends React.Component {
                 <div class="row">
                   <div class="col-12">
                     <div class="article-text">
-                      <h4 style={{ paddingTop: "5px" }}>
+                      <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
                         <strong>Upload Whale Image 🐳</strong>
                       </h4>
+                      <p style={{ marginBottom: "5px" }}>
+                        Here are a few points about the uploading of images:
+                      </p>
+                      <ul style={{ paddingBottom: "0px", color: "black" }}>
+                        <li>
+                          Image must be ventral side of the animal in an upright (or as close to vertical as possible) position.
+                        </li>
+                        <li>
+                          If the image is taken from the front of the animal, then the image must be flipped horizontally before uploading.
+                        </li>
+                        <li>
+                          If the image is taken on the lifting of the fluke, the image has to be flipped vertically, so the trailing edge is on the top of the image.
+                        </li>
+                        <li>
+                          Please do not upload dorsal fin or head images as this will confuse the algorithm.
+                        </li>
+                        <li>
+                        Ask if the crop has been done correctly. If not, then the submitter may have to crop their own photo and re-submit, in which case, I guess they might have to say this is a cropped image. Like the dead whale, was already a cropped image, but the program cropped it further.
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
               </div>
+              <div style={{ paddingRight: "15px", paddingLeft: "15px" }}>
               <input
                 type="file"
                 accept="image/jpeg"
@@ -306,6 +309,7 @@ class ProfilePage extends React.Component {
                 {!!this.state.response && (
                   <h5 style={{ color: this.state.responseColor }}>{this.state.response}</h5>
                 )}
+                </div>
               </div>
             </div>
           </div>
