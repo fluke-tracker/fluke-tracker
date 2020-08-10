@@ -52,11 +52,12 @@ const ImageWithInfoComponent = (props) => {
     const geoCoordsParsed = getGeocoordsParsed(false);
     const date = picObj.date_taken;
     const dateErrs = new Set(["", " ", null]);
+
     picInfosItems = (
       <div style={{ marginBottom: "10px" }}>
         <strong style={labelsAligned}>Whale ID: </strong>
         <Badge color="info">{parseInt(whaleId) === -1 ? "-" : whaleId}</Badge>
-        {adminFlag && parseInt(whaleId) !== -1 ? (
+        {parseInt(whaleId) !== -1 ? (
           <Button style={{ marginLeft: "10px" }} size="sm" onClick={openSearchPage}>
             Show more pictures
           </Button>
