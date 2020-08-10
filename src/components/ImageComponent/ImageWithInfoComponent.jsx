@@ -45,15 +45,19 @@ const ImageWithInfoComponent = (props) => {
   };
 
   if (typeof picObj !== "undefined") {
+    const labelsAligned = { minWidth: "165px", display: "inline-block" };
+
     const whaleId = picObj.whale.id;
+    const uploadedBy = picObj.uploaded_by;
+    const geoCoordsParsed = getGeocoordsParsed(false);
     const date = picObj.date_taken;
     const dateErrs = new Set(["", " ", null]);
     picInfosItems = (
-      <div>
-        <strong>Whale ID: </strong>
+      <div style={{ marginBottom: "10px" }}>
+        <strong style={labelsAligned}>Whale ID: </strong>
         <Badge color="info">{parseInt(whaleId) === -1 ? "-" : whaleId}</Badge>
-        {adminFlag ? (
-          <Button size="sm" onClick={openSearchPage}>
+        {adminFlag && parseInt(whaleId) !== -1 ? (
+          <Button style={{ marginLeft: "10px" }} size="sm" onClick={openSearchPage}>
             Show more pictures
           </Button>
         ) : (
@@ -61,23 +65,27 @@ const ImageWithInfoComponent = (props) => {
         )}
         <br />
         <div>
-          <strong>Picture owner: </strong>
-          <Badge color="info">{picObj.uploaded_by}</Badge>
+          <strong style={labelsAligned}>Picture owner: </strong>
+          <Badge color="info">{uploadedBy !== "" ? uploadedBy : "-"}</Badge>
           {/*<SendPrivateMessage />*/}
           <br />
         </div>
-        <strong>Coordinates / Place: </strong>
-        <Badge color="info">{getGeocoordsParsed(false)}</Badge>
-        <Button size="sm" onClick={openMapPage}>
-          Open in map
-        </Button>
+        <strong style={labelsAligned}>Coordinates / Place: </strong>
+        <Badge color="info">{geoCoordsParsed}</Badge>
+        {geoCoordsParsed !== "-" ? (
+          <Button style={{ marginLeft: "10px" }} size="sm" onClick={openMapPage}>
+            Open in map
+          </Button>
+        ) : (
+          ""
+        )}
         <br />
-        <strong>Date: </strong>
+        <strong style={labelsAligned}>Date: </strong>
         <Badge color="info">{dateErrs.has(date) ? "-" : date}</Badge>
         <br />
         {distance != null ? (
           <div>
-            <strong>Similarity-Score: </strong>
+            <strong style={labelsAligned}>Similarity-Score: </strong>
             <Badge color="info">{(2 - distance).toFixed(2)}</Badge>
           </div>
         ) : (

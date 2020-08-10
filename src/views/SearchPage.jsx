@@ -218,15 +218,22 @@ class UploadPage extends React.Component {
                     <h2 style={{ paddingTop: "5px" }}>
                       <strong>Search Whale Image 🐳</strong>
                     </h2>
-                    <p style={{ paddingBottom: "5px" }}>You can search for Whale Images using:</p>
+                    <p style={{ paddingBottom: "5px" }}>You can search for whale images using:</p>
                     <ul style={{ paddingBottom: "5px", color: "black" }}>
                       <li>
-                        <strong>Whale ID</strong>: This will display all Whales tagged to the given
-                        ID
+                        <strong>Search whale / image: </strong>This will display all whales tagged
+                        to the given ID
                       </li>
                       <li>
-                        <strong>Random Whale</strong>: This will display a random image of the Whale
-                        with Image Name and ID
+                        <strong>Display random whale: </strong>This will display the images of a
+                        random whale
+                      </li>
+                      <li>
+                        <strong>Re-match whale: </strong>After searching for a whale ID you can
+                        select one of the displayed pictures and remove the ID from it.
+                        <br />
+                        This way you will be able to re-match it again, in case of a
+                        matching-mistake.
                       </li>
                     </ul>
                   </div>
@@ -234,28 +241,53 @@ class UploadPage extends React.Component {
               </div>
             </div>
 
-            <form onSubmit={this.handleSubmit.bind(this)}>
-              <input
-                type="text"
-                style={{ "text-align": "center" }}
-                name="searchInput"
-                placeholder="Whale ID/Image Name"
-                value={this.state.searchInput}
-                onChange={this.handleInputChange.bind(this)}
-                required
-              />
-              <button>Search Whale</button>
-              <button onClick={this.handleAlternate.bind(this)}>Display Random Whale</button>
-              <button onClick={this.getSelectedImages.bind(this)}>Re-Match Whale</button>
-              <Gallery
-                images={this.state.IMAGES}
-                rowHeight={174}
-                enableLightbox={true}
-                backdropClosesModal
-                onSelectImage={this.onSelectImage}
-              />
-            </form>
-            {this.state.noData && <p style={{ color: "red" }}>No Results Found!</p>}
+            <input
+              type="text"
+              style={{ "text-align": "center" }}
+              name="searchInput"
+              placeholder="whale ID / image name"
+              value={this.state.searchInput}
+              onChange={this.handleInputChange.bind(this)}
+              required
+            />
+            <Button
+              onClick={this.handleSubmit.bind(this)}
+              style={{ margin: "10px" }}
+              variant="contained"
+              color="info"
+              size="sm"
+            >
+              Search Whale / Image
+            </Button>
+            <Button
+              onClick={this.handleAlternate.bind(this)}
+              style={{ margin: "10px" }}
+              variant="contained"
+              color="info"
+              size="sm"
+            >
+              Display Random Whale
+            </Button>
+            <Button
+              onClick={this.getSelectedImages.bind(this)}
+              style={{ margin: "10px" }}
+              variant="contained"
+              color="info"
+              size="sm"
+            >
+              Re-Match Whale
+            </Button>
+            <Gallery
+              images={this.state.IMAGES}
+              rowHeight={174}
+              enableLightbox={true}
+              backdropClosesModal
+              onSelectImage={this.onSelectImage}
+            />
+
+            {this.state.noData && (
+              <p style={{ color: "red" }}>No results found. Please try again.</p>
+            )}
             <Snackbar open={dialogMessage !== ""} message={dialogMessage} autoHideDuration={4000} />
           </div>
         ) : (

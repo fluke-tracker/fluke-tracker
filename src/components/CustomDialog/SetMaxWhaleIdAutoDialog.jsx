@@ -28,7 +28,7 @@ const SetMaxWhaleIdAutoDialog = (props) => {
         size="sm"
         disabled={props.disabled}
         variant="contained"
-        color="white"
+        color="success"
         onClick={handleClickOpen}
       >
         Create and set new whale ID

@@ -280,6 +280,7 @@ class ProfilePage extends React.Component {
                 required
               />
               <Button
+                style={{ marginLeft: "10px" }}
                 variant="contained"
                 color="info"
                 size="md"
@@ -292,6 +293,7 @@ class ProfilePage extends React.Component {
                 Browse
               </Button>
               <Button
+                style={{ marginLeft: "10px" }}
                 variant="contained"
                 onClick={() => this.uploadImage()}
                 color="success"

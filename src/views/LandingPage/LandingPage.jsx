@@ -747,10 +747,10 @@ class LandingPage extends React.Component {
                           </Button>
                           {adminFlag ? (
                             <Button
+                              style={{ marginLeft: "10px" }}
                               disabled={!this.state.picsLoaded[0]}
                               variant="contained"
                               onClick={() => this.go_badPicture()}
-                              color="warning"
                               size="sm"
                             >
                               Bad picture
@@ -778,6 +778,7 @@ class LandingPage extends React.Component {
                                 Match
                               </Button>
                               <Button
+                                style={{ marginLeft: "6px" }}
                                 disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
                                 variant="contained"
                                 onClick={() => this.unmatchPictures()}
