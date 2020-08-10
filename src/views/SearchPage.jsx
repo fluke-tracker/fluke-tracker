@@ -22,7 +22,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 
 const dashboardRoutes = [];
 const IMAGES = [];
-class UploadPage extends React.Component {
+class SearchPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -108,7 +108,11 @@ class UploadPage extends React.Component {
     });
   }
   async searchWhales(data) {
+    let returnPath;
     try {
+      const S3bucket = await Storage.get("");
+      returnPath = S3bucket.split("public/")[0];
+      console.log("search page bucket path", returnPath);
       const whale = await API.graphql(graphqlOperation(getWhale, { id: data.searchInput }));
       const pictures = await API.graphql(graphqlOperation(getPicture, { id: data.searchInput }));
       console.log("whale output aws", whale);
@@ -117,14 +121,14 @@ class UploadPage extends React.Component {
         console.log("whale ID output present. length", whale.data.getWhale.pictures.items.length);
         this.state.IMAGES = [];
         whale.data.getWhale.pictures.items.forEach((item) => {
-          this.state.IMAGES.push(this.formatImages(item, data.searchInput));
+          this.state.IMAGES.push(this.formatImages(item, data.searchInput, returnPath));
         });
         this.setState({ noData: false });
       } else if (pictures.data.getPicture) {
         console.log("pictures name output present. ", pictures.data.getPicture.id);
         this.state.IMAGES = [];
         this.state.IMAGES.push(
-          this.formatImages(pictures.data.getPicture, pictures.data.getPicture.whale.id)
+          this.formatImages(pictures.data.getPicture, pictures.data.getPicture.whale.id, returnPath)
         );
         this.setState({ noData: false });
       } else {
@@ -149,7 +153,11 @@ class UploadPage extends React.Component {
     const data = this.state;
     console.log("inside handleAlternate function");
     console.log("state before submit", data);
+    let returnPath;
     try {
+      const S3bucket = await Storage.get("");
+      returnPath = S3bucket.split("public/")[0];
+      console.log("search page bucket path", returnPath);
       const whale = await API.graphql(graphqlOperation(listWhales, { limit: 3000 }));
       console.log("whale output aws", whale);
       const whale_items = whale.data.listWhales.items;
@@ -162,7 +170,7 @@ class UploadPage extends React.Component {
       console.log("picture_items", picture_items);
       this.state.IMAGES = [];
       picture_items.forEach((item) => {
-        this.state.IMAGES.push(this.formatImages(item, randomID.name));
+        this.state.IMAGES.push(this.formatImages(item, randomID.name, returnPath));
       });
       this.setState({ noData: false, searchInput: randomID.name });
     } catch (e) {
@@ -172,15 +180,11 @@ class UploadPage extends React.Component {
     console.log("state after submit", this.state);
   }
 
-  formatImages(item, whale_id) {
+  formatImages(item, whale_id, S3bucket) {
     console.log("fetching images array from S3", item);
     return {
-      src:
-        "https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/cropped_images/" +
-        item.filename,
-      thumbnail:
-        "https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/public/thumbnails/" +
-        item.thumbnail,
+      src: S3bucket + "cropped_images/" + item.filename,
+      thumbnail: S3bucket + "cropped_images/" + item.filename,
       thumbnailWidth: 320,
       thumbnailHeight: 174,
       tags: [
@@ -265,4 +269,4 @@ class UploadPage extends React.Component {
     );
   }
 }
-export default withStyles(landingPageStyle)(UploadPage);
+export default withStyles(landingPageStyle)(SearchPage);
