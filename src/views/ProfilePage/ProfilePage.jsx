@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-//import { configureAmplify, SetS3Config } from "./services";
+
 import Header from "components/Header/Header.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Storage from "@aws-amplify/storage";
@@ -11,8 +10,9 @@ import classNames from "classnames";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { Auth } from "aws-amplify";
-import Footer from "components/Footer/Footer.jsx";
+
 import { createPicture, updateConfig, createWhale } from "graphql/mutations";
 import { getConfig } from "graphql/queries";
 import API, { graphqlOperation } from "@aws-amplify/api";
@@ -25,7 +25,8 @@ class ProfilePage extends React.Component {
     this.state = {
       imageName: "",
       imageFile: "",
-      response: "",
+      response: undefined,
+      responseColor: "",
       user: null,
       latitude: null,
       longitude: null,
@@ -45,96 +46,116 @@ class ProfilePage extends React.Component {
         this.props.history.push("/login-page");
       });
   }
-  async uploadImage() {
-    try {
-      const output = await exifr.parse(this.state.imageFile);
-      this.state.latitude = output.latitude;
-      this.state.longitude = output.longitude;
-      this.state.imageDate = output.DateTimeOriginal.toGMTString();
-      console.log("image output", output);
-    } catch (e) {
-      this.state.latitude = null;
-      this.state.longitude = null;
-      this.state.imageDate = null;
-      console.log("error in exifr ", e);
-    }
 
-    var allowUpload = false;
-    try {
-      allowUpload = await this.insertToDynamo(`${this.upload.files[0].name}`, allowUpload);
-    } catch (e) {
-      console.log("error in uploading ", e);
-    }
-    console.log("allowUpload ", allowUpload);
-    if (allowUpload == true) {
-      try {
-        console.log("upload image to S3 bucket");
-        var options = {
-          ACL: "public-read",
-          level: "public",
-          contentType: this.upload.files[0].type,
-        };
-        Storage.put(
-          "embeddings/input/" + `${this.upload.files[0].name}`,
-          this.upload.files[0],
-          options
-          //         { contentType: this.upload.files[0].type,level: 'public' }
-        )
-          .then((result) => {
-            this.uploadThumbnail();
-            const image = `${this.upload.files[0].name}`;
-            console.log("image uploaded", result);
-            this.upload = null;
-            this.setState({ response: "Success uploading file!", imageName: "" });
-          })
-          .catch((err) => {
-            console.log("error while uploading,", err);
-            this.setState({ response: `Cannot uploading file: ${err}` });
-          });
-      } catch (e) {
-        console.log("error in uploading", e);
+  async uploadImage() {
+    let file = this.upload.files[0];
+    if (typeof file !== "undefined") {
+      const allowedFileTypes = new Set(["image/jpeg"]);
+      const filetype = file.type;
+      if (!allowedFileTypes.has(filetype)) {
+        this.setState({
+          response:
+            "Error! File could not be uploaded: Expected file type is 'image/jpeg' but received '" +
+            filetype +
+            "'.",
+          responseColor: "red",
+        });
+
+        // artifical "break"
+        return;
       }
-    } else {
-      console.log("cannot upload image");
+
+      // if we got to this point, we set the response to "" to enable the circularProgress item
+      this.setState({ response: "" });
+
+      // modify file ending if written in capital letters or as 'jpeg' instead of 'jpg'
+      let splitFileName = file.name.split(".");
+      const fileExt = splitFileName.pop();
+      if (fileExt === "JPG" || fileExt === "jpeg") {
+        file = new File([file], splitFileName.join("") + ".jpg", { type: filetype });
+        console.log(file);
+      }
+
+      // extract meta data if available
+      try {
+        const output = await exifr.parse(file);
+        this.state.latitude = output.latitude;
+        this.state.longitude = output.longitude;
+        this.state.imageDate = output.DateTimeOriginal.toGMTString();
+        console.log("image output", output);
+      } catch (e) {
+        this.state.latitude = null;
+        this.state.longitude = null;
+        this.state.imageDate = null;
+        console.log("error in exifr ", e);
+      }
+
+      let allowUpload = false;
+      try {
+        allowUpload = await this.insertToDynamo(file.name, allowUpload);
+      } catch (e) {
+        console.log("error in insertToDynamo ", e);
+      }
+      console.log("allowUpload ", allowUpload);
+      if (allowUpload == true) {
+        try {
+          console.log("upload image to S3 bucket");
+          var options = {
+            ACL: "public-read",
+            level: "public",
+            contentType: filetype,
+          };
+
+          Storage.put(
+            "embeddings/input/" + file.name,
+            file,
+            options
+            //         { contentType: this.upload.files[0].type,level: 'public' }
+          )
+            .then((result) => {
+              this.uploadThumbnail(file);
+              console.log("image uploaded", result);
+              this.upload = null;
+              this.setState({
+                response: "File uploaded successfully!",
+                responseColor: "green",
+                imageName: "",
+              });
+            })
+            .catch((err) => {
+              console.log("error while uploading,", err);
+              this.setState({
+                response: "Error! File could not be uploaded, please try again.",
+                responseColor: "red",
+              });
+            });
+        } catch (e) {
+          console.log("error in uploading", e);
+        }
+      } else {
+        console.log("cannot upload image");
+      }
     }
   }
 
-  async uploadThumbnail() {
+  async uploadThumbnail(pFile) {
     try {
       var options = {
         ACL: "public-read",
         level: "public",
-        contentType: this.upload.files[0].type,
+        contentType: pFile.type,
       };
-      console.log("upload thumbnail", `${this.upload.files[0].name}` + "thumbnail.jpg");
-      await Storage.put(
-        "thumbnails/" + `${this.upload.files[0].name}` + "thumbnail.jpg",
-        this.upload.files[0],
-        options
-      );
+      console.log("upload thumbnail", pFile.name + "thumbnail.jpg");
+      await Storage.put("thumbnails/" + pFile.name + "thumbnail.jpg", pFile, options);
+      console.log("AFTER thumbnail upload");
     } catch (e) {
       console.log("cannot upload thumbnail", e);
     }
   }
+
   async insertToDynamo(image, allowUpload) {
     try {
-      console.log("getting config from dynamodb");
-      const getWhaleConfig = await API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" }));
-      console.log("getConfig output aws", getWhaleConfig);
-      const maxWhaleID = getWhaleConfig.data.getConfig.value;
-      console.log("maxWhaleID", maxWhaleID);
-      var newWhaleID = parseInt(maxWhaleID) + 1;
-    } catch (e) {
-      allowUpload = false;
-      console.log("getting config error", e);
-      this.setState({
-        response: `Error: while fetching AWS Config for upload: ${e}`,
-        imageName: "",
-      });
-    }
-    try {
       console.log("inserting image record to dynamodb");
-      console.log("newWhaleID", newWhaleID);
       const insertImage = await API.graphql(
         graphqlOperation(createPicture, {
           input: {
@@ -152,33 +173,15 @@ class ProfilePage extends React.Component {
       );
       console.log("insertImage output aws", insertImage);
 
-      /* const insertWhale = await API.graphql(graphqlOperation(createWhale,
-        {
-          input:
-          {
-            id: newWhaleID,
-            name: newWhaleID
-          }
-        }));
-      console.log('insertWhale output aws', insertWhale)
-
-      console.log('updating maxwhaleID config', newWhaleID)
-      const updateWhaleConfig = await API.graphql(graphqlOperation(updateConfig,
-        {
-          input:
-          {
-            id: 'maxWhaleId',
-            value: newWhaleID
-          }
-        }));
-      console.log('updateWhaleConfig output aws', updateWhaleConfig) */
       allowUpload = true;
       console.log("setting allowupload as ", allowUpload);
     } catch (e) {
       allowUpload = false;
       console.log("getting insertImage error", e);
       this.setState({
-        response: `Error while upload. Check if Image already exists in the Database: ${e}`,
+        response:
+          "Error! Please make sure that the image you are trying to upload does not exist in the database already.",
+        responseColor: "red",
         imageName: "",
       });
     }
@@ -189,124 +192,142 @@ class ProfilePage extends React.Component {
     const { classes, ...rest } = this.props;
 
     return (
-      <div>
+      <div style={{ minHeight: "100vh" }}>
         <Header
-          color="blue"
           brand={
-            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
+            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
-            height: "400",
+            height: "200",
             color: "black",
           }}
           {...rest}
         />
-      {this.state.user != null ? (
-        <div>
-        <div
-          class="section container"
-          style={{
-            backgroundImage: 'url(require("../assets/img/tail.jpg"))',
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-          }}
-        ></div>
-        <div className={classes.container}>
-          <div class="section container" style={{ paddingTop: "50px", paddingBottom: "5px" }}>
-            <div class="row">
-              <div class="col-12">
-                <div class="article-text">
-                  <h2 style={{ paddingTop: "5px" }}>
-                    <strong>Whalewatching</strong>
-                  </h2>
-                  <h4 style={{ paddingTop: "5px" }}>
-                    <strong>What is the Whalewatching website?</strong>
-                  </h4>
-                  <p style={{ paddingBottom: "5px" }}>
-                    For Whale-Lovers, you can use this website to find sperm whales and match your
-                    whale pictures with others. This website consists of the following pages:{" "}
-                  </p>
-                  <ul style={{ paddingBottom: "5px", color: "black" }}>
-                    <li>
-                      <strong>Profile Page</strong>: where you can find the basic instruction and
-                      upload your pictures after log-in
-                    </li>
-                    <li>
-                      <strong>Matching Page</strong>: where you can compare two pictures and confirm
-                      whether they are the same
-                    </li>
-                    <li>
-                      <strong>Search Page</strong>: where you can find the whale pictures with the
-                      same id
-                    </li>
-                    <li>
-                      <strong>Impressum (?)</strong>
-                    </li>
-                  </ul>
+        {this.state.user != null ? (
+          <div>
+            <div
+              class="section container"
+              style={{
+                backgroundImage: 'url(require("../assets/img/tail.jpg"))',
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></div>
+            <div className={classes.container}>
+              <div class="section container" style={{ paddingTop: "50px", paddingBottom: "5px" }}>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="article-text">
+                      <h1 style={{ paddingTop: "5px" }}>
+                        <strong>FlukeTracker</strong>
+                      </h1>
+                      <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
+                        <strong>What is the FlukeTracker website?</strong>
+                      </h4>
+                      <p style={{ paddingBottom: "5px" }}>
+                        For Whale-Lovers: You can use this website to find sperm whales and match
+                        your whale pictures with others.<br></br> After uploading a whale image,
+                        potential matches generated by the AI can be reviewed on the{" "}
+                        <i>Match Whales</i> page.<br></br> Feel free to view our entire whale
+                        catalogue on the <i> Browse Pictures </i> page.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className={classes.container}>
-          <div class="section container" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-            <div class="row">
-              <div class="col-12">
-                <div class="article-text">
-                  <h4 style={{ paddingTop: "5px" }}>
-                    <strong>Upload Whale Image 🐳</strong>
-                  </h4>
+            <div className={classes.container}>
+              <div class="section container" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="article-text">
+                      <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
+                        <strong>Upload Whale Image 🐳</strong>
+                      </h4>
+                      <p style={{ marginBottom: "5px" }}>
+                        Here are a few points about the uploading of images:
+                      </p>
+                      <ul style={{ paddingBottom: "0px", color: "black" }}>
+                        <li>
+                          Image must be ventral side of the animal in an upright (or as close to
+                          vertical as possible) position.
+                        </li>
+                        <li>
+                          If the image is taken from the front of the animal, then the image must be
+                          flipped horizontally before uploading.
+                        </li>
+                        <li>
+                          If the image is taken on the lifting of the fluke, the image has to be
+                          flipped vertically, so the trailing edge is on the top of the image.
+                        </li>
+                        <li>
+                          Please do not upload dorsal fin or head images as this will confuse the
+                          algorithm.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            style={{ display: "none" }}
-            ref={(ref) => (this.upload = ref)}
-            onChange={(e) =>
-              this.setState({
-                imageFile: this.upload.files[0],
-                imageName: this.upload.files[0].name,
-              })
-            }
-            required
-          />
-          <input
-            style={{ "text-align": "center" }}
-            value={this.state.imageName}
-            placeholder="Select file"
-            required
-          />
-          <Button
-            variant="contained"
-            color="info"
-            size="md"
-            onClick={(e) => {
-              this.upload.value = null;
-              this.upload.click();
-            }}
-            loading={this.state.uploading}
-          >
-            Browse
-          </Button>
-          <Button variant="contained" onClick={() => this.uploadImage()} color="success" size="md">
-            Upload File
-          </Button>
+              <div style={{ paddingRight: "15px", paddingLeft: "15px" }}>
+                <input
+                  type="file"
+                  accept="image/jpeg"
+                  style={{ display: "none" }}
+                  ref={(ref) => (this.upload = ref)}
+                  onChange={(e) =>
+                    this.setState({
+                      imageFile: this.upload.files[0],
+                      imageName: this.upload.files[0].name,
+                    })
+                  }
+                  required
+                />
+                <input
+                  style={{ "text-align": "center" }}
+                  value={this.state.imageName}
+                  placeholder="Select file"
+                  required
+                />
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  variant="contained"
+                  color="info"
+                  size="md"
+                  onClick={(e) => {
+                    this.upload.value = null;
+                    this.upload.click();
+                  }}
+                  loading={this.state.uploading}
+                >
+                  Browse
+                </Button>
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  variant="contained"
+                  onClick={() => this.uploadImage()}
+                  color="success"
+                  size="md"
+                >
+                  Upload File
+                </Button>
 
-          <div color="red" size="sm">
-            {!!this.state.response && <h5 style={{ color: "red" }}>{this.state.response}</h5>}
+                <div size="sm">
+                  {this.state.response === "" ? <CircularProgress /> : ""}
+                  {!!this.state.response && (
+                    <h5 style={{ color: this.state.responseColor }}>{this.state.response}</h5>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        </div>
-      ) : (
-       <div></div>
-      )}
-    </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
     );
   }
 }

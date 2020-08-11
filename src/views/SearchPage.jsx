@@ -13,15 +13,16 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from "aws-amplify";
 import Footer from "components/Footer/Footer.jsx";
-import { getWhale } from "graphql/queries";
-import { getPicture } from "graphql/queries";
+import { getWhale, listWhales, getPicture } from "graphql/queries";
+import { updatePicture } from "graphql/mutations";
 import API, { graphqlOperation } from "@aws-amplify/api";
 import { render } from "react-dom";
 import Gallery from "react-grid-gallery";
-import { listWhales } from "graphql/queries";
+import Snackbar from "@material-ui/core/Snackbar";
+import CircularProgress from "@material-ui/core/CircularProgress";
 const dashboardRoutes = [];
 const IMAGES = [];
-class UploadPage extends React.Component {
+class SearchPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,19 +30,72 @@ class UploadPage extends React.Component {
       user: null,
       IMAGES: [],
       noData: false,
+      selectedImages: [],
+      dialogMessage: "",
+      reseponse: undefined,
     };
+    this.onSelectImage = this.onSelectImage.bind(this);
+    this.getSelectedImages = this.getSelectedImages.bind(this);
+    this.authenticate_user();
+
     if (props.match.params.whale_id) {
       this.state.searchInput = props.match.params.whale_id;
       this.searchWhales(this.state);
     }
-    this.authenticate_user();
+  }
+  onSelectImage(index, image) {
+    console.log("index", index);
+    console.log("image", image);
+    var images = this.state.IMAGES.slice();
+    var img = images[index];
+    if (img.hasOwnProperty("isSelected")) img.isSelected = !img.isSelected;
+    else img.isSelected = true;
+    this.setState({
+      IMAGES: images,
+    });
+    console.log("state images", this.state.IMAGES);
+  }
+
+  async getSelectedImages() {
+    try {
+      let queryWasSuccess = false;
+      console.log("setting whaleid of images -1 and is_new flag as false");
+      for (var i = 0; i < this.state.IMAGES.length; i++) {
+        if (this.state.IMAGES[i].isSelected == true) {
+          console.log("rematching selected images", this.state.IMAGES[i].caption);
+          const selected_image_name = this.state.IMAGES[i].caption;
+          queryWasSuccess = await API.graphql(
+            graphqlOperation(updatePicture, {
+              input: { id: selected_image_name, is_new: 1, pictureWhaleId: -1 },
+            })
+          );
+          if (queryWasSuccess) {
+            console.log("Successfully assigned whales ", selected_image_name);
+            this.showSnackBar("Picture '" + selected_image_name + "' can now be re-matched", 5000);
+          }
+        }
+      }
+      this.searchWhales(this.state);
+    } catch (e) {
+      console.log("error while re-setting whaleID and is_new flag");
+    }
+  }
+
+  /**
+   * A Snackbar with message will appear for timeout milliseconds.
+   **/
+  showSnackBar(message, timeout) {
+    this.setState({
+      dialogMessage: message,
+    });
+    setTimeout((_) => this.setState({ dialogMessage: "" }), timeout);
   }
 
   authenticate_user() {
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log("searchpage user", user.username);
-        this.setState({ user: user });
+        this.setState({ user: user.username });
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser searchpage err", err);
@@ -57,7 +111,11 @@ class UploadPage extends React.Component {
     });
   }
   async searchWhales(data) {
+    let returnPath;
     try {
+      const S3bucket = await Storage.get("");
+      returnPath = S3bucket.split("public/")[0];
+      console.log("search page bucket path", returnPath);
       const whale = await API.graphql(graphqlOperation(getWhale, { id: data.searchInput }));
       const pictures = await API.graphql(graphqlOperation(getPicture, { id: data.searchInput }));
       console.log("whale output aws", whale);
@@ -66,14 +124,14 @@ class UploadPage extends React.Component {
         console.log("whale ID output present. length", whale.data.getWhale.pictures.items.length);
         this.state.IMAGES = [];
         whale.data.getWhale.pictures.items.forEach((item) => {
-          this.state.IMAGES.push(this.formatImages(item, data.searchInput));
+          this.state.IMAGES.push(this.formatImages(item, data.searchInput, returnPath));
         });
         this.setState({ noData: false });
       } else if (pictures.data.getPicture) {
         console.log("pictures name output present. ", pictures.data.getPicture.id);
         this.state.IMAGES = [];
         this.state.IMAGES.push(
-          this.formatImages(pictures.data.getPicture, pictures.data.getPicture.whale.id)
+          this.formatImages(pictures.data.getPicture, pictures.data.getPicture.whale.id, returnPath)
         );
         this.setState({ noData: false });
       } else {
@@ -98,7 +156,12 @@ class UploadPage extends React.Component {
     const data = this.state;
     console.log("inside handleAlternate function");
     console.log("state before submit", data);
+    let returnPath;
     try {
+      this.setState({ IMAGES: [], searchInput: "", response: "" });
+      const S3bucket = await Storage.get("");
+      returnPath = S3bucket.split("public/")[0];
+      console.log("search page bucket path", returnPath);
       const whale = await API.graphql(graphqlOperation(listWhales, { limit: 3000 }));
       console.log("whale output aws", whale);
       const whale_items = whale.data.listWhales.items;
@@ -111,9 +174,9 @@ class UploadPage extends React.Component {
       console.log("picture_items", picture_items);
       this.state.IMAGES = [];
       picture_items.forEach((item) => {
-        this.state.IMAGES.push(this.formatImages(item, randomID.name));
+        this.state.IMAGES.push(this.formatImages(item, randomID.name, returnPath));
       });
-      this.setState({ noData: false, searchInput: randomID.name });
+      this.setState({ noData: false, searchInput: randomID.name, response: undefined });
     } catch (e) {
       this.setState({ noData: true, IMAGES: [] });
       console.log("no results found for random whale", e);
@@ -121,17 +184,13 @@ class UploadPage extends React.Component {
     console.log("state after submit", this.state);
   }
 
-  formatImages(item, whale_id) {
+  formatImages(item, whale_id, S3bucket) {
     console.log("fetching images array from S3", item);
     return {
-      src:
-        "https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/cropped_images/" +
-        item.filename,
-      thumbnail:
-        "https://whalewatch315ac43cc81e4e31bd2ebcdca3e4bb09213627-whaledev.s3.eu-central-1.amazonaws.com/public/thumbnails/" +
-        item.thumbnail,
-      thumbnailWidth: 320,
-      thumbnailHeight: 174,
+      src: S3bucket + "cropped_images/" + item.filename,
+      thumbnail: S3bucket + "cropped_images/" + item.filename,
+      /*  thumbnailWidth: 360,
+      thumbnailHeight: 90, */
       tags: [
         { value: item.filename, title: "File name" },
         { value: whale_id, title: "Whale ID" },
@@ -140,14 +199,19 @@ class UploadPage extends React.Component {
     };
   }
   render() {
+    const { dialogMessage } = this.state;
     const { classes, ...rest } = this.props;
     const searchInput = this.state.searchInput;
+    const admins = new Set(["LisaSteiner", "whalewatching"]);
+    const adminFlag = admins.has(this.state.user) ? true : false;
+    console.log("adminFlag", adminFlag);
+
     return (
       <div>
         <Header
           color="blue"
           brand={
-            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
+            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
@@ -166,15 +230,22 @@ class UploadPage extends React.Component {
                     <h2 style={{ paddingTop: "5px" }}>
                       <strong>Search Whale Image 🐳</strong>
                     </h2>
-                    <p style={{ paddingBottom: "5px" }}>You can search for Whale Images using:</p>
+                    <p style={{ paddingBottom: "5px" }}>You can search for whale images using:</p>
                     <ul style={{ paddingBottom: "5px", color: "black" }}>
                       <li>
-                        <strong>Whale ID</strong>: This will display all Whales tagged to the given
-                        ID
+                        <strong>Search whale / image: </strong>This will display all whales tagged
+                        to the given ID
                       </li>
                       <li>
-                        <strong>Random Whale</strong>: This will display a random image of the Whale
-                        with Image Name and ID
+                        <strong>Display random whale: </strong>This will display the images of a
+                        random whale
+                      </li>
+                      <li>
+                        <strong>Re-match whale: </strong>After searching for a whale ID you can
+                        select one of the displayed pictures and remove the ID from it.
+                        <br />
+                        This way you will be able to re-match it again, in case of a
+                        matching-mistake.
                       </li>
                     </ul>
                   </div>
@@ -182,27 +253,59 @@ class UploadPage extends React.Component {
               </div>
             </div>
 
-            <form onSubmit={this.handleSubmit.bind(this)}>
-              <input
-                type="text"
-                style={{ "text-align": "center" }}
-                name="searchInput"
-                placeholder="Whale ID/Image Name"
-                value={this.state.searchInput}
-                onChange={this.handleInputChange.bind(this)}
-                required
-              />
-              <button>Search Whale</button>
-              <button onClick={this.handleAlternate.bind(this)}>Display Random Whale</button>
-              <Gallery
-                images={this.state.IMAGES}
-                rowHeight={174}
-                enableLightbox={true}
-                backdropClosesModal
-                enableImageSelection={false}
-              />
-            </form>
-            {this.state.noData && <p style={{ color: "red" }}>No Results Found!</p>}
+            <input
+              type="text"
+              style={{ "text-align": "center", borderRadius: "5px" }}
+              name="searchInput"
+              placeholder="whale ID / image name"
+              value={this.state.searchInput}
+              onChange={this.handleInputChange.bind(this)}
+              required
+            />
+            <Button
+              onClick={this.handleSubmit.bind(this)}
+              style={{ margin: "10px" }}
+              variant="contained"
+              color="info"
+              size="sm"
+            >
+              Search Whale / Image
+            </Button>
+            <Button
+              onClick={this.handleAlternate.bind(this)}
+              style={{ margin: "10px" }}
+              variant="contained"
+              color="info"
+              size="sm"
+            >
+              Display Random Whale
+            </Button>
+            {adminFlag ? (
+              <Button
+                onClick={this.getSelectedImages.bind(this)}
+                style={{ margin: "10px" }}
+                variant="contained"
+                color="info"
+                size="sm"
+              >
+                Re-Match Whale
+              </Button>
+            ) : (
+              <div></div>
+            )}
+            <div size="sm">{this.state.response === "" ? <CircularProgress /> : ""}</div>
+            <Gallery
+              images={this.state.IMAGES}
+              rowHeight={90}
+              enableLightbox={true}
+              backdropClosesModal
+              onSelectImage={this.onSelectImage}
+            />
+
+            {this.state.noData && (
+              <p style={{ color: "red" }}>No results found. Please try again.</p>
+            )}
+            <Snackbar open={dialogMessage !== ""} message={dialogMessage} autoHideDuration={4000} />
           </div>
         ) : (
           <div></div>
@@ -211,4 +314,4 @@ class UploadPage extends React.Component {
     );
   }
 }
-export default withStyles(landingPageStyle)(UploadPage);
+export default withStyles(landingPageStyle)(SearchPage);

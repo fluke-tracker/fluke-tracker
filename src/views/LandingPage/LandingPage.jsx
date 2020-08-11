@@ -1,24 +1,16 @@
 import React from "react";
-// nodejs library that concatenates classes
-import classNames from "classnames";
+
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-import { logout } from "../../store/actions";
-
-// @material-ui/icons
 
 // core components
-import CSVReader from "react-csv-reader";
 import Header from "components/Header/Header.jsx";
-import Footer from "components/Footer/Footer.jsx";
-import SetWhaleDialog from "components/CustomDialog/SetWhaleID.jsx";
 import SetMaxWhaleIdAutoDialog from "components/CustomDialog/SetMaxWhaleIdAutoDialog.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Badge from "components/Badge/Badge.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import Parallax from "components/Parallax/Parallax.jsx";
 import Snackbar from "@material-ui/core/Snackbar";
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -27,59 +19,39 @@ import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoCompo
 
 import { connect } from "react-redux";
 
-// Sections for this page
-import ProductSection from "./Sections/ProductSection.jsx";
-import TeamSection from "./Sections/TeamSection.jsx";
-import WorkSection from "./Sections/WorkSection.jsx";
-
-import ImagePicker from "react-image-picker";
 import "react-image-picker/dist/index.css";
-import Cookies from "utils/Cookies";
-import { withAuthenticator, SignOut } from "aws-amplify-react";
-
-//import images from local
-import { MuiThemeProvider } from "@material-ui/core";
 
 // aws stuff
 import API, { graphqlOperation } from "@aws-amplify/api";
-import PubSub from "@aws-amplify/pubsub";
 
 // graphql stuff
-import { listMatchs, getConfig, getWhale } from "graphql/queries";
+import { getConfig, getWhale } from "graphql/queries";
 import { createMatch, createWhale, updateConfig, updatePicture } from "graphql/mutations";
 import { pictureByIsNewFiltered, getPictureFiltered } from "graphql/customQueries";
 import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/queries";
 
-//import awsconfig from 'aws-exports';
-import Amplify, { Storage } from "aws-amplify";
 import { Auth } from "aws-amplify";
-
-const papaparseOptions = {
-  header: false,
-  dynamicTyping: true,
-  sokipEmptyLines: true,
-  transformHeader: (header) => header.toLowerCase().replace(/\W/g, "_"),
-};
 
 class LandingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: null,
       horizontal: 0,
       vertical: 0,
       dialogMessage: "",
-      matchedPictures: {},
-      isMatched: "",
       user: null,
-      similar_pictures: [""],
-      newPicsList: [],
+      adminFlag: false,
+      similar_pictures: [undefined],
+      // newPicsList needs to be initialized with "undefined" object to prevent showing the error message "No pics available" in the first seconds
+      newPicsList: [undefined],
       simPicObj: undefined,
+      // first array value represents left img, second one the right img
+      picsLoaded: [false, false],
     };
 
     // BINDING FUNCTIONS
-    this.acceptPicture = this.acceptPicture.bind(this);
-    this.unacceptPicture = this.unacceptPicture.bind(this);
+    this.matchPicture = this.matchPicture.bind(this);
+    this.unmatchPictures = this.unmatchPictures.bind(this);
 
     this.go_manualId = this.go_manualId.bind(this);
     this.go_up = this.go_up.bind(this);
@@ -88,7 +60,7 @@ class LandingPage extends React.Component {
     this.go_right = this.go_right.bind(this);
 
     this.fetchNewPicturesList = this.fetchNewPicturesList.bind(this);
-    this.loadMatches = this.loadMatches.bind(this);
+    this.picLoadHandler = this.picLoadHandler.bind(this);
 
     this._handleKeyDown = this._handleKeyDown.bind(this);
 
@@ -96,12 +68,39 @@ class LandingPage extends React.Component {
     this.authenticate_user();
   }
 
-  go_badPicture() {
-    console.log("bad picture code goes here");
+  authenticate_user() {
+    const admins = new Set(["LisaSteiner", "whalewatching"]);
+
+    Auth.currentAuthenticatedUser()
+      .then((user) => {
+        console.log("MATCHINGPAGE user", user, user.username);
+        this.setState({ user: user.username, adminFlag: admins.has(user.username) });
+      })
+      .catch((err) => {
+        console.log("currentAuthenticatedUser landing page err redirect to login", err);
+        this.props.history.push("/login-page");
+      });
   }
-  go_newId() {
-    console.log("new id code goes here");
+
+  /**
+   * This function is passed to the components that are loading the actual image.
+   * These components will then call this function so we can activate the matching buttons accordingly.
+   */
+  picLoadHandler(filename) {
+    console.log("NOTIFY HANDLER CALLED");
+    // check if left image was the loaded one
+    if (filename === this.state.newPicsList[this.state.vertical].filename) {
+      this.setState({ picsLoaded: [true, this.state.picsLoaded[1]] });
+    }
+    // check if right image was the loaded one
+    else if (
+      typeof this.state.simPicObj !== "undefined" &&
+      filename === this.state.simPicObj.filename
+    ) {
+      this.setState({ picsLoaded: [this.state.picsLoaded[0], true] });
+    }
   }
+
   async go_manualId(pId) {
     console.log("IN goManualId");
     const leftImgFileName = this.state.newPicsList[this.state.vertical].id;
@@ -118,32 +117,28 @@ class LandingPage extends React.Component {
         5000
       );
     }
-
     this.fetchNewPicturesList(undefined, [], 0);
-    this.loadMatches();
   }
 
-  authenticate_user() {
-    Auth.currentAuthenticatedUser()
-      .then((user) => {
-        console.log("MATCHINGPAGE user", user, user.username);
-        this.setState({ user: user.username });
-      })
-      .catch((err) => {
-        console.log("currentAuthenticatedUser landing page err redirect to login", err);
-        this.props.history.push("/login-page");
-      });
+  go_badPicture() {
+    console.log("bad picture code goes here");
   }
 
   go_left() {
     if (this.state.horizontal > 0) {
-      this.setState({ simPicObj: undefined, horizontal: this.state.horizontal - 1 });
+      this.setState({
+        picsLoaded: [this.state.picsLoaded[0], false],
+        simPicObj: undefined,
+        horizontal: this.state.horizontal - 1,
+      });
     }
   }
   go_up() {
     if (this.state.vertical > 0) {
       this.setState({
+        picsLoaded: [false, false],
         simPicObj: undefined,
+        similar_pictures: [undefined],
         vertical: this.state.vertical - 1,
         horizontal: 0,
       });
@@ -152,7 +147,9 @@ class LandingPage extends React.Component {
   go_down() {
     if (this.state.vertical < this.state.newPicsList.length - 1) {
       this.setState({
+        picsLoaded: [false, false],
         simPicObj: undefined,
+        similar_pictures: [undefined],
         vertical: this.state.vertical + 1,
         horizontal: 0,
       });
@@ -161,6 +158,7 @@ class LandingPage extends React.Component {
   go_right() {
     if (this.state.horizontal < this.state.similar_pictures.length - 1) {
       this.setState({
+        picsLoaded: [this.state.picsLoaded[0], false],
         simPicObj: undefined,
         horizontal: Math.min(this.state.similar_pictures.length - 1, this.state.horizontal + 1),
       });
@@ -212,6 +210,9 @@ class LandingPage extends React.Component {
     });
   }
 
+  /**
+   * Returns the ID's and names of the left and right whale / picture.
+   */
   getCurrentNamesIds() {
     const leftPicObj = this.state.newPicsList[this.state.vertical];
     const rightPicObj = this.state.simPicObj;
@@ -223,7 +224,7 @@ class LandingPage extends React.Component {
     return [leftImgName, rightImgName, leftWhaleId, rightWhaleId];
   }
 
-  async acceptPicture() {
+  async matchPicture() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
     console.log("left_img_name is: ", left_img_name, "left id is: ", leftWhaleId);
@@ -255,7 +256,6 @@ class LandingPage extends React.Component {
         graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } })
       );
       this.fetchNewPicturesList(undefined, [], 0);
-      this.loadMatches();
     }
   }
 
@@ -274,16 +274,30 @@ class LandingPage extends React.Component {
       let resultsPromiseArray = [];
       // -1 has to be handled specially to only set the ID of one picture and not every picture that has -1 as whale ID
       if (fromId == -1) {
-        console.log("IN -1 case");
-        // NOTE this only works if we can be sure that on the right side can't be any picture displayed with is_new = 1
-        const picObjId = this.state.newPicsList[this.state.vertical].id;
-        resultsPromiseArray.push(
-          API.graphql(
-            graphqlOperation(updatePicture, {
-              input: { id: picObjId, pictureWhaleId: toId },
-            })
-          )
-        );
+        if (toId == -1) {
+          // handle the case when on the left AND right side are images with ID = -1
+          // 1. give right pic a new ID
+          let idOrFalse = await this.createAndAssignNewWhaleId(
+            this.state.similar_pictures[this.state.horizontal].simPicName
+          );
+          // now assign the new ID of the right picture to the left picture by performing a recursive call
+          if (idOrFalse !== false) {
+            const tempRes = await this.changeWhaleIdOfPictures(-1, idOrFalse);
+            if (!tempRes) return false;
+          } else {
+            return false;
+          }
+        } else {
+          // this only works if on the right side is not a picture displayed with is_new = 1
+          const picObjId = this.state.newPicsList[this.state.vertical].id;
+          resultsPromiseArray.push(
+            API.graphql(
+              graphqlOperation(updatePicture, {
+                input: { id: picObjId, pictureWhaleId: toId },
+              })
+            )
+          );
+        }
       } else {
         console.log("IN NOT -1 case");
         const whaleObjs = await API.graphql(graphqlOperation(getWhale, { id: fromId }));
@@ -320,6 +334,11 @@ class LandingPage extends React.Component {
         "Successfully assigned all whales with ID " + fromId + " the ID " + toId,
         5000
       );
+    } else if (fromId == -1 && toId == -1) {
+      this.showSnackBar(
+        "Successfully created a new whale ID and assigned it to both pictures",
+        5000
+      );
     } else {
       this.showSnackBar("Successfully assigned whale ID " + toId, 5000);
     }
@@ -335,9 +354,10 @@ class LandingPage extends React.Component {
     setTimeout((_) => this.setState({ dialogMessage: "" }), timeout);
   }
 
-  unacceptPicture() {
+  unmatchPictures() {
     const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] = this.getCurrentNamesIds();
 
+    // to have a unique ID with concatenate the two file names
     const constructedId = left_img_name + "_" + right_img_name;
     API.graphql(
       graphqlOperation(createMatch, {
@@ -351,30 +371,8 @@ class LandingPage extends React.Component {
     ).then(() => {
       console.log("Created a new 'NO MATCH' pair");
       this.showSnackBar("Successfully saved 'no match' between the two pictures", 5000);
+      this.navigationAction("right");
     });
-
-    // this can never happen due to the fact that a picture with an assigned ID won't be on the left side
-    /*
-    if (leftWhaleId == rightWhaleId) {
-      API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" })).then((result) => {
-        const maxWhaleId = result.data.getConfig.value;
-        const newMaxWhaleId = (parseInt(maxWhaleId) + 1).toString();
-        const left_img_name = this.state.newPicsList[this.state.vertical];
-        API.graphql(
-          graphqlOperation(createWhale, { input: { id: maxWhaleId, name: maxWhaleId } })
-        ).then((result) =>
-          API.graphql(
-            graphqlOperation(updatePicture, {
-              input: { id: left_img_name, pictureWhaleId: maxWhaleId },
-            })
-          )
-        );
-
-        API.graphql(
-          graphqlOperation(updateConfig, { input: { id: "maxWhaleId", value: newMaxWhaleId } })
-        );
-      });
-    }*/
   }
 
   navigationAction(direction) {
@@ -409,23 +407,22 @@ class LandingPage extends React.Component {
 
     switch (event.keyCode) {
       case M_KEY:
-        this.acceptPicture();
+        if (this.state.adminFlag) this.matchPicture();
         break;
       case U_KEY:
-        this.unacceptPicture();
-        this.go_right();
+        if (this.state.adminFlag) this.unmatchPictures();
         break;
       case LEFT_ARROW_KEY:
-        this.go_left();
+        this.navigationAction("left");
         break;
       case RIGHT_ARROW_KEY:
-        this.go_right();
+        this.navigationAction("right");
         break;
       case DOWN_ARROW_KEY:
-        this.go_down();
+        this.navigationAction("down");
         break;
       case UP_ARROW_KEY:
-        this.go_up();
+        this.navigationAction("up");
         break;
       default:
         console.log("WARNING! Key code of pressed key did not match.");
@@ -438,25 +435,32 @@ class LandingPage extends React.Component {
     document.addEventListener("keydown", this._handleKeyDown);
 
     this.fetchNewPicturesList(undefined, [], 0);
-    this.loadMatches();
   }
 
   async componentDidUpdate(prevProps, prevState) {
+    console.log("IN UPDATE");
+    console.log(prevState);
+    console.log(this.state);
+
+    // will be entered every time a match happened / the whole page was refreshed
     if (prevState.newPicsList !== this.state.newPicsList) {
-      console.log("IN UPDATE");
-      console.log(prevState.newPicsList);
-      console.log(this.state.newPicsList);
+      console.log("IN newPicsList UPDATE");
+
       this.doubleCheckVertical();
-      const fetchedSimPics = this.fetchSimilarPictures();
-      this.processNewSimilarPics(await fetchedSimPics);
+      if (this.state.newPicsList.length > 0) {
+        const fetchedSimPics = this.fetchSimilarPictures();
+        this.processNewSimilarPics(await fetchedSimPics);
+      }
     }
 
     if (prevState.vertical !== this.state.vertical) {
+      console.log("IN VERTICAL CHANGE");
       this.processNewSimilarPics(await this.fetchSimilarPictures());
     } else if (prevState.horizontal !== this.state.horizontal) {
+      console.log("IN HORIZONTAL CHANGE");
       /* this means vertical didn't change, only horizontal did */
       const newSimPic = this.fetchPictureObject(
-        this.state.similar_pictures[this.state.horizontal].picture2
+        this.state.similar_pictures[this.state.horizontal].simPicName
       );
       this.processNewSimPicObj(await newSimPic);
     }
@@ -471,9 +475,12 @@ class LandingPage extends React.Component {
    * This could happen when matching an image that then disappears from the left side.
    */
   doubleCheckVertical() {
-    this.setState({
-      vertical: Math.min(this.state.vertical, this.state.newPicsList.length),
-    });
+    const vert = this.state.vertical;
+    if (vert !== Math.min(vert, this.state.newPicsList.length)) {
+      this.setState({
+        vertical: Math.min(vert, this.state.newPicsList.length),
+      });
+    }
   }
 
   /**
@@ -496,31 +503,48 @@ class LandingPage extends React.Component {
         })
       );
       //query where picture2 = leftImgId
-      /*const query2 = API.graphql(
+      const query2 = API.graphql(
         graphqlOperation(euclidianDistanceByPicture2, {
           picture2: leftImgId,
           limit: 5000,
         })
-      );*/
+      );
 
       const result1 = await query1;
-      //const result2 = await query2;
+      console.log("LLLLLLLLLLLLLLLLLL", result1);
+      // check if the result that came back here is still the one we're looking for (in case it's an empty array we assume it is the right one)
+      if (
+        result1.data.listEuclidianDistances.items.length > 0 &&
+        result1.data.listEuclidianDistances.items[0].picture1 !=
+          this.state.newPicsList[this.state.vertical].id
+      ) {
+        return -1;
+      }
+      const result2 = await query2;
 
       console.log("GOT result1");
       console.log(result1);
       console.log("GOT result2");
-      //console.log(result2);
+      console.log(result2);
 
       // concatinate both arrays
-      let resultsAllItems = await result1.data.listEuclidianDistances.items.concat(
-        //result2.data.listEuclidianDistances.items
-        []
+      let resultsAllItems = result1.data.listEuclidianDistances.items.concat(
+        result2.data.EuclidianDistanceByPicture2.items
       );
-
       resultsAllItems.sort((a, b) => a.distance - b.distance);
-      let first100Pictures = resultsAllItems.slice(0, 100);
+      let resultsFirst100 = resultsAllItems.slice(0, 100);
 
-      returnValue = first100Pictures;
+      let filteredFirst100 = [];
+      // extract only the relevant file name out of the tupel
+      resultsFirst100.forEach((elem) => {
+        if (elem.picture1 === leftImgId) {
+          filteredFirst100.push({ simPicName: elem.picture2, distance: elem.distance });
+        } else {
+          filteredFirst100.push({ simPicName: elem.picture1, distance: elem.distance });
+        }
+      });
+
+      returnValue = filteredFirst100;
     } catch (error) {
       console.log("ERROR IN fetchSimilarPictures");
       console.log(error);
@@ -538,17 +562,21 @@ class LandingPage extends React.Component {
     console.log("IN processNewSimilarPics");
     if (picArray !== -1) {
       if (picArray.length >= 1) {
-        const simPicObjTemp = this.fetchPictureObject(picArray[this.state.horizontal].picture2);
-        this.processNewSimPicObj(await simPicObjTemp);
+        const simPicObjTemp = await this.fetchPictureObject(
+          picArray[this.state.horizontal].simPicName
+        );
+        if (simPicObjTemp !== -1) {
+          this.setState({ similar_pictures: picArray, simPicObj: simPicObjTemp });
+        }
+      } else {
+        this.setState({ similar_pictures: picArray });
       }
-      this.setState({ similar_pictures: picArray });
     }
   }
 
   processNewSimPicObj(simPicObjNew) {
     if (simPicObjNew !== -1) {
-      console.log("AFTER await");
-      console.log(simPicObjNew);
+      console.log("PROCESS NEW SIM PIC", simPicObjNew);
       this.setState({ simPicObj: simPicObjNew });
     }
   }
@@ -586,42 +614,25 @@ class LandingPage extends React.Component {
 
       console.log("IN PROCESSING - SETTING STATE");
       console.log(pics);
-      this.setState({ newPicsList: pics });
+      this.setState({ similar_pictures: [undefined], newPicsList: pics });
     } catch (error) {
       console.log("IN CATCH");
       console.log(error);
     }
   }
 
-  loadMatches = () => {
-    API.graphql(graphqlOperation(listMatchs)).then((response) => {
-      console.log(response);
-      const imgArr = {};
-      response.data.listMatchs.items.forEach((match) => {
-        if (match.picture1.filename in imgArr) {
-        } else {
-          imgArr[match.picture1.filename] = new Set();
-        }
-        imgArr[match.picture1.filename].add(match.picture2.filename);
-      });
-
-      this.setState({ matchedPictures: imgArr });
-    });
-  };
-
   render() {
+    console.log("IN RENDER", this.state, this.state.newPicsList);
+
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
-
-    const admins = new Set(["LisaSteiner", "whalewatching"]);
-    const adminFlag = admins.has(this.state.user) ? true : false;
 
     return (
       <div>
         <Header
           color="blue"
           brand={
-            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
+            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
@@ -642,149 +653,172 @@ class LandingPage extends React.Component {
                         <strong>Do these whales match?</strong>
                       </h2>
                     </div>
-                    <GridContainer>
-                      <GridItem xs={12} sm={12} md={12} space={10}>
-                        <br />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={(this.state.vertical / (this.state.newPicsList.length - 1)) * 100}
-                        />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={
-                            (this.state.horizontal / (this.state.similar_pictures.length - 1)) * 100
-                          }
-                        />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
-                        <strong>New Image Number: </strong>
-                        <Badge color="success">{this.state.vertical + 1}</Badge> of{" "}
-                        <Badge color="success">{this.state.newPicsList.length}</Badge>
-                        <br />
-                        <br />
-                        <ImageWithInfoComponent
-                          picObj={this.state.newPicsList[this.state.vertical]}
-                          adminFlag={adminFlag}
-                        />
-                        <br />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
-                        <strong>Best Matching Picture Number: </strong>
-                        <Badge color="success">{this.state.horizontal + 1}</Badge>
-                        <br />
-                        <br />
-                        {this.state.similar_pictures.length === 0 ? (
-                          <div style={{ textAlign: "center", marginTop: 100 }}>
-                            Computing similar images.
-                            <br />
-                            <br />
-                            <CircularProgress />
-                            <br />
-                            <br />
-                            Please come back in a few minutes.
-                          </div>
-                        ) : (
-                          <ImageWithInfoComponent
-                            picObj={this.state.simPicObj}
-                            distance={this.state.similar_pictures[this.state.horizontal].distance}
-                            adminFlag={adminFlag}
+                    {this.state.newPicsList.length > 0 ? (
+                      <GridContainer>
+                        <GridItem xs={12} sm={12} md={12} space={10}>
+                          <br />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={
+                              (this.state.vertical / (this.state.newPicsList.length - 1)) * 100
+                            }
                           />
-                        )}
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        {adminFlag ? (
-                          <SetMaxWhaleIdAutoDialog
-                            function={this.go_manualId}
-                          ></SetMaxWhaleIdAutoDialog>
-                        ) : (
-                          ""
-                        )}
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("up")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#9650;
-                        </Button>
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("down")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#9660;
-                        </Button>
-                        {adminFlag ? (
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={
+                              (this.state.horizontal / (this.state.similar_pictures.length - 1)) *
+                              100
+                            }
+                          />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                          <strong>New Image Number: </strong>
+                          <Badge color="success">{this.state.vertical + 1}</Badge> of{" "}
+                          <Badge color="success">{this.state.newPicsList.length}</Badge>
+                          <br />
+                          <br />
+                          <ImageWithInfoComponent
+                            picObj={this.state.newPicsList[this.state.vertical]}
+                            adminFlag={this.state.adminFlag}
+                            notifyLoadHandler={this.picLoadHandler}
+                          />
+                          <br />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                          <strong>Best Matching Picture Number: </strong>
+                          <Badge color="success">{this.state.horizontal + 1}</Badge>
+                          <br />
+                          <br />
+                          {this.state.similar_pictures.length === 0 ? (
+                            <div style={{ textAlign: "center", marginTop: 100 }}>
+                              Computing similar images.
+                              <br />
+                              <br />
+                              <CircularProgress />
+                              <br />
+                              <br />
+                              Please come back in a few minutes.
+                            </div>
+                          ) : (
+                            <ImageWithInfoComponent
+                              picObj={this.state.simPicObj}
+                              distance={
+                                typeof this.state.similar_pictures[this.state.horizontal] ===
+                                "undefined"
+                                  ? undefined
+                                  : this.state.similar_pictures[this.state.horizontal].distance
+                              }
+                              adminFlag={this.state.adminFlag}
+                              notifyLoadHandler={this.picLoadHandler}
+                            />
+                          )}
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          {this.state.adminFlag ? (
+                            <SetMaxWhaleIdAutoDialog
+                              function={this.go_manualId}
+                              disabled={!this.state.picsLoaded[0]}
+                            ></SetMaxWhaleIdAutoDialog>
+                          ) : (
+                            ""
+                          )}
                           <Button
                             variant="contained"
-                            onClick={() => this.go_badPicture()}
-                            color="badPicture"
+                            onClick={() => this.navigationAction("up")}
+                            color="info"
                             size="sm"
                           >
-                            Bad picture
+                            &#9650;
                           </Button>
-                        ) : (
-                          ""
-                        )}
-                        <Snackbar
-                          open={dialogMessage !== ""}
-                          message={dialogMessage}
-                          autoHideDuration={4000}
-                        />
-                      </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
-                        {/*  new buttons for the matching result */}
-                        {adminFlag ? (
-                          <div>
+                          <Button
+                            variant="contained"
+                            onClick={() => this.navigationAction("down")}
+                            color="info"
+                            size="sm"
+                          >
+                            &#9660;
+                          </Button>
+                          {/*this.state.adminFlag ? (
                             <Button
+                              style={{ marginLeft: "10px" }}
+                              disabled={!this.state.picsLoaded[0]}
                               variant="contained"
-                              onClick={() => this.acceptPicture()}
-                              color="success"
+                              onClick={() => this.go_badPicture()}
                               size="sm"
                             >
-                              {" "}
-                              Match
+                              Bad picture
                             </Button>
-                            <Button
-                              variant="contained"
-                              onClick={() => this.unacceptPicture()}
-                              color="info"
-                              size="sm"
-                            >
-                              Don't match
-                            </Button>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("left")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#9664;
-                        </Button>
-                        <Button
-                          variant="contained"
-                          onClick={() => this.navigationAction("right")}
-                          color="info"
-                          size="sm"
-                        >
-                          &#10148;
-                        </Button>
-                        {/*               <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Signout</Button>
-              <SignOut/> */}
-                        {/*        <Button variant="contained" onClick={() => this.signout()}color="info" size="sm">Log Out</Button>
-                            <SignOut/> */}
-                      </GridItem>
-                      <br />
-                    </GridContainer>
+                          ) : (
+                            ""
+                          )*/}
+                          <Snackbar
+                            open={dialogMessage !== ""}
+                            message={dialogMessage}
+                            autoHideDuration={4000}
+                          />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          {/*  new buttons for the matching result */}
+                          {this.state.adminFlag ? (
+                            <div>
+                              <Button
+                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                variant="contained"
+                                onClick={() => this.matchPicture()}
+                                color="success"
+                                size="sm"
+                              >
+                                Match
+                              </Button>
+                              <Button
+                                style={{ marginLeft: "6px" }}
+                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                variant="contained"
+                                onClick={() => this.unmatchPictures()}
+                                color="info"
+                                size="sm"
+                              >
+                                Don't match
+                              </Button>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          <Button
+                            variant="contained"
+                            onClick={() => this.navigationAction("left")}
+                            color="info"
+                            size="sm"
+                          >
+                            &#9664;
+                          </Button>
+                          <Button
+                            variant="contained"
+                            onClick={() => this.navigationAction("right")}
+                            color="info"
+                            size="sm"
+                          >
+                            &#10148;
+                          </Button>
+                        </GridItem>
+                        <br />
+                      </GridContainer>
+                    ) : (
+                      <GridContainer>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                          <br />
+                          We are sorry, there are currently no unmatched pictures.
+                          <br />
+                          <br />
+                          Please upload a new image and come back to this page.
+                          <br />
+                        </GridItem>
+                      </GridContainer>
+                    )}
                   </div>
                 </div>
               </div>
