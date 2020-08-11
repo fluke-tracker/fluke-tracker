@@ -504,12 +504,12 @@ class LandingPage extends React.Component {
         })
       );
       //query where picture2 = leftImgId
-      /*const query2 = API.graphql(
+      const query2 = API.graphql(
         graphqlOperation(euclidianDistanceByPicture2, {
           picture2: leftImgId,
           limit: 5000,
         })
-      );*/
+      );
 
       const result1 = await query1;
       console.log("LLLLLLLLLLLLLLLLLL", result1);
@@ -521,19 +521,17 @@ class LandingPage extends React.Component {
       ) {
         return -1;
       }
-      //const result2 = await query2;
+      const result2 = await query2;
 
       console.log("GOT result1");
       console.log(result1);
       console.log("GOT result2");
-      //console.log(result2);
+      console.log(result2);
 
       // concatinate both arrays
-      let resultsAllItems = await result1.data.listEuclidianDistances.items.concat(
-        //result2.data.listEuclidianDistances.items
-        []
+      let resultsAllItems = result1.data.listEuclidianDistances.items.concat(
+        result2.data.EuclidianDistanceByPicture2.items
       );
-
       resultsAllItems.sort((a, b) => a.distance - b.distance);
       let resultsFirst100 = resultsAllItems.slice(0, 100);
 
