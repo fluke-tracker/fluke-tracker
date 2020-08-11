@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-//import { configureAmplify, SetS3Config } from "./services";
+
 import Header from "components/Header/Header.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Storage from "@aws-amplify/storage";
@@ -11,8 +10,9 @@ import classNames from "classnames";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { Auth } from "aws-amplify";
-import Footer from "components/Footer/Footer.jsx";
+
 import { createPicture, updateConfig, createWhale } from "graphql/mutations";
 import { getConfig } from "graphql/queries";
 import API, { graphqlOperation } from "@aws-amplify/api";
@@ -25,7 +25,7 @@ class ProfilePage extends React.Component {
     this.state = {
       imageName: "",
       imageFile: "",
-      response: "",
+      response: undefined,
       responseColor: "",
       user: null,
       latitude: null,
@@ -49,85 +49,92 @@ class ProfilePage extends React.Component {
 
   async uploadImage() {
     let file = this.upload.files[0];
-    const allowedFileTypes = new Set(["image/jpeg"]);
-    const filetype = file.type;
-    if (!allowedFileTypes.has(filetype)) {
-      this.setState({
-        response:
-          "Error! File could not be uploaded: Expected file type is 'image/jpeg' but received '" +
-          filetype +
-          "'.",
-        responseColor: "red",
-      });
-      return;
-    }
+    if (typeof file !== "undefined") {
+      const allowedFileTypes = new Set(["image/jpeg"]);
+      const filetype = file.type;
+      if (!allowedFileTypes.has(filetype)) {
+        this.setState({
+          response:
+            "Error! File could not be uploaded: Expected file type is 'image/jpeg' but received '" +
+            filetype +
+            "'.",
+          responseColor: "red",
+        });
 
-    // modify file ending if written in capital letters or as 'jpeg' instead of 'jpg'
-    let splitFileName = file.name.split(".");
-    const fileExt = splitFileName.pop();
-    if (fileExt === "JPG" || fileExt === "jpeg") {
-      file = new File([file], splitFileName.join("") + ".jpg", { type: filetype });
-      console.log(file);
-    }
-
-    // extract meta data if available
-    try {
-      const output = await exifr.parse(file);
-      this.state.latitude = output.latitude;
-      this.state.longitude = output.longitude;
-      this.state.imageDate = output.DateTimeOriginal.toGMTString();
-      console.log("image output", output);
-    } catch (e) {
-      this.state.latitude = null;
-      this.state.longitude = null;
-      this.state.imageDate = null;
-      console.log("error in exifr ", e);
-    }
-
-    let allowUpload = false;
-    try {
-      allowUpload = await this.insertToDynamo(file.name, allowUpload);
-    } catch (e) {
-      console.log("error in insertToDynamo ", e);
-    }
-    console.log("allowUpload ", allowUpload);
-    if (allowUpload == true) {
-      try {
-        console.log("upload image to S3 bucket");
-        var options = {
-          ACL: "public-read",
-          level: "public",
-          contentType: filetype,
-        };
-
-        Storage.put(
-          "embeddings/input/" + file.name,
-          file,
-          options
-          //         { contentType: this.upload.files[0].type,level: 'public' }
-        )
-          .then((result) => {
-            this.uploadThumbnail(file);
-            console.log("image uploaded", result);
-            this.upload = null;
-            this.setState({
-              response: "File uploaded successfully!",
-              responseColor: "green",
-              imageName: "",
-            });
-          })
-          .catch((err) => {
-            console.log("error while uploading,", err);
-            this.setState({
-              response: "Error! File could not be uploaded, please try again.",
-              responseColor: "red",
-            });
-          });
-      } catch (e) {
-        console.log("error in uploading", e);
+        // artifical "break"
+        return;
       }
-    } else {
-      console.log("cannot upload image");
+
+      // if we got to this point, we set the response to "" to enable the circularProgress item
+      this.setState({ response: "" });
+
+      // modify file ending if written in capital letters or as 'jpeg' instead of 'jpg'
+      let splitFileName = file.name.split(".");
+      const fileExt = splitFileName.pop();
+      if (fileExt === "JPG" || fileExt === "jpeg") {
+        file = new File([file], splitFileName.join("") + ".jpg", { type: filetype });
+        console.log(file);
+      }
+
+      // extract meta data if available
+      try {
+        const output = await exifr.parse(file);
+        this.state.latitude = output.latitude;
+        this.state.longitude = output.longitude;
+        this.state.imageDate = output.DateTimeOriginal.toGMTString();
+        console.log("image output", output);
+      } catch (e) {
+        this.state.latitude = null;
+        this.state.longitude = null;
+        this.state.imageDate = null;
+        console.log("error in exifr ", e);
+      }
+
+      let allowUpload = false;
+      try {
+        allowUpload = await this.insertToDynamo(file.name, allowUpload);
+      } catch (e) {
+        console.log("error in insertToDynamo ", e);
+      }
+      console.log("allowUpload ", allowUpload);
+      if (allowUpload == true) {
+        try {
+          console.log("upload image to S3 bucket");
+          var options = {
+            ACL: "public-read",
+            level: "public",
+            contentType: filetype,
+          };
+
+          Storage.put(
+            "embeddings/input/" + file.name,
+            file,
+            options
+            //         { contentType: this.upload.files[0].type,level: 'public' }
+          )
+            .then((result) => {
+              this.uploadThumbnail(file);
+              console.log("image uploaded", result);
+              this.upload = null;
+              this.setState({
+                response: "File uploaded successfully!",
+                responseColor: "green",
+                imageName: "",
+              });
+            })
+            .catch((err) => {
+              console.log("error while uploading,", err);
+              this.setState({
+                response: "Error! File could not be uploaded, please try again.",
+                responseColor: "red",
+              });
+            });
+        } catch (e) {
+          console.log("error in uploading", e);
+        }
+      } else {
+        console.log("cannot upload image");
+      }
     }
   }
 
@@ -306,7 +313,8 @@ class ProfilePage extends React.Component {
                   Upload File
                 </Button>
 
-                <div color="red" size="sm">
+                <div size="sm">
+                  {this.state.response === "" ? <CircularProgress /> : ""}
                   {!!this.state.response && (
                     <h5 style={{ color: this.state.responseColor }}>{this.state.response}</h5>
                   )}
