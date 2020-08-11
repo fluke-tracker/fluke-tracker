@@ -205,7 +205,7 @@ class SearchPage extends React.Component {
         <Header
           color="blue"
           brand={
-            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
+            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}

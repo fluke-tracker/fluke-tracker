@@ -178,7 +178,6 @@ class LoginPage extends React.Component {
             backgroundImage: "url(" + image + ")",
             backgroundSize: "cover",
             backgroundPosition: "top center",
-            opacity: 0.8,
           }}
         >
           <div className={classes.container}>
@@ -187,9 +186,9 @@ class LoginPage extends React.Component {
                 <Card
                   className={classes[this.state.cardAnimaton]}
                   style={{
-                    backgroundColor: "black",
+                    backgroundColor: "#434245",
                     color: "black",
-                    boxShadow: "5px 10px",
+                    boxShadow: "7px 8px",
                     fontSize: "100%",
                     lineHeight: "1.6",
                     border: "1px solid",
@@ -201,8 +200,8 @@ class LoginPage extends React.Component {
                     </h3>
                     <h4 style={{ paddingBottom: "5px" }}>
                       <strong>
-                        For Whale-Lovers, you can use this website to find sperm whales and match
-                        your whale pictures with others.
+                        For whale-lovers, who can use this website to find sperm whales and match
+                        whale pictures with others.
                       </strong>
                     </h4>
                     {/*               <form onSubmit={this.submitForm} className={classes.form}>

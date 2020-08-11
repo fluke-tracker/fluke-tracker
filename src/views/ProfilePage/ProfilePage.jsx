@@ -192,11 +192,10 @@ class ProfilePage extends React.Component {
     const { classes, ...rest } = this.props;
 
     return (
-      <div style={{ backgroundColor: "rgb(170,223,255)", minHeight: "100vh" }}>
+      <div style={{ minHeight: "100vh" }}>
         <Header
-          color="blue"
           brand={
-            <img src="https://visualidentity.capgemini.com/wp-content/themes/v/html/images/logo.png" />
+            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
