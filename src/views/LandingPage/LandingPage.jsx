@@ -40,6 +40,7 @@ class LandingPage extends React.Component {
       vertical: 0,
       dialogMessage: "",
       user: null,
+      adminFlag: false,
       similar_pictures: [undefined],
       // newPicsList needs to be initialized with "undefined" object to prevent showing the error message "No pics available" in the first seconds
       newPicsList: [undefined],
@@ -69,10 +70,12 @@ class LandingPage extends React.Component {
   }
 
   authenticate_user() {
+    const admins = new Set(["LisaSteiner", "whalewatching"]);
+
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log("MATCHINGPAGE user", user, user.username);
-        this.setState({ user: user.username });
+        this.setState({ user: user.username, adminFlag: admins.has(user.username) });
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser landing page err redirect to login", err);
@@ -405,11 +408,10 @@ class LandingPage extends React.Component {
 
     switch (event.keyCode) {
       case M_KEY:
-        this.matchPicture();
+        if (this.state.adminFlag) this.matchPicture();
         break;
       case U_KEY:
-        this.unmatchPictures();
-        this.navigationAction("right");
+        if (this.state.adminFlag) this.unmatchPictures();
         break;
       case LEFT_ARROW_KEY:
         this.navigationAction("left");
@@ -628,9 +630,6 @@ class LandingPage extends React.Component {
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
 
-    const admins = new Set(["LisaSteiner", "whalewatching"]);
-    const adminFlag = admins.has(this.state.user) ? true : false;
-
     return (
       <div>
         <Header
@@ -687,7 +686,7 @@ class LandingPage extends React.Component {
                           <br />
                           <ImageWithInfoComponent
                             picObj={this.state.newPicsList[this.state.vertical]}
-                            adminFlag={adminFlag}
+                            adminFlag={this.state.adminFlag}
                             notifyLoadHandler={this.picLoadHandler}
                           />
                           <br />
@@ -716,13 +715,13 @@ class LandingPage extends React.Component {
                                   ? undefined
                                   : this.state.similar_pictures[this.state.horizontal].distance
                               }
-                              adminFlag={adminFlag}
+                              adminFlag={this.state.adminFlag}
                               notifyLoadHandler={this.picLoadHandler}
                             />
                           )}
                         </GridItem>
                         <GridItem xs={12} sm={12} md={6}>
-                          {adminFlag ? (
+                          {this.state.adminFlag ? (
                             <SetMaxWhaleIdAutoDialog
                               function={this.go_manualId}
                               disabled={!this.state.picsLoaded[0]}
@@ -746,7 +745,7 @@ class LandingPage extends React.Component {
                           >
                             &#9660;
                           </Button>
-                          {/*adminFlag ? (
+                          {/*this.state.adminFlag ? (
                             <Button
                               style={{ marginLeft: "10px" }}
                               disabled={!this.state.picsLoaded[0]}
@@ -767,7 +766,7 @@ class LandingPage extends React.Component {
                         </GridItem>
                         <GridItem xs={12} sm={12} md={6}>
                           {/*  new buttons for the matching result */}
-                          {adminFlag ? (
+                          {this.state.adminFlag ? (
                             <div>
                               <Button
                                 disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
