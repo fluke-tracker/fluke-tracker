@@ -16,61 +16,113 @@ import { Apps, CloudDownload } from "@material-ui/icons";
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
-import { Auth } from 'aws-amplify';
+import { Auth } from "aws-amplify";
 
-const RegisterButton = props => (
-    <ListItem className={props.classes.listItem}>
-        <Link to={"/login-page"}>
-            <Button 
-            href=""
-            color="transparent"
-            target="_blank"
-            style={{color: 'white'}}
-            className={props.classes.navLink}>Register</Button>
-        </Link>
-    </ListItem>
-)
-
-// the logout component emits a logout signal to redux
-const Logout = props => (
-    <ListItem className={props.classes.listItem}>
-       <Link to={"/login-page"}>
-        <Button 
+const RegisterButton = (props) => (
+  <ListItem className={props.classes.listItem}>
+    <Link to={"/login-page"}>
+      <Button
         href=""
         color="transparent"
         target="_blank"
-        style={{color: 'white'}}
-        onClick={() => Auth.signOut()}
-        className={props.classes.navLink}>Logout</Button>
-        </Link>
-    </ListItem>
-)
+        style={{ color: "white" }}
+        className={props.classes.navLink}
+      >
+        Register
+      </Button>
+    </Link>
+  </ListItem>
+);
 
+// the logout component emits a logout signal to redux
+const Logout = (props) => (
+  <ListItem className={props.classes.listItem}>
+    <Link to={"/login-page"}>
+      <Button
+        href=""
+        color="transparent"
+        target="_blank"
+        style={{ color: "white" }}
+        onClick={() => Auth.signOut()}
+        className={props.classes.navLink}
+      >
+        Logout
+      </Button>
+    </Link>
+  </ListItem>
+);
 
 function HeaderLinks({ ...props }) {
   const { classes } = props;
-  console.log('header props are,', props);
+  console.log("header props are,", props);
   return (
-    <div class="header__top container">
-          { props.user ?
-    <div class="header__nav">
-              <div class="menu-all-pages-container">
+    <div class="header__top container" style={{ backgroundColor: "transparent" }}>
+      {props.user ? (
+        <div class="header__nav">
+          <div class="menu-all-pages-container">
             <ul id="menu-main-menu" class="menu">
-                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                        class="nav-link" href={"/profile-page"}>Welcome</a></li>
-                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                        class="nav-link" href={"/matching-page"}>Matching Page</a></li>
-                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                        class="nav-link" href={"/search-page"}>Search Page</a></li>
-                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                        class="nav-link" href={"/impressum"}>Impressum</a></li>
-                <li class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert" user={props.user}><a
-                class="nav-link"  onClick={() => Auth.signOut()} href={"/login-page"}>Logout</a></li>
-             </ul>
+              <li
+                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                user={props.user}
+              >
+                <a class="nav-link" href={"/profile-page"}>
+                  Welcome & Upload
+                </a>
+              </li>
+              <li
+                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                user={props.user}
+              >
+                <a class="nav-link" href={"/matching-page"}>
+                  Match Whales
+                </a>
+              </li>
+              <li
+                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                user={props.user}
+              >
+                <a class="nav-link" href={"/search-page"}>
+                  Browse Pictures
+                </a>
+              </li>
+              <li
+                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                user={props.user}
+              >
+                <a class="nav-link" href={"/impressum"}>
+                  Imprint
+                </a>
+              </li>
+              <li
+                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                user={props.user}
+              >
+                <a class="nav-link" onClick={() => Auth.signOut()} href={"/login-page"}>
+                  Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <div style={{ backgroundColor: "transparent" }}>
+          <div class="header__nav">
+            <div class="menu-all-pages-container">
+              <ul id="menu-main-menu" class="menu">
+                <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/impressum"} style={{ color: "white" }}>
+                    Imprint
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-    </div>
-: <div style={{"backgroundColor": "transparent"}}></div>}
-</div>
     /* <List className={classes.list}>
       { props.user ?
       <ListItem className={classes.listItem}>
@@ -101,7 +153,7 @@ function HeaderLinks({ ...props }) {
 : <ListItem>
   </ListItem>} */
 
-/*{/*         <ListItem className={classes.listItem}>
+    /*{/*         <ListItem className={classes.listItem}>
             <Link to={props.user ? "/profile-page" : "/login-page"}>
                 <Button
                 href=""
@@ -110,8 +162,8 @@ function HeaderLinks({ ...props }) {
                 style={{color: 'white'}}
                 className={classes.navLink}>{props.user ? `${props.user.name} ${props.user.surname}` : `Login`}</Button>
             </Link>
-        </ListItem>      */ /* } */
- /*       {
+        </ListItem>      */
+    /*       {
             props.user ? <Logout {...props}/> : <div></div>
         }
 
@@ -119,6 +171,6 @@ function HeaderLinks({ ...props }) {
   );
 }
 
-const HeaderLinksContainer = connect(state => ({ state }))(HeaderLinks);
+const HeaderLinksContainer = connect((state) => ({ state }))(HeaderLinks);
 
 export default withStyles(headerLinksStyle)(HeaderLinksContainer);
