@@ -19,7 +19,7 @@ import API, { graphqlOperation } from "@aws-amplify/api";
 import { render } from "react-dom";
 import Gallery from "react-grid-gallery";
 import Snackbar from "@material-ui/core/Snackbar";
-
+import CircularProgress from "@material-ui/core/CircularProgress";
 const dashboardRoutes = [];
 const IMAGES = [];
 class SearchPage extends React.Component {
@@ -32,15 +32,16 @@ class SearchPage extends React.Component {
       noData: false,
       selectedImages: [],
       dialogMessage: "",
+      reseponse: undefined,
     };
     this.onSelectImage = this.onSelectImage.bind(this);
     this.getSelectedImages = this.getSelectedImages.bind(this);
+    this.authenticate_user();
 
     if (props.match.params.whale_id) {
       this.state.searchInput = props.match.params.whale_id;
       this.searchWhales(this.state);
     }
-    this.authenticate_user();
   }
   onSelectImage(index, image) {
     console.log("index", index);
@@ -94,7 +95,7 @@ class SearchPage extends React.Component {
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log("searchpage user", user.username);
-        this.setState({ user: user });
+        this.setState({ user: user.username });
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser searchpage err", err);
@@ -157,6 +158,7 @@ class SearchPage extends React.Component {
     console.log("state before submit", data);
     let returnPath;
     try {
+      this.setState({ IMAGES: [], searchInput: "", response: "" });
       const S3bucket = await Storage.get("");
       returnPath = S3bucket.split("public/")[0];
       console.log("search page bucket path", returnPath);
@@ -174,7 +176,7 @@ class SearchPage extends React.Component {
       picture_items.forEach((item) => {
         this.state.IMAGES.push(this.formatImages(item, randomID.name, returnPath));
       });
-      this.setState({ noData: false, searchInput: randomID.name });
+      this.setState({ noData: false, searchInput: randomID.name, response: undefined });
     } catch (e) {
       this.setState({ noData: true, IMAGES: [] });
       console.log("no results found for random whale", e);
@@ -187,8 +189,8 @@ class SearchPage extends React.Component {
     return {
       src: S3bucket + "cropped_images/" + item.filename,
       thumbnail: S3bucket + "cropped_images/" + item.filename,
-      thumbnailWidth: 320,
-      thumbnailHeight: 174,
+      /*  thumbnailWidth: 360,
+      thumbnailHeight: 90, */
       tags: [
         { value: item.filename, title: "File name" },
         { value: whale_id, title: "Whale ID" },
@@ -200,6 +202,10 @@ class SearchPage extends React.Component {
     const { dialogMessage } = this.state;
     const { classes, ...rest } = this.props;
     const searchInput = this.state.searchInput;
+    const admins = new Set(["LisaSteiner", "whalewatching"]);
+    const adminFlag = admins.has(this.state.user) ? true : false;
+    console.log("adminFlag", adminFlag);
+
     return (
       <div>
         <Header
@@ -274,18 +280,23 @@ class SearchPage extends React.Component {
             >
               Display Random Whale
             </Button>
-            <Button
-              onClick={this.getSelectedImages.bind(this)}
-              style={{ margin: "10px" }}
-              variant="contained"
-              color="info"
-              size="sm"
-            >
-              Re-Match Whale
-            </Button>
+            {adminFlag ? (
+              <Button
+                onClick={this.getSelectedImages.bind(this)}
+                style={{ margin: "10px" }}
+                variant="contained"
+                color="info"
+                size="sm"
+              >
+                Re-Match Whale
+              </Button>
+            ) : (
+              <div></div>
+            )}
+            <div size="sm">{this.state.response === "" ? <CircularProgress /> : ""}</div>
             <Gallery
               images={this.state.IMAGES}
-              rowHeight={174}
+              rowHeight={90}
               enableLightbox={true}
               backdropClosesModal
               onSelectImage={this.onSelectImage}
