@@ -149,7 +149,7 @@ class Impressum extends React.Component {
                         <strong>Sponsors</strong>
                       </h1>
                   <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/314px-Amazon_Web_Services_Logo.svg.png" style={{ width:"20%", paddingTop: "30px" }} />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/314px-Amazon_Web_Services_Logo.svg.png" style={{ width:"7%", paddingTop: "30px" }} />
                   </div>
                     <div class="article-text">
                       <h1 style={{ paddingTop: "20px" }}>
