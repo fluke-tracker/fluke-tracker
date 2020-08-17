@@ -126,11 +126,11 @@ class Impressum extends React.Component {
     const { classes, ...rest } = this.props;
 
     return (
-      <div>
+      <div style={{ minHeight: "100vh" }}>
         <Header
           color="blue"
           brand={
-            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
+            <img src={require('assets/img/placeholder.jpg')} />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
@@ -141,12 +141,17 @@ class Impressum extends React.Component {
           {...rest}
         />
         <div className={classes.container}>
-          <div class="section container" style={{ paddingTop: "150px", paddingBottom: "5px" }}>
-            <div class="row">
-              <div class="col-12">
-                <div class="article-text">
-                  <div class="section__block article-text col-12 col-md-10 offset-md-1 ">
-                    <div class="section__block article-text col-12 col-md-10 offset-md-1 ">
+              <div class="section container" style={{ paddingTop: "125px", paddingBottom: "5px" }}>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="article-text">
+                  <h1 style={{ paddingTop: "20px" }}>
+                        <strong>Sponsors</strong>
+                      </h1>
+                  <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/314px-Amazon_Web_Services_Logo.svg.png" style={{ width:"20%", paddingTop: "30px" }} />
+                  </div>
+                    <div class="article-text">
                       <h1 style={{ paddingTop: "20px" }}>
                         <strong>Impressum</strong>
                       </h1>
@@ -185,8 +190,6 @@ class Impressum extends React.Component {
               </div>
             </div>
           </div>
-        </div>
-      </div>
     );
   }
 }
