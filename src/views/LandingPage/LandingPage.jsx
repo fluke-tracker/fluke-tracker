@@ -6,6 +6,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import Header from "components/Header/Header.jsx";
 import SetMaxWhaleIdAutoDialog from "components/CustomDialog/SetMaxWhaleIdAutoDialog.jsx";
+import DeletePictureDialog from "components/CustomDialog/DeletePictureDialog.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Badge from "components/Badge/Badge.jsx";
@@ -851,15 +852,16 @@ class LandingPage extends React.Component {
                                 function={this.go_manualId}
                                 disabled={!this.state.picsLoaded[0]}
                               ></SetMaxWhaleIdAutoDialog>
-                              <Button
+                              <DeletePictureDialog
+                                function={this.deleteLeftPicture}
                                 disabled={!this.state.picsLoaded[0]}
-                                variant="contained"
-                                onClick={() => this.deleteLeftPicture()}
-                                size="sm"
-                                color="warning"
-                              >
-                                Delete picture
-                              </Button>
+                                picName={
+                                  this.state.newPicsList.length > 0 &&
+                                  typeof this.state.newPicsList[0] !== "undefined"
+                                    ? this.state.newPicsList[this.state.vertical].id
+                                    : ""
+                                }
+                              ></DeletePictureDialog>
                             </div>
                           ) : (
                             ""
