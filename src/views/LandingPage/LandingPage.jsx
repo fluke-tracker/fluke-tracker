@@ -23,10 +23,18 @@ import "react-image-picker/dist/index.css";
 
 // aws stuff
 import API, { graphqlOperation } from "@aws-amplify/api";
+import Storage from "@aws-amplify/storage";
 
 // graphql stuff
 import { getConfig, getWhale } from "graphql/queries";
-import { createMatch, createWhale, updateConfig, updatePicture } from "graphql/mutations";
+import {
+  createMatch,
+  createWhale,
+  updateConfig,
+  updatePicture,
+  deletePicture,
+  deleteEuclidianDistance,
+} from "graphql/mutations";
 import { pictureByIsNewFiltered, getPictureFiltered } from "graphql/customQueries";
 import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/queries";
 
@@ -54,6 +62,7 @@ class LandingPage extends React.Component {
     this.unmatchPictures = this.unmatchPictures.bind(this);
 
     this.go_manualId = this.go_manualId.bind(this);
+    this.deleteLeftPicture = this.deleteLeftPicture.bind(this);
 
     this.go_up = this.go_up.bind(this);
     this.go_down = this.go_down.bind(this);
@@ -108,7 +117,7 @@ class LandingPage extends React.Component {
     const idOrFalse = await this.createAndAssignNewWhaleId(leftImgFileName);
 
     if (idOrFalse === false) {
-      this.showSnackBar("Ooops, an error occured! Please try again!", 5000);
+      this.showSnackBarError();
     } else {
       this.showSnackBar(
         "Successfully created and assigned whale ID " +
@@ -121,8 +130,52 @@ class LandingPage extends React.Component {
     this.fetchNewPicturesList(undefined, [], 0);
   }
 
-  go_badPicture() {
-    console.log("bad picture code goes here");
+  async deleteLeftPicture() {
+    const imageIdToBeDeleted = this.state.newPicsList[this.state.vertical].id;
+    let euclDistArray = await this.getEuclidianDistanceTuples(imageIdToBeDeleted);
+    console.log("first query:", euclDistArray);
+
+    if (euclDistArray !== -1) {
+      let resultsPromiseArray = [];
+      // send a delete mutation for every single tuple (graphQL is handling it sequentially anyway, therefore no need to group the requests together)
+      euclDistArray.forEach((item) => {
+        resultsPromiseArray.push(
+          API.graphql(
+            graphqlOperation(deleteEuclidianDistance, {
+              input: { picture1: item.picture1, picture2: item.picture2 },
+            })
+          )
+        );
+      });
+
+      try {
+        // all the update operations are send to the DB and then await Promise.all() waits for all of them to finish
+        await Promise.all(resultsPromiseArray);
+
+        // delete entry imageIdToBeDeleted from the picture table
+        const result = await API.graphql(
+          graphqlOperation(deletePicture, { input: { id: imageIdToBeDeleted } })
+        );
+
+        // delete the actual files from storage
+        Storage.remove("embeddings/input/" + imageIdToBeDeleted)
+          .then((result) => console.log(result))
+          .catch((err) => console.log("embeddings err", err));
+
+        Storage.remove("thumbnails/" + imageIdToBeDeleted + "thumbnail.jpg")
+          .then((result) => console.log("thumbnail", result))
+          .catch((err) => console.log("thumbnail err", err));
+
+        Storage.remove("../cropped_images/" + imageIdToBeDeleted)
+          .then((result) => console.log(result))
+          .catch((err) => console.log("cropped err", err));
+      } catch (error) {
+        console.log(error);
+        this.showSnackBarError();
+      }
+    } else {
+      this.showSnackBarError();
+    }
   }
 
   go_left() {
@@ -238,7 +291,7 @@ class LandingPage extends React.Component {
       if (queryWasSuccess) {
         this.showSnackBarAssignedIds(leftWhaleId, rightWhaleId);
       } else {
-        this.showSnackBar("Oops! An error occured! Please try again!", 5000);
+        this.showSnackBarError();
       }
     } else if (parseInt(leftWhaleId) < parseInt(rightWhaleId)) {
       // assign all pictures with the right id the left id
@@ -246,7 +299,7 @@ class LandingPage extends React.Component {
       if (queryWasSuccess) {
         this.showSnackBarAssignedIds(rightWhaleId, leftWhaleId);
       } else {
-        this.showSnackBar("Oops! An error occured! Please try again!", 5000);
+        this.showSnackBarError();
       }
     }
 
@@ -343,6 +396,10 @@ class LandingPage extends React.Component {
     } else {
       this.showSnackBar("Successfully assigned whale ID " + toId, 5000);
     }
+  }
+
+  showSnackBarError() {
+    this.showSnackBar("Ooops, an error occurred! Please try again!", 5000);
   }
 
   /**
@@ -484,17 +541,88 @@ class LandingPage extends React.Component {
     }
   }
 
+  async getEuclidianDistanceTuples(imgId) {
+    let returnValue = undefined;
+    try {
+      // query where picture1 = imgId
+      const query1 = API.graphql(
+        graphqlOperation(listEuclidianDistances, {
+          picture1: imgId,
+          limit: 5000,
+        })
+      );
+      //query where picture2 = imgId
+      /*const query2 = API.graphql(
+        graphqlOperation(euclidianDistanceByPicture2, {
+          picture2: imgId,
+          limit: 5000,
+        })
+      );*/
+
+      const result1 = await query1;
+      // check if the result that came back here is still the one we're looking for (in case it's an empty array we assume it is the right one)
+      if (
+        result1.data.listEuclidianDistances.items.length > 0 &&
+        result1.data.listEuclidianDistances.items[0].picture1 !=
+          this.state.newPicsList[this.state.vertical].id
+      ) {
+        return -1;
+      }
+      //const result2 = await query2;
+
+      console.log("GOT result1");
+      console.log(result1);
+      console.log("GOT result2");
+      //console.log(result2);
+
+      // concatinate both arrays
+      returnValue = result1.data.listEuclidianDistances.items.concat(
+        //result2.data.EuclidianDistanceByPicture2.items
+        []
+      );
+    } catch (error) {
+      console.log("ERROR IN getEuclidianDistanceTuples");
+      console.log(error);
+      returnValue = -1;
+    }
+
+    return returnValue;
+  }
+
   /**
    * Executes two listEuclidianDistances graphQL-queries: One with the leftImgId as picture1; one with the leftImgId as picture2
    * Then concatenates and sorts the two result-arrays and shortens the concatenation to the 100 most similar pictures (smallest distance).
    * Returns this array as a Promise.
    */
   async fetchSimilarPictures() {
-    // TODO activate second request with picture2 and add pictures
     let returnValue = undefined;
     const leftImgId = this.state.newPicsList[this.state.vertical].id;
     console.log("IN fetchSimilar");
     console.log(leftImgId);
+
+    let result = await this.getEuclidianDistanceTuples(leftImgId);
+    if (result !== -1) {
+      // query was successful => sort by distance
+      result.sort((a, b) => a.distance - b.distance);
+      // we only want to display the first 100 most similar pictures
+      let resultsFirst100 = result.slice(0, 100);
+
+      let filteredFirst100 = [];
+      // extract only the file name and distance out of the tupel (the rest is not relevant for us)
+      resultsFirst100.forEach((elem) => {
+        if (elem.picture1 === leftImgId) {
+          filteredFirst100.push({ simPicName: elem.picture2, distance: elem.distance });
+        } else {
+          filteredFirst100.push({ simPicName: elem.picture1, distance: elem.distance });
+        }
+      });
+
+      returnValue = filteredFirst100;
+    } else {
+      returnValue = result;
+    }
+    return returnValue;
+
     try {
       // query where picture1 = leftImgId
       const query1 = API.graphql(
@@ -632,9 +760,7 @@ class LandingPage extends React.Component {
       <div>
         <Header
           color="blue"
-          brand={
-            <img src={require('assets/img/placeholder.jpg')} />
-          }
+          brand={<img src={require("assets/img/placeholder.jpg")} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -720,10 +846,21 @@ class LandingPage extends React.Component {
                         </GridItem>
                         <GridItem xs={12} sm={12} md={6}>
                           {this.state.adminFlag ? (
-                            <SetMaxWhaleIdAutoDialog
-                              function={this.go_manualId}
-                              disabled={!this.state.picsLoaded[0]}
-                            ></SetMaxWhaleIdAutoDialog>
+                            <div>
+                              <SetMaxWhaleIdAutoDialog
+                                function={this.go_manualId}
+                                disabled={!this.state.picsLoaded[0]}
+                              ></SetMaxWhaleIdAutoDialog>
+                              <Button
+                                disabled={!this.state.picsLoaded[0]}
+                                variant="contained"
+                                onClick={() => this.deleteLeftPicture()}
+                                size="sm"
+                                color="warning"
+                              >
+                                Delete picture
+                              </Button>
+                            </div>
                           ) : (
                             ""
                           )}
@@ -743,19 +880,6 @@ class LandingPage extends React.Component {
                           >
                             &#9660;
                           </Button>
-                          {/*this.state.adminFlag ? (
-                            <Button
-                              style={{ marginLeft: "10px" }}
-                              disabled={!this.state.picsLoaded[0]}
-                              variant="contained"
-                              onClick={() => this.go_badPicture()}
-                              size="sm"
-                            >
-                              Bad picture
-                            </Button>
-                          ) : (
-                            ""
-                          )*/}
                           <Snackbar
                             open={dialogMessage !== ""}
                             message={dialogMessage}
