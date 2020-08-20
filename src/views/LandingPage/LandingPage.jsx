@@ -58,6 +58,8 @@ class LandingPage extends React.Component {
       picsLoaded: [false, false],
     };
 
+    this.intervalIds = [];
+
     // BINDING FUNCTIONS
     this.matchPicture = this.matchPicture.bind(this);
     this.unmatchPictures = this.unmatchPictures.bind(this);
@@ -71,6 +73,7 @@ class LandingPage extends React.Component {
     this.go_right = this.go_right.bind(this);
 
     this.fetchNewPicturesList = this.fetchNewPicturesList.bind(this);
+    this.fetchAndDisplaySimilarPictures = this.fetchAndDisplaySimilarPictures.bind(this);
     this.picLoadHandler = this.picLoadHandler.bind(this);
 
     this._handleKeyDown = this._handleKeyDown.bind(this);
@@ -501,6 +504,15 @@ class LandingPage extends React.Component {
     console.log(prevState);
     console.log(this.state);
 
+    // clear old interval IDs
+    this.intervalIds.forEach((intervalId) => {
+      clearInterval(intervalId);
+    });
+    // if sim pics array is still empty we call the function again in 15 seconds
+    if (this.state.similar_pictures.length === 0) {
+      this.intervalIds.push(setInterval(this.fetchAndDisplaySimilarPictures, 15000));
+    }
+
     // will be entered every time a match happened / the whole page was refreshed
     if (prevState.newPicsList !== this.state.newPicsList) {
       console.log("IN newPicsList UPDATE");
@@ -514,6 +526,9 @@ class LandingPage extends React.Component {
 
     if (prevState.vertical !== this.state.vertical) {
       console.log("IN VERTICAL CHANGE");
+      this.intervalIds.forEach((intervalId) => {
+        clearInterval(intervalId);
+      });
       this.processNewSimilarPics(await this.fetchSimilarPictures());
     } else if (prevState.horizontal !== this.state.horizontal) {
       console.log("IN HORIZONTAL CHANGE");
@@ -590,6 +605,10 @@ class LandingPage extends React.Component {
     return returnValue;
   }
 
+  async fetchAndDisplaySimilarPictures() {
+    this.processNewSimilarPics(await this.fetchSimilarPictures());
+  }
+
   /**
    * Executes two listEuclidianDistances graphQL-queries: One with the leftImgId as picture1; one with the leftImgId as picture2
    * Then concatenates and sorts the two result-arrays and shortens the concatenation to the 100 most similar pictures (smallest distance).
@@ -623,69 +642,6 @@ class LandingPage extends React.Component {
       returnValue = result;
     }
     return returnValue;
-
-    try {
-      // query where picture1 = leftImgId
-      const query1 = API.graphql(
-        graphqlOperation(listEuclidianDistances, {
-          picture1: leftImgId,
-          limit: 5000,
-        })
-      );
-      //query where picture2 = leftImgId
-      const query2 = API.graphql(
-        graphqlOperation(euclidianDistanceByPicture2, {
-          picture2: leftImgId,
-          limit: 5000,
-        })
-      );
-
-      const result1 = await query1;
-      console.log("LLLLLLLLLLLLLLLLLL", result1);
-      // check if the result that came back here is still the one we're looking for (in case it's an empty array we assume it is the right one)
-      if (
-        result1.data.listEuclidianDistances.items.length > 0 &&
-        result1.data.listEuclidianDistances.items[0].picture1 !=
-          this.state.newPicsList[this.state.vertical].id
-      ) {
-        return -1;
-      }
-      const result2 = await query2;
-
-      console.log("GOT result1");
-      console.log(result1);
-      console.log("GOT result2");
-      console.log(result2);
-
-      // concatinate both arrays
-      let resultsAllItems = result1.data.listEuclidianDistances.items.concat(
-        result2.data.EuclidianDistanceByPicture2.items
-      );
-      resultsAllItems.sort((a, b) => a.distance - b.distance);
-      let resultsFirst100 = resultsAllItems.slice(0, 100);
-
-      let filteredFirst100 = [];
-      // extract only the relevant file name out of the tupel
-      resultsFirst100.forEach((elem) => {
-        if (elem.picture1 === leftImgId) {
-          filteredFirst100.push({ simPicName: elem.picture2, distance: elem.distance });
-        } else {
-          filteredFirst100.push({ simPicName: elem.picture1, distance: elem.distance });
-        }
-      });
-
-      returnValue = filteredFirst100;
-    } catch (error) {
-      console.log("ERROR IN fetchSimilarPictures");
-      console.log(error);
-      returnValue = -1;
-    }
-
-    return new Promise((resolve) => {
-      resolve(returnValue); // Rückgabewert der Funktion
-      console.log("Promise returned");
-      console.log(returnValue);
-    });
   }
 
   async processNewSimilarPics(picArray) {
