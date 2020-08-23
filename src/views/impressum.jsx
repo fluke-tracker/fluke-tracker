@@ -125,13 +125,27 @@ class Impressum extends React.Component {
   render() {
     const { classes, ...rest } = this.props;
 
+    let boxStyle = {
+      border: "2px solid white",
+      borderRadius: "12px",
+      paddingLeft: "20px",
+      paddingRight: "20px",
+      paddingTop: "25px",
+      paddingBottom: "15px",
+      backgroundColor: "#f0f0f0", // "#ebf7ff",
+    };
+    boxStyle = {
+      paddingLeft: "20px",
+      paddingRight: "20px",
+      paddingTop: "15px",
+      paddingBottom: "15px",
+    };
+
     return (
       <div style={{ minHeight: "100vh" }}>
         <Header
           color="blue"
-          brand={
-            <img src={require('assets/img/placeholder.jpg')} />
-          }
+          brand={<img src={require("assets/img/placeholder.jpg")} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -141,55 +155,93 @@ class Impressum extends React.Component {
           {...rest}
         />
         <div className={classes.container}>
-              <div class="section container" style={{ paddingTop: "125px", paddingBottom: "5px" }}>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="article-text">
+          <div class="section container" style={{ paddingTop: "125px", paddingBottom: "5px" }}>
+            <div class="row">
+              <div class="col-12">
+                <div
+                  class="article-text"
+                  style={{
+                    textAlign: "center",
+                    color: "black",
+                    paddingLeft: "50px",
+                    paddingRight: "50px",
+                  }}
+                >
+                  <h1 style={{ paddingTop: "40px", textAlign: "center", fontSize: "40px" }}>
+                    <strong>A big THANK YOU to our SPONSORS!</strong>
+                  </h1>
+                  <hr />
+                  <div style={{ ...boxStyle }}>
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/314px-Amazon_Web_Services_Logo.svg.png"
+                      style={{
+                        width: "9%",
+                        paddingBottom: "15px",
+                        margin: "0 auto",
+                      }}
+                    />
+                    We're proud to present AWS as our official cloud-service partner whose team
+                    supported us throughout the whole journey of this amazing project: Starting with
+                    their assistance during the development of the AI up to the use of their
+                    technology that makes hosting this website possible.
+                  </div>
+                  <hr />
+                  <div style={{ ...boxStyle, marginTop: "15px" }}>
+                    <img
+                      src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg"
+                      style={{
+                        paddingBottom: "10px",
+                        margin: "0 auto",
+                      }}
+                    />
+                    As the founder and organizer of the Global Data Science Challenge 2020,
+                    Capgemini is another big sponsor who really pushed this project forward. The
+                    constant innovation and dedication of Capgemini brought this idea to life and
+                    ensured creating an AI for good.
+                  </div>
+                  <hr />
+                </div>
+                <br />
+                <br />
+                <div class="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
-                        <strong>Sponsors</strong>
-                      </h1>
-                  <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/314px-Amazon_Web_Services_Logo.svg.png" style={{ width:"7%", paddingTop: "30px" }} />
-                  </div>
-                    <div class="article-text">
-                      <h1 style={{ paddingTop: "20px" }}>
-                        <strong>Impressum</strong>
-                      </h1>
-                      <h2>This site is edited by: / Ce site web est édité par :</h2>
-                      <p>
-                        Capgemini Service SAS
-                        <br />
-                        Société par actions simplifiée au capital de 8, 000,000 euros – 652 025 792
-                        RCS Paris
-                        <br />
-                        Siège social : 11 rue de Tilsitt, 75017 Paris
-                        <br />
-                        Tel: +33 (0)1 47 54 50 00
-                        <br />
-                        Publication Director: / Directeur de la publication : M. Paul Hermelin
-                      </p>
-                      <h2>ISP: / Hébergeur :</h2>
-                      <p>
-                        <a href="https://automattic.com/" target="_blank" rel="noopener noreferrer">
-                          Automattic Inc
-                        </a>
-                        <br />
-                        60 29th Street #343
-                        <br />
-                        San Francisco, CA 94110
-                        <br />
-                        Tel: (877) 273-3049.
-                      </p>
+                    <b>Impressum</b>
+                  </h1>
+                  <h2>This site is edited by: / Ce site web est édité par :</h2>
+                  <p>
+                    Capgemini Service SAS
+                    <br />
+                    Société par actions simplifiée au capital de 8, 000,000 euros – 652 025 792 RCS
+                    Paris
+                    <br />
+                    Siège social : 11 rue de Tilsitt, 75017 Paris
+                    <br />
+                    Tel: +33 (0)1 47 54 50 00
+                    <br />
+                    Publication Director: / Directeur de la publication : M. Paul Hermelin
+                  </p>
+                  <h2>ISP: / Hébergeur :</h2>
+                  <p>
+                    <a href="https://automattic.com/" target="_blank" rel="noopener noreferrer">
+                      Automattic Inc
+                    </a>
+                    <br />
+                    60 29th Street #343
+                    <br />
+                    San Francisco, CA 94110
+                    <br />
+                    Tel: (877) 273-3049.
+                  </p>
 
-                      <h5 style={{ paddingTop: "5px" }}>
-                        <a href="mailto:gdsc3_core.iandd@capgemini.com">Contact us</a>
-                      </h5>
-                    </div>
-                  </div>
+                  <h5 style={{ paddingTop: "5px" }}>
+                    <a href="mailto:gdsc3_core.iandd@capgemini.com">Contact us</a>
+                  </h5>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
     );
   }
 }
