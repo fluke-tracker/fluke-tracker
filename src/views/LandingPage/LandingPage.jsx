@@ -56,6 +56,7 @@ class LandingPage extends React.Component {
       simPicObj: undefined,
       // first array value represents left img, second one the right img
       picsLoaded: [false, false],
+      isDeleting: false,
     };
 
     this.intervalIds = [];
@@ -135,13 +136,14 @@ class LandingPage extends React.Component {
   }
 
   async deleteLeftPicture() {
+    this.setState({ isDeleting: true });
     const imageIdToBeDeleted = this.state.newPicsList[this.state.vertical].id;
     let euclDistArray = await this.getEuclidianDistanceTuples(imageIdToBeDeleted);
     console.log("first query:", euclDistArray);
 
     if (euclDistArray !== -1) {
       let resultsPromiseArray = [];
-      // send a delete mutation for every single tuple (graphQL is handling it sequentially anyway, therefore no need to group the requests together)
+      // send a delete mutation for every single tuple (graphQL is handling it sequentially anyway)
       euclDistArray.forEach((item) => {
         resultsPromiseArray.push(
           API.graphql(
@@ -161,7 +163,7 @@ class LandingPage extends React.Component {
           graphqlOperation(deletePicture, { input: { id: imageIdToBeDeleted } })
         );
 
-        // delete the actual files from storage
+        // delete the actual files from storage (NOTE: "cropped_images folder not working yet due to owner policy")
         Storage.remove("embeddings/input/" + imageIdToBeDeleted)
           .then((result) => console.log(result))
           .catch((err) => console.log("embeddings err", err));
@@ -173,6 +175,9 @@ class LandingPage extends React.Component {
         Storage.remove("../cropped_images/" + imageIdToBeDeleted)
           .then((result) => console.log(result))
           .catch((err) => console.log("cropped err", err));
+
+        // update view
+        this.fetchNewPicturesList(undefined, [], 0);
       } catch (error) {
         console.log(error);
         this.showSnackBarError();
@@ -180,6 +185,8 @@ class LandingPage extends React.Component {
     } else {
       this.showSnackBarError();
     }
+
+    this.setState({ isDeleting: false });
   }
 
   go_left() {
@@ -700,7 +707,12 @@ class LandingPage extends React.Component {
 
       console.log("IN PROCESSING - SETTING STATE");
       console.log(pics);
-      this.setState({ similar_pictures: [undefined], newPicsList: pics });
+
+      this.setState({
+        vertical: Math.max(0, Math.min(pics.length - 1, this.state.vertical)),
+        similar_pictures: [undefined],
+        newPicsList: pics,
+      });
     } catch (error) {
       console.log("IN CATCH");
       console.log(error);
@@ -712,6 +724,9 @@ class LandingPage extends React.Component {
 
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
+
+    const leftButtonsDisabled = !this.state.picsLoaded[0] || this.state.isDeleting;
+    const rightButtonsDisabled = leftButtonsDisabled || !this.state.picsLoaded[1];
 
     return (
       <div>
@@ -806,11 +821,11 @@ class LandingPage extends React.Component {
                             <div>
                               <SetMaxWhaleIdAutoDialog
                                 function={this.go_manualId}
-                                disabled={!this.state.picsLoaded[0]}
+                                disabled={leftButtonsDisabled}
                               ></SetMaxWhaleIdAutoDialog>
                               <DeletePictureDialog
                                 function={this.deleteLeftPicture}
-                                disabled={!this.state.picsLoaded[0]}
+                                disabled={leftButtonsDisabled || rightButtonsDisabled}
                                 picName={
                                   this.state.newPicsList.length > 0 &&
                                   typeof this.state.newPicsList[0] !== "undefined"
@@ -818,11 +833,13 @@ class LandingPage extends React.Component {
                                     : ""
                                 }
                               ></DeletePictureDialog>
+                              {this.state.isDeleting ? <CircularProgress /> : ""}
                             </div>
                           ) : (
                             ""
                           )}
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("up")}
                             color="info"
@@ -831,6 +848,7 @@ class LandingPage extends React.Component {
                             &#9650;
                           </Button>
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("down")}
                             color="info"
@@ -849,7 +867,7 @@ class LandingPage extends React.Component {
                           {this.state.adminFlag ? (
                             <div>
                               <Button
-                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                disabled={rightButtonsDisabled}
                                 variant="contained"
                                 onClick={() => this.matchPicture()}
                                 color="success"
@@ -859,7 +877,7 @@ class LandingPage extends React.Component {
                               </Button>
                               <Button
                                 style={{ marginLeft: "6px" }}
-                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                disabled={rightButtonsDisabled}
                                 variant="contained"
                                 onClick={() => this.unmatchPictures()}
                                 color="info"
@@ -872,6 +890,7 @@ class LandingPage extends React.Component {
                             ""
                           )}
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("left")}
                             color="info"
@@ -880,6 +899,7 @@ class LandingPage extends React.Component {
                             &#9664;
                           </Button>
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("right")}
                             color="info"
