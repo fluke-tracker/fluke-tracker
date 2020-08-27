@@ -574,8 +574,9 @@ class LandingPage extends React.Component {
           limit: 5000,
         })
       );
+
       //query where picture2 = imgId
-      /*const query2 = API.graphql(
+      const query2 = API.graphql(
         graphqlOperation(euclidianDistanceByPicture2, {
           picture2: imgId,
           limit: 5000,
@@ -591,7 +592,7 @@ class LandingPage extends React.Component {
       ) {
         return -1;
       }
-      //const result2 = await query2;
+      const result2 = await query2;
 
       console.log("GOT result1");
       console.log(result1);
@@ -600,8 +601,8 @@ class LandingPage extends React.Component {
 
       // concatinate both arrays
       returnValue = result1.data.listEuclidianDistances.items.concat(
-        //result2.data.EuclidianDistanceByPicture2.items
-        []
+        result2.data.EuclidianDistanceByPicture2.items
+        //[]
       );
     } catch (error) {
       console.log("ERROR IN getEuclidianDistanceTuples");
