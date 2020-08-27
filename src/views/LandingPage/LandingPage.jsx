@@ -6,6 +6,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import Header from "components/Header/Header.jsx";
 import SetMaxWhaleIdAutoDialog from "components/CustomDialog/SetMaxWhaleIdAutoDialog.jsx";
+import DeletePictureDialog from "components/CustomDialog/DeletePictureDialog.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Badge from "components/Badge/Badge.jsx";
@@ -23,10 +24,18 @@ import "react-image-picker/dist/index.css";
 
 // aws stuff
 import API, { graphqlOperation } from "@aws-amplify/api";
+import Storage from "@aws-amplify/storage";
 
 // graphql stuff
 import { getConfig, getWhale } from "graphql/queries";
-import { createMatch, createWhale, updateConfig, updatePicture } from "graphql/mutations";
+import {
+  createMatch,
+  createWhale,
+  updateConfig,
+  updatePicture,
+  deletePicture,
+  deleteEuclidianDistance,
+} from "graphql/mutations";
 import { pictureByIsNewFiltered, getPictureFiltered } from "graphql/customQueries";
 import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/queries";
 
@@ -47,19 +56,25 @@ class LandingPage extends React.Component {
       simPicObj: undefined,
       // first array value represents left img, second one the right img
       picsLoaded: [false, false],
+      isDeleting: false,
     };
+
+    this.intervalIds = [];
 
     // BINDING FUNCTIONS
     this.matchPicture = this.matchPicture.bind(this);
     this.unmatchPictures = this.unmatchPictures.bind(this);
 
     this.go_manualId = this.go_manualId.bind(this);
+    this.deleteLeftPicture = this.deleteLeftPicture.bind(this);
+
     this.go_up = this.go_up.bind(this);
     this.go_down = this.go_down.bind(this);
     this.go_left = this.go_left.bind(this);
     this.go_right = this.go_right.bind(this);
 
     this.fetchNewPicturesList = this.fetchNewPicturesList.bind(this);
+    this.fetchAndDisplaySimilarPictures = this.fetchAndDisplaySimilarPictures.bind(this);
     this.picLoadHandler = this.picLoadHandler.bind(this);
 
     this._handleKeyDown = this._handleKeyDown.bind(this);
@@ -107,7 +122,7 @@ class LandingPage extends React.Component {
     const idOrFalse = await this.createAndAssignNewWhaleId(leftImgFileName);
 
     if (idOrFalse === false) {
-      this.showSnackBar("Ooops, an error occured! Please try again!", 5000);
+      this.showSnackBarError();
     } else {
       this.showSnackBar(
         "Successfully created and assigned whale ID " +
@@ -120,8 +135,58 @@ class LandingPage extends React.Component {
     this.fetchNewPicturesList(undefined, [], 0);
   }
 
-  go_badPicture() {
-    console.log("bad picture code goes here");
+  async deleteLeftPicture() {
+    this.setState({ isDeleting: true });
+    const imageIdToBeDeleted = this.state.newPicsList[this.state.vertical].id;
+    let euclDistArray = await this.getEuclidianDistanceTuples(imageIdToBeDeleted);
+    console.log("first query:", euclDistArray);
+
+    if (euclDistArray !== -1) {
+      let resultsPromiseArray = [];
+      // send a delete mutation for every single tuple (graphQL is handling it sequentially anyway)
+      euclDistArray.forEach((item) => {
+        resultsPromiseArray.push(
+          API.graphql(
+            graphqlOperation(deleteEuclidianDistance, {
+              input: { picture1: item.picture1, picture2: item.picture2 },
+            })
+          )
+        );
+      });
+
+      try {
+        // all the update operations are send to the DB and then await Promise.all() waits for all of them to finish
+        await Promise.all(resultsPromiseArray);
+
+        // delete entry imageIdToBeDeleted from the picture table
+        const result = await API.graphql(
+          graphqlOperation(deletePicture, { input: { id: imageIdToBeDeleted } })
+        );
+
+        // delete the actual files from storage (NOTE: "cropped_images folder not working yet due to owner policy")
+        Storage.remove("embeddings/input/" + imageIdToBeDeleted)
+          .then((result) => console.log(result))
+          .catch((err) => console.log("embeddings err", err));
+
+        Storage.remove("thumbnails/" + imageIdToBeDeleted + "thumbnail.jpg")
+          .then((result) => console.log("thumbnail", result))
+          .catch((err) => console.log("thumbnail err", err));
+
+        Storage.remove("../cropped_images/" + imageIdToBeDeleted)
+          .then((result) => console.log(result))
+          .catch((err) => console.log("cropped err", err));
+
+        // update view
+        this.fetchNewPicturesList(undefined, [], 0);
+      } catch (error) {
+        console.log(error);
+        this.showSnackBarError();
+      }
+    } else {
+      this.showSnackBarError();
+    }
+
+    this.setState({ isDeleting: false });
   }
 
   go_left() {
@@ -237,7 +302,7 @@ class LandingPage extends React.Component {
       if (queryWasSuccess) {
         this.showSnackBarAssignedIds(leftWhaleId, rightWhaleId);
       } else {
-        this.showSnackBar("Oops! An error occured! Please try again!", 5000);
+        this.showSnackBarError();
       }
     } else if (parseInt(leftWhaleId) < parseInt(rightWhaleId)) {
       // assign all pictures with the right id the left id
@@ -245,7 +310,7 @@ class LandingPage extends React.Component {
       if (queryWasSuccess) {
         this.showSnackBarAssignedIds(rightWhaleId, leftWhaleId);
       } else {
-        this.showSnackBar("Oops! An error occured! Please try again!", 5000);
+        this.showSnackBarError();
       }
     }
 
@@ -342,6 +407,10 @@ class LandingPage extends React.Component {
     } else {
       this.showSnackBar("Successfully assigned whale ID " + toId, 5000);
     }
+  }
+
+  showSnackBarError() {
+    this.showSnackBar("Ooops, an error occurred! Please try again!", 5000);
   }
 
   /**
@@ -442,6 +511,15 @@ class LandingPage extends React.Component {
     console.log(prevState);
     console.log(this.state);
 
+    // clear old interval IDs
+    this.intervalIds.forEach((intervalId) => {
+      clearInterval(intervalId);
+    });
+    // if sim pics array is still empty we call the function again in 15 seconds
+    if (this.state.similar_pictures.length === 0) {
+      this.intervalIds.push(setInterval(this.fetchAndDisplaySimilarPictures, 15000));
+    }
+
     // will be entered every time a match happened / the whole page was refreshed
     if (prevState.newPicsList !== this.state.newPicsList) {
       console.log("IN newPicsList UPDATE");
@@ -455,6 +533,9 @@ class LandingPage extends React.Component {
 
     if (prevState.vertical !== this.state.vertical) {
       console.log("IN VERTICAL CHANGE");
+      this.intervalIds.forEach((intervalId) => {
+        clearInterval(intervalId);
+      });
       this.processNewSimilarPics(await this.fetchSimilarPictures());
     } else if (prevState.horizontal !== this.state.horizontal) {
       console.log("IN HORIZONTAL CHANGE");
@@ -483,35 +564,25 @@ class LandingPage extends React.Component {
     }
   }
 
-  /**
-   * Executes two listEuclidianDistances graphQL-queries: One with the leftImgId as picture1; one with the leftImgId as picture2
-   * Then concatenates and sorts the two result-arrays and shortens the concatenation to the 100 most similar pictures (smallest distance).
-   * Returns this array as a Promise.
-   */
-  async fetchSimilarPictures() {
-    // TODO activate second request with picture2 and add pictures
+  async getEuclidianDistanceTuples(imgId) {
     let returnValue = undefined;
-    const leftImgId = this.state.newPicsList[this.state.vertical].id;
-    console.log("IN fetchSimilar");
-    console.log(leftImgId);
     try {
-      // query where picture1 = leftImgId
+      // query where picture1 = imgId
       const query1 = API.graphql(
         graphqlOperation(listEuclidianDistances, {
-          picture1: leftImgId,
+          picture1: imgId,
           limit: 5000,
         })
       );
-      //query where picture2 = leftImgId
-      const query2 = API.graphql(
+      //query where picture2 = imgId
+      /*const query2 = API.graphql(
         graphqlOperation(euclidianDistanceByPicture2, {
-          picture2: leftImgId,
+          picture2: imgId,
           limit: 5000,
         })
       );
 
       const result1 = await query1;
-      console.log("LLLLLLLLLLLLLLLLLL", result1);
       // check if the result that came back here is still the one we're looking for (in case it's an empty array we assume it is the right one)
       if (
         result1.data.listEuclidianDistances.items.length > 0 &&
@@ -520,7 +591,7 @@ class LandingPage extends React.Component {
       ) {
         return -1;
       }
-      const result2 = await query2;
+      //const result2 = await query2;
 
       console.log("GOT result1");
       console.log(result1);
@@ -528,14 +599,43 @@ class LandingPage extends React.Component {
       console.log(result2);
 
       // concatinate both arrays
-      let resultsAllItems = result1.data.listEuclidianDistances.items.concat(
-        result2.data.EuclidianDistanceByPicture2.items
+      returnValue = result1.data.listEuclidianDistances.items.concat(
+        //result2.data.EuclidianDistanceByPicture2.items
+        []
       );
-      resultsAllItems.sort((a, b) => a.distance - b.distance);
-      let resultsFirst100 = resultsAllItems.slice(0, 100);
+    } catch (error) {
+      console.log("ERROR IN getEuclidianDistanceTuples");
+      console.log(error);
+      returnValue = -1;
+    }
+
+    return returnValue;
+  }
+
+  async fetchAndDisplaySimilarPictures() {
+    this.processNewSimilarPics(await this.fetchSimilarPictures());
+  }
+
+  /**
+   * Executes two listEuclidianDistances graphQL-queries: One with the leftImgId as picture1; one with the leftImgId as picture2
+   * Then concatenates and sorts the two result-arrays and shortens the concatenation to the 100 most similar pictures (smallest distance).
+   * Returns this array as a Promise.
+   */
+  async fetchSimilarPictures() {
+    let returnValue = undefined;
+    const leftImgId = this.state.newPicsList[this.state.vertical].id;
+    console.log("IN fetchSimilar");
+    console.log(leftImgId);
+
+    let result = await this.getEuclidianDistanceTuples(leftImgId);
+    if (result !== -1) {
+      // query was successful => sort by distance
+      result.sort((a, b) => a.distance - b.distance);
+      // we only want to display the first 100 most similar pictures
+      let resultsFirst100 = result.slice(0, 100);
 
       let filteredFirst100 = [];
-      // extract only the relevant file name out of the tupel
+      // extract only the file name and distance out of the tupel (the rest is not relevant for us)
       resultsFirst100.forEach((elem) => {
         if (elem.picture1 === leftImgId) {
           filteredFirst100.push({ simPicName: elem.picture2, distance: elem.distance });
@@ -545,17 +645,10 @@ class LandingPage extends React.Component {
       });
 
       returnValue = filteredFirst100;
-    } catch (error) {
-      console.log("ERROR IN fetchSimilarPictures");
-      console.log(error);
-      returnValue = -1;
+    } else {
+      returnValue = result;
     }
-
-    return new Promise((resolve) => {
-      resolve(returnValue); // Rückgabewert der Funktion
-      console.log("Promise returned");
-      console.log(returnValue);
-    });
+    return returnValue;
   }
 
   async processNewSimilarPics(picArray) {
@@ -614,7 +707,12 @@ class LandingPage extends React.Component {
 
       console.log("IN PROCESSING - SETTING STATE");
       console.log(pics);
-      this.setState({ similar_pictures: [undefined], newPicsList: pics });
+
+      this.setState({
+        vertical: Math.max(0, Math.min(pics.length - 1, this.state.vertical)),
+        similar_pictures: [undefined],
+        newPicsList: pics,
+      });
     } catch (error) {
       console.log("IN CATCH");
       console.log(error);
@@ -627,13 +725,14 @@ class LandingPage extends React.Component {
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
 
+    const leftButtonsDisabled = !this.state.picsLoaded[0] || this.state.isDeleting;
+    const rightButtonsDisabled = leftButtonsDisabled || !this.state.picsLoaded[1];
+
     return (
       <div>
         <Header
           color="blue"
-          brand={
-            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
-          }
+          brand={<img src={require("assets/img/placeholder.jpg")} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -719,14 +818,28 @@ class LandingPage extends React.Component {
                         </GridItem>
                         <GridItem xs={12} sm={12} md={6}>
                           {this.state.adminFlag ? (
-                            <SetMaxWhaleIdAutoDialog
-                              function={this.go_manualId}
-                              disabled={!this.state.picsLoaded[0]}
-                            ></SetMaxWhaleIdAutoDialog>
+                            <div>
+                              <SetMaxWhaleIdAutoDialog
+                                function={this.go_manualId}
+                                disabled={leftButtonsDisabled}
+                              ></SetMaxWhaleIdAutoDialog>
+                              <DeletePictureDialog
+                                function={this.deleteLeftPicture}
+                                disabled={leftButtonsDisabled || rightButtonsDisabled}
+                                picName={
+                                  this.state.newPicsList.length > 0 &&
+                                  typeof this.state.newPicsList[0] !== "undefined"
+                                    ? this.state.newPicsList[this.state.vertical].id
+                                    : ""
+                                }
+                              ></DeletePictureDialog>
+                              {this.state.isDeleting ? <CircularProgress /> : ""}
+                            </div>
                           ) : (
                             ""
                           )}
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("up")}
                             color="info"
@@ -735,6 +848,7 @@ class LandingPage extends React.Component {
                             &#9650;
                           </Button>
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("down")}
                             color="info"
@@ -742,19 +856,6 @@ class LandingPage extends React.Component {
                           >
                             &#9660;
                           </Button>
-                          {/*this.state.adminFlag ? (
-                            <Button
-                              style={{ marginLeft: "10px" }}
-                              disabled={!this.state.picsLoaded[0]}
-                              variant="contained"
-                              onClick={() => this.go_badPicture()}
-                              size="sm"
-                            >
-                              Bad picture
-                            </Button>
-                          ) : (
-                            ""
-                          )*/}
                           <Snackbar
                             open={dialogMessage !== ""}
                             message={dialogMessage}
@@ -766,7 +867,7 @@ class LandingPage extends React.Component {
                           {this.state.adminFlag ? (
                             <div>
                               <Button
-                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                disabled={rightButtonsDisabled}
                                 variant="contained"
                                 onClick={() => this.matchPicture()}
                                 color="success"
@@ -776,7 +877,7 @@ class LandingPage extends React.Component {
                               </Button>
                               <Button
                                 style={{ marginLeft: "6px" }}
-                                disabled={!this.state.picsLoaded[0] || !this.state.picsLoaded[1]}
+                                disabled={rightButtonsDisabled}
                                 variant="contained"
                                 onClick={() => this.unmatchPictures()}
                                 color="info"
@@ -789,6 +890,7 @@ class LandingPage extends React.Component {
                             ""
                           )}
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("left")}
                             color="info"
@@ -797,6 +899,7 @@ class LandingPage extends React.Component {
                             &#9664;
                           </Button>
                           <Button
+                            disabled={this.state.isDeleting}
                             variant="contained"
                             onClick={() => this.navigationAction("right")}
                             color="info"
