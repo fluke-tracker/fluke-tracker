@@ -195,7 +195,7 @@ class ProfilePage extends React.Component {
       <div style={{ minHeight: "100vh" }}>
         <Header
           brand={
-            <img src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg" />
+            <img src={require('assets/img/placeholder.jpg')} />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}

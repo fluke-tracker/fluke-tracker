@@ -20,3 +20,4 @@ amplifyconfiguration.json
 amplify-build-config.json
 amplify-gradle-config.json
 amplifyxc.config
+python_scripts/embeddings.json
