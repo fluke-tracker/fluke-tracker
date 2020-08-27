@@ -231,7 +231,7 @@ class SearchPage extends React.Component {
                       <strong>Search Whale Image 🐳</strong>
                     </h2>
                     <p style={{ paddingBottom: "5px" }}>You can search for whale images using:</p>
-                    <ul style={{ paddingBottom: "5px", color: "black" }}>
+                    <ul style={{ listStyleType:"none", paddingBottom: "5px", color: "black" }}>
                       <li>
                         <strong>Search whale / image: </strong>This will display all whales tagged
                         to the given ID

@@ -90,7 +90,7 @@ function HeaderLinks({ ...props }) {
                 user={props.user}
               >
                 <a class="nav-link" href={"/impressum"}>
-                  Imprint
+                  About
                 </a>
               </li>
               <li
@@ -114,7 +114,7 @@ function HeaderLinks({ ...props }) {
                   user={props.user}
                 >
                   <a class="nav-link" href={"/impressum"} style={{ color: "white" }}>
-                    Imprint
+                    About
                   </a>
                 </li>
               </ul>

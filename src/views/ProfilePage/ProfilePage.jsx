@@ -250,7 +250,7 @@ class ProfilePage extends React.Component {
                       <p style={{ marginBottom: "5px" }}>
                         Here are a few points about the uploading of images:
                       </p>
-                      <ul style={{ paddingBottom: "0px", color: "black" }}>
+                      <ul style={{ listStyleType:"none", paddingBottom: "0px", color: "black" }}>
                         <li>
                           Image must be ventral side of the animal in an upright (or as close to
                           vertical as possible) position.
