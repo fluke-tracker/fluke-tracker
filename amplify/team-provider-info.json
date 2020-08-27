@@ -24,14 +24,14 @@
     },
     "whaleprod": {
         "awscloudformation": {
-            "AuthRoleName": "amplify-whalewatching-whaleprod-154848-authRole",
-            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-154848-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-154848-authRole",
+            "AuthRoleName": "amplify-whalewatching-whaleprod-113239-authRole",
+            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-113239-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-113239-authRole",
             "Region": "eu-central-1",
-            "DeploymentBucketName": "amplify-whalewatching-whaleprod-154848-deployment",
-            "UnauthRoleName": "amplify-whalewatching-whaleprod-154848-unauthRole",
-            "StackName": "amplify-whalewatching-whaleprod-154848",
-            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaleprod-154848/bc942ff0-cf46-11ea-8119-064a8d32fc9e",
+            "DeploymentBucketName": "amplify-whalewatching-whaleprod-113239-deployment",
+            "UnauthRoleName": "amplify-whalewatching-whaleprod-113239-unauthRole",
+            "StackName": "amplify-whalewatching-whaleprod-113239",
+            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaleprod-113239/1e6f3ee0-cfec-11ea-8190-0ab33d325cd0",
             "AmplifyAppId": "d2vtiv2q3fzo2l"
         },
         "categories": {
@@ -41,9 +41,7 @@
             },
             "function": {
                 "S3Triggereb38f992": {},
-                "scanPictures": {},
-                "S3AndCloudFront": {},
-                "whalewatch": {}
+                "scanPictures": {}
             }
         }
     }

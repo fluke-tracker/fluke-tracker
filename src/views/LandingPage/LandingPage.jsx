@@ -580,7 +580,7 @@ class LandingPage extends React.Component {
           picture2: imgId,
           limit: 5000,
         })
-      );*/
+      );
 
       const result1 = await query1;
       // check if the result that came back here is still the one we're looking for (in case it's an empty array we assume it is the right one)
@@ -596,7 +596,7 @@ class LandingPage extends React.Component {
       console.log("GOT result1");
       console.log(result1);
       console.log("GOT result2");
-      //console.log(result2);
+      console.log(result2);
 
       // concatinate both arrays
       returnValue = result1.data.listEuclidianDistances.items.concat(
