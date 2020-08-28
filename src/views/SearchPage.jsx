@@ -210,9 +210,11 @@ class SearchPage extends React.Component {
       <div>
         <Header
           color="blue"
-          brand={
-            <img src={require('assets/img/placeholder.jpg')} />
-          }
+          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
+                        width: "90%",
+                        paddingBottom: "0px",
+                        margin: "0 auto",
+                      }} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -223,7 +225,7 @@ class SearchPage extends React.Component {
         />
         {this.state.user != null ? (
           <div className={classes.container}>
-            <div class="section container" style={{ paddingTop: "150px", paddingBottom: "5px" }}>
+            <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
               <div class="row">
                 <div class="col-12">
                   <div class="article-text">

@@ -145,7 +145,11 @@ class Impressum extends React.Component {
       <div style={{ minHeight: "100vh" }}>
         <Header
           color="blue"
-          brand={<img src={require("assets/img/placeholder.jpg")} />}
+          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
+                        width: "90%",
+                        paddingBottom: "0px",
+                        margin: "0 auto",
+                      }} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -155,7 +159,7 @@ class Impressum extends React.Component {
           {...rest}
         />
         <div className={classes.container}>
-          <div class="section container" style={{ paddingTop: "125px", paddingBottom: "5px" }}>
+          <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
             <div class="row">
               <div class="col-12">
                 <div
@@ -226,7 +230,7 @@ class Impressum extends React.Component {
                   <li><a href="mailto:kanwalmeet.singh-kochar@capgemini.com">Kanwalmeet Singh Kochar</a> (Germany)</li>
                   <li><a href="mailto:hartvig.johannson@capgemini.com">Hartvig Johannson</a> (Normay)</li>
                   <li><a href="mailto:simen-norrheim.larsen@capgemini.com">Simen Norrheim Larsen</a> (Norway)</li>
-                  <li><a href="mailto:r.wulfes@web.de">Robin Wulfes</a> (Germany)</li>
+                  <li><a href="">Robin Wulfes</a> (Germany)</li>
                   <li><a href="mailto:nien-chun.yin@capgemini.com">Sophie (Nien-chun) Yin</a> (Germany)</li>
                   </ul>
                   </div>

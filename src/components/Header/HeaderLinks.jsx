@@ -65,7 +65,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/profile-page"}>
+                <a class="nav-link" href={"/profile-page"} style={{ color: "white" }}>
                   Welcome & Upload
                 </a>
               </li>
@@ -73,7 +73,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/matching-page"}>
+                <a class="nav-link" href={"/matching-page"} style={{ color: "white" }}>
                   Match Whales
                 </a>
               </li>
@@ -81,7 +81,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/search-page"}>
+                <a class="nav-link" href={"/search-page"} style={{ color: "white" }}>
                   Browse Pictures
                 </a>
               </li>
@@ -89,7 +89,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/impressum"}>
+                <a class="nav-link" href={"/impressum"} style={{ color: "white" }}>
                   About
                 </a>
               </li>
@@ -97,7 +97,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" onClick={() => Auth.signOut()} href={"/login-page"}>
+                <a class="nav-link" onClick={() => Auth.signOut()} href={"/login-page"} style={{ color: "white" }}>
                   Logout
                 </a>
               </li>
