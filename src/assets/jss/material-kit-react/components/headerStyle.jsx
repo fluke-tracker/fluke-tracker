@@ -21,7 +21,7 @@ const headerStyle = {
     marginBottom: "20px",
     color: "#555",
     width: "100%",
-    backgroundColor: "rgb(170,223,255)",
+    backgroundColor: "rgb(0,113,174)",
     boxShadow: "0 4px 18px 0px rgba(0, 0, 0, 0.12), 0 7px 10px -5px rgba(0, 0, 0, 0.15)",
     transition: "all 150ms ease 0s",
     alignItems: "center",
