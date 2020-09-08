@@ -194,9 +194,11 @@ class ProfilePage extends React.Component {
     return (
       <div style={{ minHeight: "100vh" }}>
         <Header
-          brand={
-            <img src={require('assets/img/placeholder.jpg')} />
-          }
+          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
+                        width: "90%",
+                        paddingBottom: "0px",
+                        margin: "0 auto",
+                      }} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -217,7 +219,7 @@ class ProfilePage extends React.Component {
               }}
             ></div>
             <div className={classes.container}>
-              <div class="section container" style={{ paddingTop: "50px", paddingBottom: "5px" }}>
+              <div class="section container" style={{ paddingTop: "80px", paddingBottom: "5px" }}>
                 <div class="row">
                   <div class="col-12">
                     <div class="article-text">
@@ -250,7 +252,7 @@ class ProfilePage extends React.Component {
                       <p style={{ marginBottom: "5px" }}>
                         Here are a few points about the uploading of images:
                       </p>
-                      <ul style={{ paddingBottom: "0px", color: "black" }}>
+                      <ul style={{ listStyleType:"none", paddingBottom: "0px", color: "black" }}>
                         <li>
                           Image must be ventral side of the animal in an upright (or as close to
                           vertical as possible) position.
