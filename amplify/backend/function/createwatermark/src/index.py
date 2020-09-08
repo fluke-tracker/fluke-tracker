@@ -6,6 +6,7 @@ import boto3
 from PIL import Image, ImageDraw, ImageFont
 
 
+
 def save_image(img, bucket, image_name, folder):
     key = posixpath.join(folder, image_name)
     object = bucket.Object(key)
@@ -17,7 +18,7 @@ def save_image(img, bucket, image_name, folder):
 
 
 def get_uploader_from_image(image_str):
-    dynamo_db = boto3.resource('dynamo_db')
+    dynamo_db = boto3.resource('dynamodb')
     picture_table_str = os.environ.get('API_WHALEWATCH_PICTURETABLE_NAME')
     print(picture_table_str)
     picture_table = dynamo_db.Table(picture_table_str)
