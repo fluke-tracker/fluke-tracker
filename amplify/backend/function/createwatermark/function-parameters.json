@@ -1,0 +1,9 @@
+{
+    "permissions": {
+        "storage": {
+            "Picture:@model(appsync)": [
+                "read"
+            ]
+        }
+    }
+}

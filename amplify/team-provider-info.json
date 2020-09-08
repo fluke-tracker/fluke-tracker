@@ -18,7 +18,8 @@
             },
             "function": {
                 "scanPictures": {},
-                "S3Triggereb38f992": {}
+                "S3Triggereb38f992": {},
+                "createwatermark": {}
             }
         }
     },
