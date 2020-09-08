@@ -79,7 +79,7 @@ def watermark_image(image_str, watermark_text):
 def handler(event, context):
     print('received event:')
     print(event)
-    key = os.environ.get('key')
+    key = event['key']
     result = watermark_image(key, get_uploader_from_image(os.path.basename(key)))
 
     return {
