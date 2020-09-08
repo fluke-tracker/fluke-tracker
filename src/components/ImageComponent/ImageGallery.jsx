@@ -47,7 +47,7 @@ const ImageGallery = (props) => {
   };
 
   const getimagescropped = (image) => {
-    const image_url = s3BucketPath + "cropped_images/" + image;
+    const image_url = s3BucketPath + "public/watermark/" + image;
     return image_url;
   };
 
