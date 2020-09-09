@@ -73,7 +73,6 @@ def watermark_image(image_str, watermark_text):
 
     out = Image.alpha_composite(base, txt)
     out = out.convert("RGB")
-    out.show()
     save_image(out, bucket, os.path.basename(image_str), os.environ.get("DESTINATION_FOLDER"))
     return image_str
 
