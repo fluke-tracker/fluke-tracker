@@ -1,4 +1,5 @@
-{"whaledev": {
+{
+  "whaledev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-whalewatching-whaledev-213627-authRole",
       "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-213627-unauthRole",
