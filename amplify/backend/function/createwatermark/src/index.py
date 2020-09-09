@@ -61,7 +61,7 @@ def watermark_image(image_str, watermark_text):
     txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
 
     # get a font
-    fnt = ImageFont.truetype('arial.ttf', 40)
+    fnt = ImageFont.truetype(os.path.join(os.path.dirname(__file__), 'arial.ttf'), 40)
     # get a drawing context
     d = ImageDraw.Draw(txt)
     print(watermark_text)
@@ -73,6 +73,7 @@ def watermark_image(image_str, watermark_text):
 
     out = Image.alpha_composite(base, txt)
     out = out.convert("RGB")
+    out.show()
     save_image(out, bucket, os.path.basename(image_str), os.environ.get("DESTINATION_FOLDER"))
     return image_str
 
@@ -80,7 +81,7 @@ def watermark_image(image_str, watermark_text):
 def handler(event, context):
     print('received event:')
     print(event)
-    key = event['key']
+    key = event['Records'][0]["s3"]["object"]["key"]
     result = watermark_image(key, get_uploader_from_image(os.path.basename(key)))
 
     return {

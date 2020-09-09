@@ -1,49 +1,49 @@
 {
-    "whaledev": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-whalewatching-whaledev-213627-authRole",
-            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-213627-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-213627-authRole",
-            "Region": "eu-central-1",
-            "DeploymentBucketName": "amplify-whalewatching-whaledev-213627-deployment",
-            "UnauthRoleName": "amplify-whalewatching-whaledev-213627-unauthRole",
-            "StackName": "amplify-whalewatching-whaledev-213627",
-            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaledev-213627/045359c0-b19b-11ea-b135-06bc90058f1a",
-            "AmplifyAppId": "d2vtiv2q3fzo2l"
-        },
-        "categories": {
-            "auth": {
-                "cognitoed159519": {},
-                "userPoolGroups": {}
-            },
-            "function": {
-                "scanPictures": {},
-                "S3Triggereb38f992": {},
-                "createwatermark": {}
-            }
-        }
+  "whaledev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-whalewatching-whaledev-213627-authRole",
+      "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-213627-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaledev-213627-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-whalewatching-whaledev-213627-deployment",
+      "UnauthRoleName": "amplify-whalewatching-whaledev-213627-unauthRole",
+      "StackName": "amplify-whalewatching-whaledev-213627",
+      "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaledev-213627/045359c0-b19b-11ea-b135-06bc90058f1a",
+      "AmplifyAppId": "d2vtiv2q3fzo2l"
     },
-    "whaleprod": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-whalewatching-whaleprod-113239-authRole",
-            "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-113239-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-113239-authRole",
-            "Region": "eu-central-1",
-            "DeploymentBucketName": "amplify-whalewatching-whaleprod-113239-deployment",
-            "UnauthRoleName": "amplify-whalewatching-whaleprod-113239-unauthRole",
-            "StackName": "amplify-whalewatching-whaleprod-113239",
-            "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaleprod-113239/1e6f3ee0-cfec-11ea-8190-0ab33d325cd0",
-            "AmplifyAppId": "d2vtiv2q3fzo2l"
-        },
-        "categories": {
-            "auth": {
-                "cognitoed159519": {},
-                "userPoolGroups": {}
-            },
-            "function": {
-                "S3Triggereb38f992": {},
-                "scanPictures": {}
-            }
-        }
+    "categories": {
+      "auth": {
+        "cognitoed159519": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "scanPictures": {},
+        "S3Triggereb38f992": {},
+        "createwatermark": {}
+      }
     }
+  },
+  "whaleprod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-whalewatching-whaleprod-113239-authRole",
+      "UnauthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-113239-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::880110969874:role/amplify-whalewatching-whaleprod-113239-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-whalewatching-whaleprod-113239-deployment",
+      "UnauthRoleName": "amplify-whalewatching-whaleprod-113239-unauthRole",
+      "StackName": "amplify-whalewatching-whaleprod-113239",
+      "StackId": "arn:aws:cloudformation:eu-central-1:880110969874:stack/amplify-whalewatching-whaleprod-113239/1e6f3ee0-cfec-11ea-8190-0ab33d325cd0",
+      "AmplifyAppId": "d2vtiv2q3fzo2l"
+    },
+    "categories": {
+      "auth": {
+        "cognitoed159519": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "S3Triggereb38f992": {},
+        "scanPictures": {}
+      }
+    }
+  }
 }

@@ -1,6 +1,6 @@
 {
     "identityPoolName": "whalewatch_identitypool_f72c0164",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "whalewf72c0164",
     "userPoolName": "whalewatch_userpool_f72c0164",
     "autoVerifiedAttributes": [
