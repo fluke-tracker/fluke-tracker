@@ -900,8 +900,9 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("left")}
                             color="info"
                             size="sm"
+                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
-                            &#9664;
+                            &#9668;
                           </Button>
                           <Button
                             disabled={this.state.isDeleting}
@@ -909,8 +910,9 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("right")}
                             color="info"
                             size="sm"
+                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
-                            &#10148;
+                            &#9658;
                           </Button>
                         </GridItem>
                         <br />
