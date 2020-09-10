@@ -109,6 +109,110 @@ function HeaderLinks({ ...props }) {
           <div class="header__nav">
             <div class="menu-all-pages-container">
               <ul id="menu-main-menu" class="menu">
+                            <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                                              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                            <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                            <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+                            <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
+
+                  </a>
+                </li>
+              <li
+                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
+                  user={props.user}
+                >
+                  <a class="nav-link" href={"/login-page"} style={{ color: "white" }}>
+                    Login
+                  </a>
+                </li>
                 <li
                   class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                   user={props.user}
