@@ -187,8 +187,8 @@ class SearchPage extends React.Component {
   formatImages(item, whale_id, S3bucket) {
     console.log("fetching images array from S3", item);
     return {
-      src: S3bucket + "cropped_images/" + item.filename,
-      thumbnail: S3bucket + "cropped_images/" + item.filename,
+      src: S3bucket + "public/watermark/" + item.filename,
+      thumbnail: S3bucket + "public/watermark/" + item.filename,
       /*  thumbnailWidth: 360,
       thumbnailHeight: 90, */
       tags: [
