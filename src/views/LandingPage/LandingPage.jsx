@@ -176,6 +176,10 @@ class LandingPage extends React.Component {
           .then((result) => console.log(result))
           .catch((err) => console.log("cropped err", err));
 
+        Storage.remove("watermark/" + imageIdToBeDeleted)
+          .then((result) => console.log(result))
+          .catch((err) => console.log("watermark err", err));
+
         // update view
         this.fetchNewPicturesList(undefined, [], 0);
       } catch (error) {
