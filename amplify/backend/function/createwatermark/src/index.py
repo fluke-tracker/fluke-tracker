@@ -81,7 +81,7 @@ def handler(event, context):
     print('received event:')
     print(event)
     key = event['Records'][0]["s3"]["object"]["key"]
-    result = watermark_image(key, get_uploader_from_image(os.path.basename(key)))
+    result = watermark_image(key, get_uploader_from_image(os.path.basename(key).replace('thumbnail.jpg', '')))
 
     return {
         'statusCode': 200,
