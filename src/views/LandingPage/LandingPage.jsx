@@ -172,7 +172,7 @@ class LandingPage extends React.Component {
           .then((result) => console.log("thumbnail", result))
           .catch((err) => console.log("thumbnail err", err));
 
-        Storage.remove("../cropped_images/" + imageIdToBeDeleted)
+        Storage.remove("/cropped_images/" + imageIdToBeDeleted)
           .then((result) => console.log(result))
           .catch((err) => console.log("cropped err", err));
 
