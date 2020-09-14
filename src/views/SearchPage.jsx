@@ -187,8 +187,8 @@ class SearchPage extends React.Component {
   formatImages(item, whale_id, S3bucket) {
     console.log("fetching images array from S3", item);
     return {
-      src: S3bucket + "cropped_images/" + item.filename,
-      thumbnail: S3bucket + "cropped_images/" + item.filename,
+      src: S3bucket + "public/watermark/" + item.filename,
+      thumbnail: S3bucket + "public/watermark/" + item.filename,
       /*  thumbnailWidth: 360,
       thumbnailHeight: 90, */
       tags: [
@@ -210,9 +210,11 @@ class SearchPage extends React.Component {
       <div>
         <Header
           color="blue"
-          brand={
-            <img src={require('assets/img/placeholder.jpg')} />
-          }
+          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
+                        width: "90%",
+                        paddingBottom: "0px",
+                        margin: "0 auto",
+                      }} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -223,7 +225,7 @@ class SearchPage extends React.Component {
         />
         {this.state.user != null ? (
           <div className={classes.container}>
-            <div class="section container" style={{ paddingTop: "150px", paddingBottom: "5px" }}>
+            <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
               <div class="row">
                 <div class="col-12">
                   <div class="article-text">
@@ -231,7 +233,7 @@ class SearchPage extends React.Component {
                       <strong>Search Whale Image 🐳</strong>
                     </h2>
                     <p style={{ paddingBottom: "5px" }}>You can search for whale images using:</p>
-                    <ul style={{ paddingBottom: "5px", color: "black" }}>
+                    <ul style={{ listStyleType:"none", paddingBottom: "5px", color: "black" }}>
                       <li>
                         <strong>Search whale / image: </strong>This will display all whales tagged
                         to the given ID

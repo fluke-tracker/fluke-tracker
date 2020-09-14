@@ -145,7 +145,11 @@ class Impressum extends React.Component {
       <div style={{ minHeight: "100vh" }}>
         <Header
           color="blue"
-          brand={<img src={require("assets/img/placeholder.jpg")} />}
+          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
+                        width: "90%",
+                        paddingBottom: "0px",
+                        margin: "0 auto",
+                      }} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -155,7 +159,7 @@ class Impressum extends React.Component {
           {...rest}
         />
         <div className={classes.container}>
-          <div class="section container" style={{ paddingTop: "125px", paddingBottom: "5px" }}>
+          <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
             <div class="row">
               <div class="col-12">
                 <div
@@ -199,13 +203,40 @@ class Impressum extends React.Component {
                     constant innovation and dedication of Capgemini brought this idea to life and
                     ensured creating an AI for good.
                   </div>
+                                    <hr />
+                  <div style={{ ...boxStyle }}>
+                    <img
+                      src={require("assets/img/logotipo_01.jpg")}
+                      style={{
+                        width: "30%",
+                        paddingBottom: "15px",
+                        margin: "0 auto",
+                      }}
+                    />
+                    Whale Watch Azores, is a pioneer in whale watching in the Azores. We offer you an unforgettable experience at sea: with or without the whales & dolphins. Being a local, Norberto is proud of his heritage and particularly values local habits and culture. Don’t find it weird if he invites you to taste a fish soup or a glass of Pico wine.The Azores archipelago sits in the middle of the North Atlantic, where man and sea naturally mingle. Bathed by the warm Gulf stream, with sea temperatures ranging 17º to 24º, the Azores harbors a rich marine fauna, including all major large whales and a suite of dolphin species. Come visit the Azores and live an ocean adventure where you can enjoy the company of some of the largest and most impressive animals on earth.
+                  </div>
                   <hr />
                 </div>
                 <br />
                 <br />
+                                <div class="article-text">
+                  <h1 style={{ paddingTop: "20px" }}>
+                    <b>Development Team</b>
+                  </h1>
+                  <ul style={{listStyleType:"none", color:"black"}}>
+                  <li><a href="mailto:daniel.kuehlwein@capgemini.com">Daniel Kühlwein</a> (Germany)</li>
+                  <li><a href="mailto:marcel.bergmann@capgemini.com">Marcel Bergmann</a> (Germany)</li>
+                  <li><a href="mailto:moritz.schaffenroth@capgemini.com">Moritz Schaffenroth</a> (Germany)</li>
+                  <li><a href="mailto:kanwalmeet.singh-kochar@capgemini.com">Kanwalmeet Singh Kochar</a> (Germany)</li>
+                  <li><a href="mailto:hartvig.johannson@capgemini.com">Hartvig Johannson</a> (Normay)</li>
+                  <li><a href="mailto:simen-norrheim.larsen@capgemini.com">Simen Norrheim Larsen</a> (Norway)</li>
+                  <li><a href="">Robin Wulfes</a> (Germany)</li>
+                  <li><a href="mailto:nien-chun.yin@capgemini.com">Sophie (Nien-chun) Yin</a> (Germany)</li>
+                  </ul>
+                  </div>
                 <div class="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
-                    <b>Impressum</b>
+                    <b>Imprint</b>
                   </h1>
                   <h2>This site is edited by: / Ce site web est édité par :</h2>
                   <p>

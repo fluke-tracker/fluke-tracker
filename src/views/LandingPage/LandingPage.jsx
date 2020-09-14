@@ -172,9 +172,13 @@ class LandingPage extends React.Component {
           .then((result) => console.log("thumbnail", result))
           .catch((err) => console.log("thumbnail err", err));
 
-        Storage.remove("../cropped_images/" + imageIdToBeDeleted)
+        Storage.remove("/cropped_images/" + imageIdToBeDeleted)
           .then((result) => console.log(result))
           .catch((err) => console.log("cropped err", err));
+
+        Storage.remove("watermark/" + imageIdToBeDeleted)
+          .then((result) => console.log(result))
+          .catch((err) => console.log("watermark err", err));
 
         // update view
         this.fetchNewPicturesList(undefined, [], 0);
@@ -733,7 +737,11 @@ class LandingPage extends React.Component {
       <div>
         <Header
           color="blue"
-          brand={<img src={require("assets/img/placeholder.jpg")} />}
+          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
+                        width: "90%",
+                        paddingBottom: "0px",
+                        margin: "0 auto",
+                      }} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -745,7 +753,7 @@ class LandingPage extends React.Component {
         {this.state.user != null ? (
           <div>
             <div className={classes.container}>
-              <div class="section container" style={{ paddingTop: "150px", paddingBottom: "5px" }}>
+              <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
                 <div class="row">
                   <div class="col-12">
                     <div class="article-text">
@@ -896,8 +904,9 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("left")}
                             color="info"
                             size="sm"
+                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
-                            &#9664;
+                            &#9668;
                           </Button>
                           <Button
                             disabled={this.state.isDeleting}
@@ -905,8 +914,9 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("right")}
                             color="info"
                             size="sm"
+                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
-                            &#10148;
+                            &#9658;
                           </Button>
                         </GridItem>
                         <br />
