@@ -206,14 +206,14 @@ class Impressum extends React.Component {
                                     <hr />
                   <div style={{ ...boxStyle }}>
                     <img
-                      src={require("assets/img/logotipo_01.jpg")}
+                      src={require("assets/img/Lisa-2018-MLI7527.jpg")}
                       style={{
-                        width: "30%",
+                        width: "20%",
                         paddingBottom: "15px",
                         margin: "0 auto",
                       }}
                     />
-                    Whale Watch Azores, is a pioneer in whale watching in the Azores. We offer you an unforgettable experience at sea: with or without the whales & dolphins. Being a local, Norberto is proud of his heritage and particularly values local habits and culture. Don’t find it weird if he invites you to taste a fish soup or a glass of Pico wine.The Azores archipelago sits in the middle of the North Atlantic, where man and sea naturally mingle. Bathed by the warm Gulf stream, with sea temperatures ranging 17º to 24º, the Azores harbors a rich marine fauna, including all major large whales and a suite of dolphin species. Come visit the Azores and live an ocean adventure where you can enjoy the company of some of the largest and most impressive animals on earth.
+                    In 1988, after graduating with a degree in Marine Science, Lisa joined “Song of the Whale”, the International Fund for Animal Welfare’s research boat in the Azores studying sperm whales. When the boat moved on to other projects in 1992, she became co-founder of Whale Watch Azores to continue that research and now is based permanently in the Azores. Lisa’s main focus has always been in photo identification, be it sperm whales or other species. She has several publications based on photo-id work and presented findings at International marine mammal conferences. For several years, she developed B&W films, printed the flukes and matched them on her living room floor! In 2002, an semi-automated system was developed as part of “Europhlukes” a EU funded project, to do the matching and she has been using that program ever since. But technology has come a long way since 1992 and when the offer came to develop a new algorithm as part of Capgemini’s annual competition, she accepted the offer and the rest as they say is history!
                   </div>
                   <hr />
                 </div>
