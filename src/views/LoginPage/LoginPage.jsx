@@ -107,7 +107,7 @@ class LoginPage extends React.Component {
         .then((user) => {
           console.log("loginpage user", user.username);
           this.setState({ user: user.username });
-          this.props.history.push("/profile-page");
+          this.props.history.push("/welcome-upload");
         })
         .catch((err) => console.log("currentAuthenticatedUser err", err));
     }
