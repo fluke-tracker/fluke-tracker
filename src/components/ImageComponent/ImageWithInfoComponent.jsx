@@ -56,7 +56,7 @@ const ImageWithInfoComponent = (props) => {
     picInfosItems = (
       <div style={{ marginBottom: "10px" }}>
         <strong style={labelsAligned}>Whale ID: </strong>
-        <Badge color="info">{parseInt(whaleId) === -1 ? "-" : whaleId}</Badge>
+        <Badge color="info"><p style={{fontSize: "16px"}}>{parseInt(whaleId) === -1 ? "-" : whaleId}</p></Badge>
         {parseInt(whaleId) !== -1 ? (
           <Button style={{ marginLeft: "10px" }} size="sm" onClick={openSearchPage}>
             Show more pictures
@@ -67,14 +67,14 @@ const ImageWithInfoComponent = (props) => {
         <br />
         <div>
           <strong style={labelsAligned}>Picture owner: </strong>
-          <Badge color="info">{uploadedBy !== "" ? uploadedBy : "-"}</Badge>
+          <Badge color="info"><p style={{fontSize: "16px"}}>{uploadedBy !== "" ? uploadedBy : "-"}</p></Badge>
           {/*<SendPrivateMessage />*/}
           <br />
         </div>
         <strong style={labelsAligned}>Coordinates / Place: </strong>
-        <Badge color="info">{geoCoordsParsed}</Badge>
+        <Badge color="info"><p style={{fontSize: "16px"}}>{geoCoordsParsed}</p></Badge>
         {geoCoordsParsed !== "-" ? (
-          <Button style={{ marginLeft: "10px" }} size="sm" onClick={openMapPage}>
+          <Button style={{ marginLeft: "10px" }} size="sm" onClick={openMapPage} style={{fontSize: "10px"}}>
             Open in map
           </Button>
         ) : (
@@ -82,12 +82,12 @@ const ImageWithInfoComponent = (props) => {
         )}
         <br />
         <strong style={labelsAligned}>Date: </strong>
-        <Badge color="info">{dateErrs.has(date) ? "-" : date}</Badge>
+        <Badge color="info"><p style={{fontSize: "16px"}}>{dateErrs.has(date) ? "-" : date}</p></Badge>
         <br />
         {distance != null ? (
           <div>
             <strong style={labelsAligned}>Similarity-Score: </strong>
-            <Badge color="info">{(2 - distance).toFixed(2)}</Badge>
+            <Badge color="info"><p style={{fontSize: "16px"}}>{(2 - distance).toFixed(2)}</p></Badge>
           </div>
         ) : (
           <br />

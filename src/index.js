@@ -36,15 +36,15 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
       <Switch>
-        <Route path="/matching-page" component={LandingPage} />
-        <Route path="/profile-page" component={ProfilePage} />
-        <Route path="/login-page" component={LoginPage} />
+        <Route path="/match-whales" component={LandingPage} />
+        <Route path="/welcome-upload" component={ProfilePage} />
+        <Route path="/login" component={LoginPage} />
         <Route path="/components" component={Components} />
         <Route path="/upload-page" component={UploadPage} />
-        <Route path="/search-page/:whale_id" component={SearchPage} />
-        <Route path="/search-page" component={SearchPage} />
+        <Route path="/browse-pictures/:whale_id" component={SearchPage} />
+        <Route path="/browse-pictures" component={SearchPage} />
         <Route path="/contact-owner" component={SecretContactPage} />
-        <Route path="/impressum" component={Impressum} />
+        <Route path="/about" component={Impressum} />
         <Route path="/" component={LoginPage} />
       </Switch>
     </Router>

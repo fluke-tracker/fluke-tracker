@@ -20,7 +20,7 @@ import { Auth } from "aws-amplify";
 
 const RegisterButton = (props) => (
   <ListItem className={props.classes.listItem}>
-    <Link to={"/login-page"}>
+    <Link to={"/login"}>
       <Button
         href=""
         color="transparent"
@@ -37,7 +37,7 @@ const RegisterButton = (props) => (
 // the logout component emits a logout signal to redux
 const Logout = (props) => (
   <ListItem className={props.classes.listItem}>
-    <Link to={"/login-page"}>
+    <Link to={"/login"}>
       <Button
         href=""
         color="transparent"
@@ -65,7 +65,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/profile-page"} style={{ color: "white" }}>
+                <a class="nav-link" href={"/welcome-upload"} style={{ color: "white" }}>
                   Welcome & Upload
                 </a>
               </li>
@@ -73,7 +73,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/matching-page"} style={{ color: "white" }}>
+                <a class="nav-link" href={"/match-whales"} style={{ color: "white" }}>
                   Match Whales
                 </a>
               </li>
@@ -81,7 +81,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/search-page"} style={{ color: "white" }}>
+                <a class="nav-link" href={"/browse-pictures"} style={{ color: "white" }}>
                   Browse Pictures
                 </a>
               </li>
@@ -89,7 +89,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" href={"/impressum"} style={{ color: "white" }}>
+                <a class="nav-link" href={"/about"} style={{ color: "white" }}>
                   About
                 </a>
               </li>
@@ -97,7 +97,7 @@ function HeaderLinks({ ...props }) {
                 class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                 user={props.user}
               >
-                <a class="nav-link" onClick={() => Auth.signOut()} href={"/login-page"} style={{ color: "white" }}>
+                <a class="nav-link" onClick={() => Auth.signOut()} href={"/login"} style={{ color: "white" }}>
                   Logout
                 </a>
               </li>
@@ -209,7 +209,7 @@ function HeaderLinks({ ...props }) {
                   class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                   user={props.user}
                 >
-                  <a class="nav-link" href={"/login-page"} style={{ color: "white" }}>
+                  <a class="nav-link" href={"/login"} style={{ color: "white" }}>
                     Login
                   </a>
                 </li>
@@ -217,7 +217,7 @@ function HeaderLinks({ ...props }) {
                   class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
                   user={props.user}
                 >
-                  <a class="nav-link" href={"/impressum"} style={{ color: "white" }}>
+                  <a class="nav-link" href={"/about"} style={{ color: "white" }}>
                     About
                   </a>
                 </li>
@@ -239,7 +239,7 @@ function HeaderLinks({ ...props }) {
           }}
           buttonIcon={Apps}
           dropdownList={[
-          <Link to= {"/profile-page"} className={classes.dropdownLink} user={props.user}>
+          <Link to= {"/welcome-upload"} className={classes.dropdownLink} user={props.user}>
             Profile Page
           </Link>,
             <Link to= {"/landing-page"} className={classes.dropdownLink} user={props.user}>
@@ -258,7 +258,7 @@ function HeaderLinks({ ...props }) {
   </ListItem>} */
 
     /*{/*         <ListItem className={classes.listItem}>
-            <Link to={props.user ? "/profile-page" : "/login-page"}>
+            <Link to={props.user ? "/welcome-upload" : "/login"}>
                 <Button
                 href=""
                 color="transparent"
