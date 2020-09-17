@@ -203,37 +203,46 @@ class Impressum extends React.Component {
                     constant innovation and dedication of Capgemini brought this idea to life and
                     ensured creating an AI for good.
                   </div>
-                                    <hr />
-                  <div style={{ ...boxStyle }}>
-                    <img
-                      src={require("assets/img/Lisa-2018-MLI7527.jpg")}
-                      style={{
-                        width: "20%",
-                        paddingBottom: "15px",
-                        margin: "0 auto",
-                      }}
-                    />
-                    In 1988, after graduating with a degree in Marine Science, Lisa joined “Song of the Whale”, the International Fund for Animal Welfare’s research boat in the Azores studying sperm whales. When the boat moved on to other projects in 1992, she became co-founder of Whale Watch Azores to continue that research and now is based permanently in the Azores. Lisa’s main focus has always been in photo identification, be it sperm whales or other species. She has several publications based on photo-id work and presented findings at International marine mammal conferences. For several years, she developed B&W films, printed the flukes and matched them on her living room floor! In 2002, an semi-automated system was developed as part of “Europhlukes” a EU funded project, to do the matching and she has been using that program ever since. But technology has come a long way since 1992 and when the offer came to develop a new algorithm as part of Capgemini’s annual competition, she accepted the offer and the rest as they say is history!
-                  </div>
                   <hr />
                 </div>
                 <br />
                 <br />
+                <div class="article-text">
+                  <h1 style={{ paddingTop: "20px" }}>
+                    <b>Collaborator</b>
+                  </h1>
+                  <h3>Lisa Steiner</h3>
+                  <div>
+                    <img
+                      src={require("assets/img/Lisa-2018-MLI7527.jpg")}
+                      style={{
+                        width: "38%",
+                        paddingBottom: "15px",
+                        paddingTop: "5px",
+                        marginRight: "15px",
+                        float: "left"
+
+                      }}
+                    /></div>
+                    <div>
+                    <p style={{ fontFamily: "Roboto, Helvetica, Arial, sans-serif", fontSize: "16px", lineHeight: "24px", fontWeight: "300"}}>In 1988, after graduating with a degree in Marine Science, Lisa joined “Song of the Whale”, the International Fund for Animal Welfare’s research boat in the Azores studying sperm whales. When the boat moved on to other projects in 1992, she became co-founder of Whale Watch Azores to continue that research and now is based permanently in the Azores. Lisa’s main focus has always been in photo identification, be it sperm whales or other species. She has several publications based on photo-id work and presented findings at International marine mammal conferences. For several years, she developed B&W films, printed the flukes and matched them on her living room floor! In 2002, an semi-automated system was developed as part of “Europhlukes” a EU funded project, to do the matching and she has been using that program ever since. But technology has come a long way since 1992 and when the offer came to develop a new algorithm as part of Capgemini’s annual competition, she accepted the offer and the rest as they say is history!</p>
+                  </div></div>
                                 <div class="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
                     <b>Development Team</b>
                   </h1>
                   <ul style={{listStyleType:"none", color:"black"}}>
-                  <li><a href="mailto:daniel.kuehlwein@capgemini.com">Daniel Kühlwein</a> (Germany)</li>
-                  <li><a href="mailto:marcel.bergmann@capgemini.com">Marcel Bergmann</a> (Germany)</li>
-                  <li><a href="mailto:moritz.schaffenroth@capgemini.com">Moritz Schaffenroth</a> (Germany)</li>
-                  <li><a href="mailto:kanwalmeet.singh-kochar@capgemini.com">Kanwalmeet Singh Kochar</a> (Germany)</li>
-                  <li><a href="mailto:hartvig.johannson@capgemini.com">Hartvig Johannson</a> (Normay)</li>
-                  <li><a href="mailto:simen-norrheim.larsen@capgemini.com">Simen Norrheim Larsen</a> (Norway)</li>
+                  <li><a href="">Daniel Kühlwein</a> (Germany)</li>
+                  <li><a href="">Marcel Bergmann</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de">Moritz Schaffenroth</a> (Germany)</li>
+                  <li><a href="">Kanwalmeet Singh Kochar</a> (Germany)</li>
+                  <li><a href="">Hartvig Johannson</a> (Normay)</li>
+                  <li><a href="">Simen Norrheim Larsen</a> (Norway)</li>
                   <li><a href="">Robin Wulfes</a> (Germany)</li>
-                  <li><a href="mailto:nien-chun.yin@capgemini.com">Sophie (Nien-chun) Yin</a> (Germany)</li>
+                  <li><a href="mailto:gdsc3_core.iandd@capgemini.com">Sophie (Nien-chun) Yin</a> (Germany)</li>
                   </ul>
                   </div>
+                  {/* comment
                 <div class="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
                     <b>Imprint</b>
@@ -268,6 +277,7 @@ class Impressum extends React.Component {
                     <a href="mailto:gdsc3_core.iandd@capgemini.com">Contact us</a>
                   </h5>
                 </div>
+                */}
               </div>
             </div>
           </div>
