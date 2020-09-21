@@ -58,9 +58,7 @@
             "ENV": {
               "Ref": "env"
             },
-            "BUCKET": {
-              "Ref":  "S3Bucket"
-            },
+            "DESTINATION_FOLDER": "public/watermark/",
             "REGION": {
               "Ref": "AWS::Region"
             },
