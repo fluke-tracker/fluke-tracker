@@ -40,14 +40,14 @@ def watermark_all_images():
 
     for item in data:
         try:
-            watermark_image('cropped_images/' + item['id'], item['uploaded_by'])
+            bucket_str = os.environ.get('BUCKET')
+            watermark_image('cropped_images/' + item['id'], bucket_str, item['uploaded_by'])
         except:
             print("error")
 
 
-def watermark_image(image_str, watermark_text):
+def watermark_image(image_str, bucket_str, watermark_text):
     s3 = boto3.resource('s3')
-    bucket_str = os.environ.get('BUCKET')
     bucket = s3.Bucket(bucket_str)
     print(image_str)
     object = bucket.Object(image_str)
@@ -81,7 +81,8 @@ def handler(event, context):
     print('received event:')
     print(event)
     key = event['Records'][0]["s3"]["object"]["key"]
-    result = watermark_image(key, get_uploader_from_image(os.path.basename(key).replace('thumbnail.jpg', '')))
+    bucket_str = event['Records'][0]['bucket']['name']
+    result = watermark_image(key, bucket_str, get_uploader_from_image(os.path.basename(key).replace('thumbnail.jpg', '')))
 
     return {
         'statusCode': 200,
