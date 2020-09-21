@@ -69,7 +69,6 @@
                 "Fn::Sub": "${apiwhalewatchGraphQLAPIIdOutput}:GetAtt:PictureTable:Name"
               }
             },
-            "DESTINATION_FOLDER": "public/watermark/",
             "API_WHALEWATCH_PICTURETABLE_ARN": {
               "Fn::Join": [
                 "",
