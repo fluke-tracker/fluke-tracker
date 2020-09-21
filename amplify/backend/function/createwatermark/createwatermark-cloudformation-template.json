@@ -34,6 +34,7 @@
       },
       "Properties": {
         "Handler": "index.handler",
+        "MemorySize": 1024,
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
