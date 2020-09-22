@@ -81,7 +81,7 @@ def handler(event, context):
     print('received event:')
     print(event)
     key = event['Records'][0]["s3"]["object"]["key"]
-    bucket_str = event['Records'][0]['bucket']['name']
+    bucket_str = event['Records'][0]['s3']['bucket']['name']
     result = watermark_image(key, bucket_str, get_uploader_from_image(os.path.basename(key).replace('thumbnail.jpg', '')))
 
     return {
