@@ -171,8 +171,8 @@ class LandingPage extends React.Component {
         Storage.remove("thumbnails/" + imageIdToBeDeleted + "thumbnail.jpg")
           .then((result) => console.log("thumbnail", result))
           .catch((err) => console.log("thumbnail err", err));
-
-        Storage.remove("/cropped_images/" + imageIdToBeDeleted)
+        const customPrefix = { public: '' };
+        Storage.remove("cropped_images/" + imageIdToBeDeleted, {customPrefix: customPrefix})
           .then((result) => console.log(result))
           .catch((err) => console.log("cropped err", err));
 
