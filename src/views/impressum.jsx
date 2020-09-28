@@ -211,7 +211,7 @@ class Impressum extends React.Component {
                   <h1 style={{ paddingTop: "20px" }}>
                     <b>Collaborator</b>
                   </h1>
-                  <h3>Lisa Steiner</h3>
+                  <h3><a href="https://www.facebook.com/WhaleWatchAzores" target="_blank">Lisa Steiner</a></h3>
                   <div>
                     <img
                       src={require("assets/img/Lisa-2018-MLI7527.jpg")}
@@ -234,7 +234,7 @@ class Impressum extends React.Component {
                   <ul style={{listStyleType:"none", color:"black"}}>
                   <li><a href="">Daniel Kühlwein</a> (Germany)</li>
                   <li><a href="">Marcel Bergmann</a> (Germany)</li>
-                  <li><a href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de">Moritz Schaffenroth</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de" target="_blank">Moritz Schaffenroth</a> (Germany)</li>
                   <li><a href="">Kanwalmeet Singh Kochar</a> (Germany)</li>
                   <li><a href="">Hartvig Johannson</a> (Normay)</li>
                   <li><a href="">Simen Norrheim Larsen</a> (Norway)</li>

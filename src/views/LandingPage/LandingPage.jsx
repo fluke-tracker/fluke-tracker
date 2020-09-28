@@ -904,7 +904,6 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("left")}
                             color="info"
                             size="sm"
-                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
                             &#9668;
                           </Button>
@@ -914,7 +913,6 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("right")}
                             color="info"
                             size="sm"
-                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
                             &#9658;
                           </Button>
