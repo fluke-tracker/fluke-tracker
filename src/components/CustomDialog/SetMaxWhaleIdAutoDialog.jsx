@@ -14,21 +14,22 @@ import API, { graphqlOperation } from "@aws-amplify/api";
 
 const SetMaxWhaleIdAutoDialog = (props) => {
   const [open, setOpen] = React.useState(false);
-  const [whaleID, setWhaleID] = React.useState(0);
+  const [whaleID, setWhaleID] = React.useState();
   const [maxwhaleID, setMaxWhaleID] = React.useState();
 
-  
+
   const handleClickOpen = async () => {
     setOpen(true);
     let getWhaleID = await API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" }));
     setMaxWhaleID(getWhaleID.data.getConfig.value);
-  };  
+    setWhaleID(getWhaleID.data.getConfig.value);
+  };
   const handleCloseAbort = () => {
     setOpen(false);
   };
   const handleCloseOk = () => {
     setOpen(false);
-    props.function(whaleID,maxwhaleID);
+    props.function(whaleID, maxwhaleID);
   };
   const handleInputChange = (e) => {
     console.log("whale id parsed", e.target.value);
@@ -56,8 +57,8 @@ const SetMaxWhaleIdAutoDialog = (props) => {
         </DialogTitle>
         <DialogContent>
           <br />
-          <b>Warning!</b> You're about to <b>create a new whale ID</b>. Are you sure there is no
-          current whale matching?
+          <b>Warning!</b> You're about to <b>create a new whale ID</b> or match the whale to an{" "}
+          <b>existing ID</b>
           <br />
           <b>If you're not sure please return to the matching page</b> and match the new picture via
           the "Match" button to an existing whale ID.

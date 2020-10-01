@@ -303,6 +303,18 @@ class ProfilePage extends React.Component {
                           algorithm.
                         </li>
                       </ul>
+                      <p style={{ marginBottom: "5px" }}>
+                        What is the cropping algorithm?
+                      </p>
+                      <ul style={{ listStyleType: "none", paddingBottom: "0px", color: "black" }}>
+                        <li>
+                      The fluke tracker machine learning model, finds the best matches to images in the 
+                      database by using images tightly cropped around the flukes of whales.
+                      </li>
+                      <li> Select the <b>Use Cropping Algorithm </b>option to leverage the algorithm 
+                        which automatically crops uploaded images </li>
+                      <li>To upload manually cropped images, select the <b>No Cropping</b> option.</li>
+                      </ul>
                     </div>
                   </div>
                 </div>
