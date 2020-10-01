@@ -6,7 +6,6 @@ import boto3
 from PIL import Image, ImageDraw, ImageFont
 
 
-
 def save_image(img, bucket, image_name, folder):
     key = posixpath.join(folder, image_name)
     object = bucket.Object(key)
@@ -42,16 +41,16 @@ def watermark_all_images():
         try:
             bucket_str = os.environ.get('BUCKET')
             watermark_image('cropped_images/' + item['id'], bucket_str, item['uploaded_by'])
-        except:
-            print("error")
+        except Exception as e:
+            print("error %s" % e)
 
 
 def watermark_image(image_str, bucket_str, watermark_text):
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_str)
     print(image_str)
-    object = bucket.Object(image_str)
-    response = object.get()
+    bucket_object = bucket.Object(image_str)
+    response = bucket_object.get()
     file_stream = response['Body']
     image = Image.open(file_stream)
     base = image.convert('RGBA')
@@ -60,20 +59,33 @@ def watermark_image(image_str, bucket_str, watermark_text):
     # make a blank image for the text, initialized to transparent text color
     txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
 
+    #
+    img_fraction = 0.2
+
     # get a font
-    fnt = ImageFont.truetype(os.path.join(os.path.dirname(__file__), 'arial.ttf'), 40)
+    font_size = 0
+    font = ImageFont.truetype(os.path.join(os.path.dirname(__file__), 'arial.ttf'), font_size)
+    while watermark_text.strip() and font.getsize(watermark_text)[0] < img_fraction * width:
+        font_size += 1
+        font = ImageFont.truetype(os.path.join(os.path.dirname(__file__), 'arial.ttf'), font_size)
+        # we don't want to risk an indefinite loop (costs $ on AWS) e.g. all characters are invisible for some reason
+        if font_size > 11111:
+            break
+    print("font_size: %s" % font_size)
+
     # get a drawing context
     d = ImageDraw.Draw(txt)
     print(watermark_text)
-    w, h = d.textsize(watermark_text, font=fnt)
+    w, h = d.textsize(watermark_text, font=font)
 
     # draw text, half opacity
-    d.text(((width - w) / 2, (height - h) / 2), watermark_text, font=fnt, fill=(255, 255, 255, 128))
+    d.text(((width - w) / 2, (height - h) / 1.2), watermark_text, font=font, fill=(255, 255, 255, 128))
     # txt = txt.rotate(5)
 
     out = Image.alpha_composite(base, txt)
     out = out.convert("RGB")
-    save_image(out, bucket, os.path.basename(image_str).replace('thumbnail.jpg', ''), os.environ.get("DESTINATION_FOLDER"))
+    save_image(out, bucket, os.path.basename(image_str).replace('thumbnail.jpg', ''),
+               os.environ.get("DESTINATION_FOLDER"))
     return image_str
 
 
@@ -82,7 +94,8 @@ def handler(event, context):
     print(event)
     key = event['Records'][0]["s3"]["object"]["key"]
     bucket_str = event['Records'][0]['s3']['bucket']['name']
-    result = watermark_image(key, bucket_str, get_uploader_from_image(os.path.basename(key).replace('thumbnail.jpg', '')))
+    result = watermark_image(key, bucket_str,
+                             get_uploader_from_image(os.path.basename(key).replace('thumbnail.jpg', '')))
 
     return {
         'statusCode': 200,

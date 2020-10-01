@@ -12,12 +12,14 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { Auth } from "aws-amplify";
-
+import Radio from "@material-ui/core/Radio";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
 import { createPicture, updateConfig, createWhale } from "graphql/mutations";
 import { getConfig } from "graphql/queries";
 import API, { graphqlOperation } from "@aws-amplify/api";
 import exifr from "exifr";
-
+import basicsStyle from "assets/jss/material-kit-react/views/componentsSections/basicsStyle.jsx";
 const dashboardRoutes = [];
 class ProfilePage extends React.Component {
   constructor(props) {
@@ -31,10 +33,14 @@ class ProfilePage extends React.Component {
       latitude: null,
       longitude: null,
       imageDate: null,
+      selectedEnabled: "a",
     };
     this.authenticate_user();
+    this.handleChangeEnabled = this.handleChangeEnabled.bind(this);
   }
-
+  handleChangeEnabled(event) {
+    this.setState({ selectedEnabled: event.target.value });
+  }
   authenticate_user() {
     Auth.currentAuthenticatedUser()
       .then((user) => {
@@ -100,35 +106,57 @@ class ProfilePage extends React.Component {
       if (allowUpload == true) {
         try {
           console.log("upload image to S3 bucket");
+          let uploadPath;
           var options = {
             ACL: "public-read",
             level: "public",
             contentType: filetype,
           };
+          if (this.state.selectedEnabled === "b") {
+            console.log("no cropping selected");
+            const customPrefix = { public: "" };
+            uploadPath = "cropped_images/";
+            Storage.put(uploadPath + file.name, file, { customPrefix: customPrefix })
+              .then((result) => {
+                this.uploadThumbnail(file);
+                console.log("image uploaded", result);
+                this.upload = null;
+                this.setState({
+                  response: "File uploaded successfully!",
+                  responseColor: "green",
+                  imageName: "",
+                });
+              })
+              .catch((err) => {
+                console.log("error while uploading,", err);
+                this.setState({
+                  response: "Error! File could not be uploaded, please try again.",
+                  responseColor: "red",
+                });
+              });
+          } else {
+            console.log("cropping algorithm selected");
+            uploadPath = "embeddings/input/";
 
-          Storage.put(
-            "embeddings/input/" + file.name,
-            file,
-            options
-            //         { contentType: this.upload.files[0].type,level: 'public' }
-          )
-            .then((result) => {
-              this.uploadThumbnail(file);
-              console.log("image uploaded", result);
-              this.upload = null;
-              this.setState({
-                response: "File uploaded successfully!",
-                responseColor: "green",
-                imageName: "",
+            Storage.put(uploadPath + file.name, file, options)
+              .then((result) => {
+                this.uploadThumbnail(file);
+                console.log("image uploaded", result);
+                this.upload = null;
+                this.setState({
+                  response: "File uploaded successfully!",
+                  responseColor: "green",
+                  imageName: "",
+                });
+              })
+              .catch((err) => {
+                console.log("error while uploading,", err);
+                this.setState({
+                  response: "Error! File could not be uploaded, please try again.",
+                  responseColor: "red",
+                });
               });
-            })
-            .catch((err) => {
-              console.log("error while uploading,", err);
-              this.setState({
-                response: "Error! File could not be uploaded, please try again.",
-                responseColor: "red",
-              });
-            });
+          }
         } catch (e) {
           console.log("error in uploading", e);
         }
@@ -194,11 +222,16 @@ class ProfilePage extends React.Component {
     return (
       <div style={{ minHeight: "100vh" }}>
         <Header
-          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
-                        width: "90%",
-                        paddingBottom: "0px",
-                        margin: "0 auto",
-                      }} />}
+          brand={
+            <img
+              src={require("assets/img/fluketracker-logo(blue-bg).jpg")}
+              style={{
+                width: "90%",
+                paddingBottom: "0px",
+                margin: "0 auto",
+              }}
+            />
+          }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -252,7 +285,7 @@ class ProfilePage extends React.Component {
                       <p style={{ marginBottom: "5px" }}>
                         Here are a few points about the uploading of images:
                       </p>
-                      <ul style={{ listStyleType:"none", paddingBottom: "0px", color: "black" }}>
+                      <ul style={{ listStyleType: "none", paddingBottom: "0px", color: "black" }}>
                         <li>
                           Image must be ventral side of the animal in an upright (or as close to
                           vertical as possible) position.
@@ -269,6 +302,18 @@ class ProfilePage extends React.Component {
                           Please do not upload dorsal fin or head images as this will confuse the
                           algorithm.
                         </li>
+                      </ul>
+                      <p style={{ marginBottom: "5px" }}>
+                        What is the cropping algorithm?
+                      </p>
+                      <ul style={{ listStyleType: "none", paddingBottom: "0px", color: "black" }}>
+                        <li>
+                      The fluke tracker machine learning model, finds the best matches to images in the 
+                      database by using images tightly cropped around the flukes of whales.
+                      </li>
+                      <li> Select the <b>Use Cropping Algorithm </b>option to leverage the algorithm 
+                        which automatically crops uploaded images </li>
+                      <li>To upload manually cropped images, select the <b>No Cropping</b> option.</li>
                       </ul>
                     </div>
                   </div>
@@ -316,7 +361,51 @@ class ProfilePage extends React.Component {
                 >
                   Upload File
                 </Button>
-
+                <div
+                  className={classes.checkboxAndRadio + " " + classes.checkboxAndRadioHorizontal}
+                >
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.selectedEnabled === "a"}
+                        onChange={this.handleChangeEnabled}
+                        value="a"
+                        name="radio button a"
+                        aria-label="A"
+                        color="secondary"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio,
+                        }}
+                      />
+                    }
+                    classes={{
+                      label: classes.label,
+                    }}
+                    label="Use Cropping Algorithm"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.selectedEnabled === "b"}
+                        onChange={this.handleChangeEnabled}
+                        value="b"
+                        name="radio button b"
+                        aria-label="B"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio,
+                        }}
+                      />
+                    }
+                    classes={{
+                      label: classes.label,
+                    }}
+                    label="No Cropping"
+                  />
+                </div>
                 <div size="sm">
                   {this.state.response === "" ? <CircularProgress /> : ""}
                   {!!this.state.response && (
@@ -334,4 +423,4 @@ class ProfilePage extends React.Component {
   }
 }
 
-export default withStyles(landingPageStyle)(ProfilePage);
+export default withStyles(basicsStyle)(ProfilePage);

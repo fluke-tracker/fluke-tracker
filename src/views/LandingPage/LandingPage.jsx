@@ -83,13 +83,15 @@ class LandingPage extends React.Component {
     this.authenticate_user();
   }
 
-  authenticate_user() {
+   authenticate_user() {
     const admins = new Set(["LisaSteiner", "whalewatching"]);
-
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log("MATCHINGPAGE user", user, user.username);
-        this.setState({ user: user.username, adminFlag: admins.has(user.username) });
+        this.setState({
+          user: user.username,
+          adminFlag: admins.has(user.username)
+        });
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser landing page err redirect to login", err);
@@ -116,13 +118,49 @@ class LandingPage extends React.Component {
     }
   }
 
-  async go_manualId(pId) {
-    console.log("IN goManualId");
-    const leftImgFileName = this.state.newPicsList[this.state.vertical].id;
-    const idOrFalse = await this.createAndAssignNewWhaleId(leftImgFileName);
+  async go_manualId(pId, maxwhaleID) {
+    console.log("IN goManualId. whale ID value from previous comp", pId);
+    console.log("IN goManualId. MaxID value from previous comp", maxwhaleID);
 
+    const leftImgFileName = this.state.newPicsList[this.state.vertical].id;
+    let idOrFalse;
+    let existsError = false;
+    if (pId === maxwhaleID) {
+      console.log("Image needs to be set with max id only. carry on existing func");
+      idOrFalse = await this.createAndAssignNewWhaleId(leftImgFileName);
+    } else {
+      console.log("Image needs to be set with existing ID", pId);
+      //check if whale exists
+      const whaleObjs = await API.graphql(graphqlOperation(getWhale, { id: pId }));
+      console.log("whaleObjs", whaleObjs);
+      console.log("whaleObjs", whaleObjs.data);
+
+      if (whaleObjs.data.getWhale == null) {
+        console.log("Ooops, This Whale ID doesn't exist. Please select valid Whale ID");
+        idOrFalse = false;
+        existsError = true;
+      } else {
+        console.log("whale exists with given id as,", whaleObjs.data.getWhale);
+        //mapping whale to existing id and set is_new = 0
+        try {
+          const updateID = await API.graphql(
+            graphqlOperation(updatePicture, {
+              input: { id: leftImgFileName, is_new: 0, pictureWhaleId: pId },
+            })
+          );
+          idOrFalse = pId;
+        } catch (error) {
+          idOrFalse = false;
+          console.log("ERROR in assigning new whale ID to existing whale: ", error);
+        }
+      }
+    }
     if (idOrFalse === false) {
-      this.showSnackBarError();
+      if (existsError === true) {
+        this.showSnackBar("Ooops, This Whale ID doesn't exist. Please select valid Whale ID", 5000);
+      } else {
+        this.showSnackBarError();
+      }
     } else {
       this.showSnackBar(
         "Successfully created and assigned whale ID " +
@@ -171,8 +209,8 @@ class LandingPage extends React.Component {
         Storage.remove("thumbnails/" + imageIdToBeDeleted + "thumbnail.jpg")
           .then((result) => console.log("thumbnail", result))
           .catch((err) => console.log("thumbnail err", err));
-
-        Storage.remove("/cropped_images/" + imageIdToBeDeleted)
+        const customPrefix = { public: "" };
+        Storage.remove("cropped_images/" + imageIdToBeDeleted, { customPrefix: customPrefix })
           .then((result) => console.log(result))
           .catch((err) => console.log("cropped err", err));
 
@@ -737,11 +775,16 @@ class LandingPage extends React.Component {
       <div>
         <Header
           color="blue"
-          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
-                        width: "90%",
-                        paddingBottom: "0px",
-                        margin: "0 auto",
-                      }} />}
+          brand={
+            <img
+              src={require("assets/img/fluketracker-logo(blue-bg).jpg")}
+              style={{
+                width: "90%",
+                paddingBottom: "0px",
+                margin: "0 auto",
+              }}
+            />
+          }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -904,7 +947,6 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("left")}
                             color="info"
                             size="sm"
-                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
                             &#9668;
                           </Button>
@@ -914,7 +956,6 @@ class LandingPage extends React.Component {
                             onClick={() => this.navigationAction("right")}
                             color="info"
                             size="sm"
-                            style={{ fontSize: "1em", fontFamily: "Comic Sans MS" }}
                           >
                             &#9658;
                           </Button>

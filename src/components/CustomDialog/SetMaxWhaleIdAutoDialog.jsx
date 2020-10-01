@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "components/CustomButtons/Button.jsx";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -6,22 +6,35 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
-import { updatePicture } from "graphql/mutations";
+import { getConfig } from "graphql/queries";
+import Input from "@material-ui/core/Input";
+import FormControl from "@material-ui/core/FormControl";
+
+import API, { graphqlOperation } from "@aws-amplify/api";
 
 const SetMaxWhaleIdAutoDialog = (props) => {
   const [open, setOpen] = React.useState(false);
+  const [whaleID, setWhaleID] = React.useState();
+  const [maxwhaleID, setMaxWhaleID] = React.useState();
 
-  const handleClickOpen = () => {
+
+  const handleClickOpen = async () => {
     setOpen(true);
+    let getWhaleID = await API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" }));
+    setMaxWhaleID(getWhaleID.data.getConfig.value);
+    setWhaleID(getWhaleID.data.getConfig.value);
   };
   const handleCloseAbort = () => {
     setOpen(false);
   };
   const handleCloseOk = () => {
     setOpen(false);
-    props.function();
+    props.function(whaleID, maxwhaleID);
   };
-
+  const handleInputChange = (e) => {
+    console.log("whale id parsed", e.target.value);
+    setWhaleID(e.target.value);
+  };
   return (
     <div>
       <Button
@@ -44,11 +57,13 @@ const SetMaxWhaleIdAutoDialog = (props) => {
         </DialogTitle>
         <DialogContent>
           <br />
-          <b>Warning!</b> You're about to <b>create a new whale ID</b>. Are you sure there is no
-          current whale matching?
+          <b>Warning!</b> You're about to <b>create a new whale ID</b> or match the whale to an{" "}
+          <b>existing ID</b>
           <br />
           <b>If you're not sure please return to the matching page</b> and match the new picture via
           the "Match" button to an existing whale ID.
+          <br />
+          The Max Whale ID in the database is <b>{maxwhaleID}.</b>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseOk} color="success">
@@ -57,6 +72,17 @@ const SetMaxWhaleIdAutoDialog = (props) => {
           <Button onClick={handleCloseAbort} color="primary" autoFocus>
             Abort
           </Button>
+          <FormControl required>
+            <Input
+              type="text"
+              /*   style={{ "text-align": "center", borderRadius: "5px" }} */
+              name="whaleIDInput"
+              placeholder="Whale ID"
+              value={whaleID}
+              onChange={handleInputChange}
+              required={true}
+            />
+          </FormControl>
         </DialogActions>
       </Dialog>
     </div>
