@@ -14,8 +14,7 @@ import awsmobile from "./aws-exports";
 import { Auth } from "aws-amplify";
 // pages for this product
 import Components from "views/Components/Components.jsx";
-import LandingPage from "views/LandingPage/LandingPage.jsx";
-import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
+import MatchingPage from "views/MatchingPage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 import UploadPage from "views/UploadPage.jsx";
 import SearchPage from "views/SearchPage.jsx";
@@ -36,11 +35,10 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
       <Switch>
-        <Route path="/match-whales" component={LandingPage} />
-        <Route path="/welcome-upload" component={ProfilePage} />
+        <Route path="/match-whales" component={MatchingPage} />
+        <Route path="/welcome-upload" component={UploadPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/components" component={Components} />
-        <Route path="/upload-page" component={UploadPage} />
         <Route path="/browse-pictures/:whale_id" component={SearchPage} />
         <Route path="/browse-pictures" component={SearchPage} />
         <Route path="/contact-owner" component={SecretContactPage} />

@@ -117,7 +117,7 @@ function disclaimer() {
 
     var myForm = document.getElementById("example4");
     var checkForm = function(e) {
-      ...
+
       if(!this.terms.checked) {
         alert("Please indicate that you accept the Terms and Conditions");
         this.terms.focus();
@@ -303,22 +303,6 @@ var PF_ERR = [];
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script>
-        {% if messages %}
-            {% for message in messages %}
-                alert(message);
-            {% endfor %}
-        {% endif %}
-
-
-
-
-
-
-
-
-
-    </script>
     <style>
 .pagination {
   display: inline-block;

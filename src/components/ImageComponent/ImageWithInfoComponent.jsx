@@ -20,7 +20,7 @@ const ImageWithInfoComponent = (props) => {
   let picInfosItems = <br />;
 
   const openSearchPage = () => {
-    const url = "/search-page/" + picObj.whale.id;
+    const url = "/browse-pictures/" + picObj.whale.id;
     window.open(url, "_blank");
   };
 
@@ -108,7 +108,7 @@ const ImageWithInfoComponent = (props) => {
       <GridItem xs={12} style={{ color: "black", clear: "both" }}>
         <div>
           <h4>
-            <a href={"search-page/" + filename}>{filename}</a>
+            <a href={"browse-pictures/" + filename}>{filename}</a>
           </h4>
         </div>
       </GridItem>
