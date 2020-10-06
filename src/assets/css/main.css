@@ -702,3 +702,7 @@ input.gsc-input, .gsc-input-box, .gsc-input-box-hover, .gsc-input-box-focus, .gs
   box-sizing: content-box;
   line-height: normal;
 }
+
+.specialTextTMPClass{
+    color: white;
+}
