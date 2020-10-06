@@ -1,5 +1,7 @@
 import React from "react";
 
+import 'semantic-ui-css/semantic.min.css'
+
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -17,6 +19,7 @@ import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.js
 import LinearProgress from "@material-ui/core/LinearProgress";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoComponent.jsx";
+import { Dropdown } from 'semantic-ui-react'
 
 import { connect } from "react-redux";
 
@@ -41,7 +44,7 @@ import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/que
 
 import { Auth } from "aws-amplify";
 
-class LandingPage extends React.Component {
+class MatchingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -78,6 +81,8 @@ class LandingPage extends React.Component {
     this.picLoadHandler = this.picLoadHandler.bind(this);
 
     this._handleKeyDown = this._handleKeyDown.bind(this);
+
+    this.handlePictureChange = this.handlePictureChange.bind(this);
 
     // function uses async code => no blocking
     this.authenticate_user();
@@ -738,6 +743,17 @@ class LandingPage extends React.Component {
     });
   }
 
+  handlePictureChange(event, data){
+     console.log( "change to picture " + data.options[data.value].text);
+      this.setState({
+        picsLoaded: [false, false],
+        simPicObj: undefined,
+        similar_pictures: [undefined],
+        vertical: parseInt(data.value),
+        horizontal: 0,
+      });
+  }
+
   async fetchNewPicturesList(nextToken, pics, numReq) {
     console.log("AT BEGINNING OF FETCHNEWPICTURESLIST");
     try {
@@ -804,6 +820,14 @@ class LandingPage extends React.Component {
                         <strong>Do these whales match?</strong>
                       </h2>
                     </div>
+                    <Dropdown
+                        placeholder='Select Uploaded Picture'
+                        fluid
+                        search
+                        selection
+                        onChange={this.handlePictureChange}
+                        options={this.state.newPicsList.filter(pic => pic).map((pic, i) => {return {key: i, value: i,text: pic.id}})}
+                    />
                     {this.state.newPicsList.length > 0 ? (
                       <GridContainer>
                         <GridItem xs={12} sm={12} md={12} space={10}>
@@ -987,5 +1011,5 @@ class LandingPage extends React.Component {
   }
 }
 
-const LandingPageContainer = connect((dispatch) => ({ dispatch }))(LandingPage);
-export default withStyles(landingPageStyle)(LandingPageContainer);
+const MatchingPageContainer = connect((dispatch) => ({ dispatch }))(MatchingPage);
+export default withStyles(landingPageStyle)(MatchingPageContainer);

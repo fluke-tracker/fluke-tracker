@@ -11,11 +11,15 @@ const headerLinksStyle = theme => ({
     listStyle: "none",
     paddingTop: "0",
     paddingBottom: "0",
-    color: "inherit"
+    color: "inherit",
+    "border-top": "1px solid #ececec",
+    "border-top-width": "1px",
+    "border-top-style": "solid",
+    "border-top-color": "rgb(236, 236, 236)"
   },
   listItem: {
     float: "left",
-    color: "inherit",
+    color: "white",
     position: "relative",
     display: "block",
     width: "auto",
@@ -41,8 +45,8 @@ const headerLinksStyle = theme => ({
     position: "relative",
     padding: "0.9375rem",
     fontWeight: "400",
-    fontSize: "12px",
-    textTransform: "uppercase",
+    fontSize: "14px",
+    textTransform: "none",
     borderRadius: "3px",
     lineHeight: "20px",
     textDecoration: "none",
@@ -53,6 +57,7 @@ const headerLinksStyle = theme => ({
       background: "rgba(200, 200, 200, 0.2)"
     },
     [theme.breakpoints.down("sm")]: {
+      color: "black",
       width: "calc(100% - 30px)",
       marginLeft: "15px",
       marginBottom: "8px",

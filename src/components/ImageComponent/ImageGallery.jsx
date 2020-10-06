@@ -5,10 +5,12 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Gallery from "react-grid-gallery";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import failImg from "assets/img/fail.svg";
 
 const ImageGallery = (props) => {
   const [s3BucketPath, setS3BucketPath] = useState("");
   const [loadedPictures, setLoadedPictures] = useState(new Set());
+  const [errorPictures, setErrorPictures] = useState(new Set());
   let imageStatus = "";
   const filename = props.filename;
   // handler that will be called after the image has loaded
@@ -37,8 +39,12 @@ const ImageGallery = (props) => {
   };
 
   const handleImageErrored = () => {
+    const newSet = new Set(errorPictures);
+    newSet.add(filename);
+    setErrorPictures(newSet);
     imageStatus = "failed to load picture";
     console.log(imageStatus);
+    notifyLoadHandler(filename);
   };
 
   const getimages = (image) => {
@@ -47,7 +53,7 @@ const ImageGallery = (props) => {
   };
 
   const getimagescropped = (image) => {
-    const image_url = s3BucketPath + "public/watermark/" + image;
+    const image_url = !errorPictures.has(image) ? s3BucketPath + "public/watermark/" + image : failImg;
     return image_url;
   };
 
@@ -82,7 +88,7 @@ const ImageGallery = (props) => {
 
   return (
     <div>
-      {loadedPictures.has(filename) ? "" : <CircularProgress />}
+      {loadedPictures.has(filename) || errorPictures.has(filename) ? "" : <CircularProgress />}
       {imageGallery}
     </div>
   );

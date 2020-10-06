@@ -37,17 +37,8 @@ const RegisterButton = (props) => (
 // the logout component emits a logout signal to redux
 const Logout = (props) => (
   <ListItem className={props.classes.listItem}>
-    <Link to={"/login"}>
-      <Button
-        href=""
-        color="transparent"
-        target="_blank"
-        style={{ color: "white" }}
-        onClick={() => Auth.signOut()}
-        className={props.classes.navLink}
-      >
-        Logout
-      </Button>
+    <Link to={"/login"} className={props.classes.navLink} onClick={() => Auth.signOut()}>
+      Logout
     </Link>
   </ListItem>
 );
@@ -56,222 +47,56 @@ function HeaderLinks({ ...props }) {
   const { classes } = props;
   console.log("header props are,", props);
   return (
-    <div class="header__top container" style={{ backgroundColor: "transparent" }}>
-      {props.user ? (
-        <div class="header__nav">
-          <div class="menu-all-pages-container">
-            <ul id="menu-main-menu" class="menu">
-              <li
-                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                user={props.user}
-              >
-                <a class="nav-link" href={"/welcome-upload"} style={{ color: "white" }}>
-                  Welcome & Upload
-                </a>
-              </li>
-              <li
-                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                user={props.user}
-              >
-                <a class="nav-link" href={"/match-whales"} style={{ color: "white" }}>
-                  Match Whales
-                </a>
-              </li>
-              <li
-                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                user={props.user}
-              >
-                <a class="nav-link" href={"/browse-pictures"} style={{ color: "white" }}>
-                  Browse Pictures
-                </a>
-              </li>
-              <li
-                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                user={props.user}
-              >
-                <a class="nav-link" href={"/about"} style={{ color: "white" }}>
-                  About
-                </a>
-              </li>
-              <li
-                class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                user={props.user}
-              >
-                <a class="nav-link" onClick={() => Auth.signOut()} href={"/login"} style={{ color: "white" }}>
-                  Logout
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      ) : (
-        <div style={{ backgroundColor: "transparent" }}>
-          <div class="header__nav">
-            <div class="menu-all-pages-container">
-              <ul id="menu-main-menu" class="menu">
-                            <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
 
-                  </a>
-                </li>
-                              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                                              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                            <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                            <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-                            <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/"} style={{ color: "white" }}>
-
-                  </a>
-                </li>
-              <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/login"} style={{ color: "white" }}>
-                    Login
-                  </a>
-                </li>
-                <li
-                  class="nav-item menu-item menu-item-type-post_type_archive menu-item-object-expert"
-                  user={props.user}
-                >
-                  <a class="nav-link" href={"/about"} style={{ color: "white" }}>
-                    About
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-    /* <List className={classes.list}>
+    <List className={classes.list}>
       { props.user ?
+      <>
       <ListItem className={classes.listItem}>
-        <CustomDropdown
-          noLiPadding
-          buttonText="Pages"
-          buttonProps={{
-            className: classes.navLink,
-            color: "transparent"
-          }}
-          buttonIcon={Apps}
-          dropdownList={[
-          <Link to= {"/welcome-upload"} className={classes.dropdownLink} user={props.user}>
-            Profile Page
-          </Link>,
-            <Link to= {"/landing-page"} className={classes.dropdownLink} user={props.user}>
-              Matching Page
-            </Link>,
-/*            <Link to= {"/upload-page"} className={classes.dropdownLink} user={props.user}>
-            Upload Page
-          </Link>,
-             <Link to = {"/search-page"} className={classes.dropdownLink} user={props.user}>
-             Search Page
-           </Link>
-          ]}
-        />
+        <Link to= {"/welcome-upload"} className={classes.navLink} user={props.user}>
+            Welcome &amp; Upload
+          </Link>
       </ListItem>
-: <ListItem>
-  </ListItem>} */
-
-    /*{/*         <ListItem className={classes.listItem}>
-            <Link to={props.user ? "/welcome-upload" : "/login"}>
+      <ListItem className={classes.listItem}>
+            <Link to= {"/match-whales"} className={classes.navLink} user={props.user}>
+              Match Whales
+            </Link>
+            </ListItem>
+            <ListItem className={classes.listItem}>
+            <Link to= {"/browse-pictures"} className={classes.navLink} user={props.user}>
+            Browse Pictures
+          </Link>
+          </ListItem>
+          <ListItem className={classes.listItem}>
+             <Link to = {"/about"} className={classes.navLink} user={props.user}>
+             About
+           </Link>
+      </ListItem>
+      </>
+:
+<>
+         <ListItem className={classes.listItem}>
+            <Link to={props.user ? "/welcome-upload" : "/login"} className={classes.navLink} >
                 <Button
                 href=""
                 color="transparent"
                 target="_blank"
-                style={{color: 'white'}}
                 className={classes.navLink}>{props.user ? `${props.user.name} ${props.user.surname}` : `Login`}</Button>
             </Link>
-        </ListItem>      */
-    /*       {
-            props.user ? <Logout {...props}/> : <div></div>
-        }
+            <Link to={"/about"} className={classes.navLink} >
+                <Button
+                href=""
+                color="transparent"
+                target="_blank"
+                className={classes.navLink}>About</Button>
+            </Link>
+        </ListItem>
+</>
+}
+{
+            props.user ? <ListItem className={classes.listItem}><Logout {...props}/></ListItem> : <div></div>
+}
 
-    </List>*/
+    </List>
   );
 }
 

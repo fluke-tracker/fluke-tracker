@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-//import { configureAmplify, SetS3Config } from "./services";
+
 import Header from "components/Header/Header.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Storage from "@aws-amplify/storage";
@@ -11,109 +10,407 @@ import classNames from "classnames";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import { Auth } from 'aws-amplify';
-import Footer from "components/Footer/Footer.jsx";
-
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { Auth } from "aws-amplify";
+import Radio from "@material-ui/core/Radio";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
+import { createPicture, updateConfig, createWhale } from "graphql/mutations";
+import { getConfig } from "graphql/queries";
+import API, { graphqlOperation } from "@aws-amplify/api";
+import exifr from "exifr";
+import basicsStyle from "assets/jss/material-kit-react/views/componentsSections/basicsStyle.jsx";
 const dashboardRoutes = [];
 class UploadPage extends React.Component {
-    constructor(props) {
-    super(props)
-this.state = {
-    imageName: "",
-    imageFile: "",
-    response: "",
-    user: null
-}
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      imageNames: [],
+      imageFiles: [],
+      responses: [],
+      user: null,
+      latitude: null,
+      longitude: null,
+      imageDate: null,
+      selectedEnabled: "a",
+    };
     this.authenticate_user();
+    this.handleChangeEnabled = this.handleChangeEnabled.bind(this);
   }
-
-
+  handleChangeEnabled(event) {
+    this.setState({ selectedEnabled: event.target.value });
+  }
   authenticate_user() {
-
     Auth.currentAuthenticatedUser()
-          .then(user => { 
-           console.log('uploadpage user',user.username);
-           this.setState({ user: user })
-          }).catch(err => console.log('currentAuthenticatedUser uploadpage err', err))
-  }
-  uploadImage = () => {
-  //  SetS3Config("my-test-bucket-amplify", "protected");
-  try {
-    Storage.put('embeddings/input/'+`${this.upload.files[0].name}`,
-                this.upload.files[0],
-                { contentType: this.upload.files[0].type })
-      .then(result => {
-        this.upload = null;
-        console.log("upload success," );
-        this.setState({ response: "Success uploading file!" });
+      .then((user) => {
+        console.log("uploadpage user", user.username);
+        this.setState({ user: user });
       })
-      .catch(err => {
-          console.log("error while uploading,",err );
-        this.setState({ response: `Cannot uploading file: ${err}` });
+      .catch((err) => {
+        console.log("currentAuthenticatedUser uploadpage er pushing to login page", err);
+        this.props.history.push("/login-page");
       });
-    }catch(e) {
-      console.log("error in uploading",e);
-   }      
-  };
+  }
+  async addResponse(response, color){
+    console.log("add Response " + response);
+    await this.setState(state => {return {responses: [...state.responses, {response: response, responseColor: color}]}});
+  }
+
+  async uploadImages() {
+    await this.setState({loading: true});
+    await Promise.all(this.state.imageFiles.map(async file => {
+        if (typeof file !== "undefined") {
+              const allowedFileTypes = new Set(["image/jpeg"]);
+              const filetype = file.type;
+              if (!allowedFileTypes.has(filetype)) {
+                this.addResponse("Error " + file.name + "! File could not be uploaded: Expected file type is 'image/jpeg' but received '" +
+                    filetype +
+                    "'.",
+                    "red"
+                );
+                // artifical "break"
+                return;
+              }
+
+              // if we got to this point, we set the response to "" to enable the circularProgress item
+              this.setState({ responses: [] });
+
+              // modify file ending if written in capital letters or as 'jpeg' instead of 'jpg'
+              let splitFileName = file.name.split(".");
+              const fileExt = splitFileName.pop();
+              if (fileExt === "JPG" || fileExt === "jpeg") {
+                file = new File([file], splitFileName.join("") + ".jpg", { type: filetype });
+                console.log(file);
+              }
+
+              // extract meta data if available
+              try {
+                const output = await exifr.parse(file);
+                this.state.latitude = output.latitude;
+                this.state.longitude = output.longitude;
+                this.state.imageDate = output.DateTimeOriginal.toGMTString();
+                console.log("image output", output);
+              } catch (e) {
+                this.state.latitude = null;
+                this.state.longitude = null;
+                this.state.imageDate = null;
+                console.log("error in exifr ", e);
+              }
+
+              let allowUpload = false;
+              try {
+                allowUpload = await this.insertToDynamo(file.name, allowUpload);
+              } catch (e) {
+                console.log("error in insertToDynamo ", e);
+              }
+              console.log("allowUpload ", allowUpload);
+              if (allowUpload == true) {
+                try {
+                  console.log("upload image to S3 bucket");
+                  let uploadPath;
+                  var options = {
+                    ACL: "public-read",
+                    level: "public",
+                    contentType: filetype,
+                  };
+                  if (this.state.selectedEnabled === "b") {
+                    console.log("no cropping selected");
+                    const customPrefix = { public: "" };
+                    uploadPath = "cropped_images/";
+                    Storage.put(uploadPath + file.name, file, { customPrefix: customPrefix })
+                      .then((result) => {
+                        this.uploadThumbnail(file);
+                        console.log("image uploaded", result);
+                        this.upload = null;
+                        this.addResponse("File " + file.name + " uploaded successfully!", "green");
+                      })
+                      .catch((err) => {
+                        console.log("error while uploading,", err);
+                        this.addResponse("Error! File " + file.name + " could not be uploaded, please try again.", "red");
+                      });
+                  } else {
+                    console.log("cropping algorithm selected");
+                    uploadPath = "embeddings/input/";
+
+                    Storage.put(uploadPath + file.name, file, options)
+                      .then((result) => {
+                        this.uploadThumbnail(file);
+                        console.log("image uploaded", result);
+                        this.upload = null;
+                        this.addResponse("File " + file.name + " uploaded successfully!", "green");
+                      })
+                      .catch((err) => {
+                        console.log("error while uploading,", err);
+                        this.addResponse("Error! File " + file.name + " could not be uploaded, please try again.", "red");
+                      });
+                  }
+                } catch (e) {
+                  console.log("error in uploading", e);
+                }
+              } else {
+                console.log("cannot upload image");
+              }
+            }
+    }));
+    await this.setState({loading: false});
+  }
+
+  async uploadThumbnail(pFile) {
+    try {
+      var options = {
+        ACL: "public-read",
+        level: "public",
+        contentType: pFile.type,
+      };
+      console.log("upload thumbnail", pFile.name + "thumbnail.jpg");
+      await Storage.put("thumbnails/" + pFile.name + "thumbnail.jpg", pFile, options);
+      console.log("AFTER thumbnail upload");
+    } catch (e) {
+      console.log("cannot upload thumbnail", e);
+    }
+  }
+
+  async insertToDynamo(image, allowUpload) {
+    try {
+      console.log("inserting image record to dynamodb");
+      const insertImage = await API.graphql(
+        graphqlOperation(createPicture, {
+          input: {
+            id: image,
+            filename: image,
+            geocoords: this.state.latitude + "," + this.state.longitude,
+            thumbnail: image + "thumbnail.jpg",
+            pictureWhaleId: -1,
+            is_new: 1,
+            embedding: 123,
+            uploaded_by: this.state.user.username,
+            date_taken: this.state.imageDate,
+          },
+        })
+      );
+      console.log("insertImage output aws", insertImage);
+
+      allowUpload = true;
+      console.log("setting allowupload as ", allowUpload);
+    } catch (e) {
+      allowUpload = false;
+      console.log("getting insertImage error", e);
+      this.addResponse("Error " + image + "! Please make sure that the image you are trying to upload does not exist in the database already.", "red");
+    }
+    return allowUpload;
+  }
 
   render() {
     const { classes, ...rest } = this.props;
 
     return (
-      <div>
+      <div style={{ minHeight: "100vh" }}>
         <Header
-        color="transparent"
-        routes={dashboardRoutes}
-        brand=""
-        fixed
-        rightLinks={<HeaderLinks user={this.state.user} />}
-        changeColorOnScroll={{
-          "height": "400",
-          "color": "white"
-        }}
-        {...rest}
-      />
-         <Parallax color="black" small center fixed filter image={require("assets/img/Pardot-Banner-GDSC_TD.png")} />
-                <div className={classNames(classes.main, classes.mainRaised)}>
-          <div className={classes.container} style={{"height": "350px"}}>
-          <GridContainer color = "black">
-            <GridItem xs={12} sm={12} md={6}><h2 className={classes.title} style={{"color": "black"}}>Upload Whale Image 🐳</h2></GridItem>
-            <GridItem xs={12} sm={12} md={6}>
-        <input
-          type="file"
-          accept="image/png, image/jpeg"
-          style={{ "display": "none" }}
-          ref={ref => (this.upload = ref)}
-          onChange={e =>
-            this.setState({
-              imageFile: this.upload.files[0],
-              imageName: this.upload.files[0].name
-            })
+          brand={
+            <img
+              src={require("assets/img/fluketracker-logo(blue-bg).jpg")}
+              style={{
+                width: "90%",
+                paddingBottom: "0px",
+                margin: "0 auto",
+              }}
+            />
           }
-          required
-        /></GridItem>
-        <input value={this.state.imageName} placeholder="Select file" required/>
-        <Button
-        variant="contained"
-        color="info" size="sm"
-          onClick={e => {
-            this.upload.value = null;
-            this.upload.click();
+          fixed
+          rightLinks={<HeaderLinks user={this.state.user} />}
+          changeColorOnScroll={{
+            height: "200",
+            color: "black",
           }}
-          loading={this.state.uploading} 
-        >Browse
-        </Button>
-
-        <Button variant="contained" onClick={() => this.uploadImage()} color="info" size="sm">Upload File</Button>
-        </GridContainer>      
-        <GridItem xs={12} sm={12} md={6}> 
-        <div color="red" size="sm">{!!this.state.response && <h5 style={{ color: 'red' }}>{this.state.response}</h5>}</div>
-        </GridItem>
-      </div>
-      </div>
-              <Footer />
+          {...rest}
+        />
+        {this.state.user != null ? (
+          <div>
+            <div
+              class="section container"
+              style={{
+                backgroundImage: 'url(require("../assets/img/tail.jpg"))',
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></div>
+            <div className={classes.container}>
+              <div class="section container" style={{ paddingTop: "80px", paddingBottom: "5px" }}>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="article-text">
+                      <h1 style={{ paddingTop: "5px" }}>
+                        <strong>FlukeTracker</strong>
+                      </h1>
+                      <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
+                        <strong>What is the FlukeTracker website?</strong>
+                      </h4>
+                      <p style={{ paddingBottom: "5px" }}>
+                        For Whale-Lovers: You can use this website to find sperm whales and match
+                        your whale pictures with others.<br></br> After uploading a whale image,
+                        potential matches generated by the AI can be reviewed on the{" "}
+                        <i>Match Whales</i> page.<br></br> Feel free to view our entire whale
+                        catalogue on the <i> Browse Pictures </i> page.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={classes.container}>
+              <div class="section container" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="article-text">
+                      <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
+                        <strong>Upload Whale Image 🐳</strong>
+                      </h4>
+                      <p style={{ marginBottom: "5px" }}>
+                        Here are a few points about the uploading of images:
+                      </p>
+                      <ul style={{ listStyleType: "none", paddingBottom: "0px", color: "black" }}>
+                        <li>
+                          Image must be ventral side of the animal in an upright (or as close to
+                          vertical as possible) position.
+                        </li>
+                        <li>
+                          If the image is taken from the front of the animal, then the image must be
+                          flipped horizontally before uploading.
+                        </li>
+                        <li>
+                          If the image is taken on the lifting of the fluke, the image has to be
+                          flipped vertically, so the trailing edge is on the top of the image.
+                        </li>
+                        <li>
+                          Please do not upload dorsal fin or head images as this will confuse the
+                          algorithm.
+                        </li>
+                      </ul>
+                      <p style={{ marginBottom: "5px" }}>
+                        What is the cropping algorithm?
+                      </p>
+                      <ul style={{ listStyleType: "none", paddingBottom: "0px", color: "black" }}>
+                        <li>
+                      The fluke tracker machine learning model, finds the best matches to images in the
+                      database by using images tightly cropped around the flukes of whales.
+                      </li>
+                      <li> Select the <b>Use Cropping Algorithm </b>option to leverage the algorithm
+                        which automatically crops uploaded images </li>
+                      <li>To upload manually cropped images, select the <b>No Cropping</b> option.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ paddingRight: "15px", paddingLeft: "15px" }}>
+                <input
+                  multiple={true}
+                  type="file"
+                  accept="image/jpeg"
+                  style={{ display: "none" }}
+                  ref={(ref) => (this.upload = ref)}
+                  onChange={(e) =>
+                    this.setState({
+                      imageFiles: Array.from(this.upload.files),
+                      imageNames: Array.from(this.upload.files).map(item => item.name),
+                    })
+                  }
+                  required
+                />
+                <input
+                  style={{ "text-align": "center" }}
+                  value={this.state.imageNames.join(',')}
+                  placeholder="Select file"
+                  required
+                />
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  variant="contained"
+                  color="info"
+                  size="md"
+                  onClick={(e) => {
+                    this.upload.value = null;
+                    this.upload.click();
+                  }}
+                  loading={this.state.uploading}
+                >
+                  Browse
+                </Button>
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  variant="contained"
+                  onClick={() => this.uploadImages()}
+                  color="success"
+                  size="md"
+                >
+                  Upload File
+                </Button>
+                <div
+                  className={classes.checkboxAndRadio + " " + classes.checkboxAndRadioHorizontal}
+                >
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.selectedEnabled === "a"}
+                        onChange={this.handleChangeEnabled}
+                        value="a"
+                        name="radio button a"
+                        aria-label="A"
+                        color="secondary"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio,
+                        }}
+                      />
+                    }
+                    classes={{
+                      label: classes.label,
+                    }}
+                    label="Use Cropping Algorithm"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.selectedEnabled === "b"}
+                        onChange={this.handleChangeEnabled}
+                        value="b"
+                        name="radio button b"
+                        aria-label="B"
+                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        classes={{
+                          checked: classes.radio,
+                        }}
+                      />
+                    }
+                    classes={{
+                      label: classes.label,
+                    }}
+                    label="No Cropping"
+                  />
+                </div>
+                <div size="sm">
+                  {this.state.loading === true ? <CircularProgress /> : ""}
+                  {this.state.responses.map(
+                          response =>
+                          (
+                            <h5 style={{ color: response.responseColor }}>{response.response}</h5>
+                          )
+                    )
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
     );
   }
 }
-export default withStyles(landingPageStyle)(UploadPage);
+
+export default withStyles(basicsStyle)(UploadPage);
