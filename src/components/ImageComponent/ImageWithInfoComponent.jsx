@@ -47,7 +47,7 @@ const ImageWithInfoComponent = (props) => {
   if (typeof picObj !== "undefined") {
     const labelsAligned = { minWidth: "165px", display: "inline-block" };
 
-    const whaleId = picObj.whale.id;
+    const whaleId = picObj.whale ? picObj.whale.id: null;
     const uploadedBy = picObj.uploaded_by;
     const geoCoordsParsed = getGeocoordsParsed(false);
     const date = picObj.date_taken;
