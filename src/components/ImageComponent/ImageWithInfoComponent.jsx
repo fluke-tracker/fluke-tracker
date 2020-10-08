@@ -20,7 +20,7 @@ const ImageWithInfoComponent = (props) => {
   let picInfosItems = <br />;
 
   const openSearchPage = () => {
-    const url = "/search-page/" + picObj.whale.id;
+    const url = "/browse-pictures/" + picObj.whale.id;
     window.open(url, "_blank");
   };
 
@@ -47,7 +47,7 @@ const ImageWithInfoComponent = (props) => {
   if (typeof picObj !== "undefined") {
     const labelsAligned = { minWidth: "165px", display: "inline-block" };
 
-    const whaleId = picObj.whale.id;
+    const whaleId = picObj.whale ? picObj.whale.id: null;
     const uploadedBy = picObj.uploaded_by;
     const geoCoordsParsed = getGeocoordsParsed(false);
     const date = picObj.date_taken;
@@ -108,7 +108,7 @@ const ImageWithInfoComponent = (props) => {
       <GridItem xs={12} style={{ color: "black", clear: "both" }}>
         <div>
           <h4>
-            <a href={"search-page/" + filename}>{filename}</a>
+            <a href={"browse-pictures/" + filename}>{filename}</a>
           </h4>
         </div>
       </GridItem>

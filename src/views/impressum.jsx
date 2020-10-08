@@ -148,7 +148,8 @@ class Impressum extends React.Component {
           brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
                         width: "90%",
                         paddingBottom: "0px",
-                        margin: "0 auto",
+                        margin: "0 auto 0 0",
+                        "max-width": "40%"
                       }} />}
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
