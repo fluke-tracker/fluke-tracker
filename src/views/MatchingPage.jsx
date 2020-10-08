@@ -862,6 +862,37 @@ class MatchingPage extends React.Component {
                             notifyLoadHandler={this.picLoadHandler}
                           />
                           <br />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                          <strong>Best Matching Picture Number: </strong>
+                          <Badge color="success">{this.state.horizontal + 1}</Badge>
+                          <br />
+                          <br />
+                          {this.state.similar_pictures.length === 0 ? (
+                            <div style={{ textAlign: "center", marginTop: 100 }}>
+                              Computing similar images.
+                              <br />
+                              <br />
+                              <CircularProgress />
+                              <br />
+                              <br />
+                              Please come back in a few minutes.
+                            </div>
+                          ) : (
+                            <ImageWithInfoComponent
+                              picObj={this.state.simPicObj}
+                              distance={
+                                typeof this.state.similar_pictures[this.state.horizontal] ===
+                                "undefined"
+                                  ? undefined
+                                  : this.state.similar_pictures[this.state.horizontal].distance
+                              }
+                              adminFlag={this.state.adminFlag}
+                              notifyLoadHandler={this.picLoadHandler}
+                            />
+                          )}
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
                           {this.state.adminFlag ? (
                             <div>
                               <SetMaxWhaleIdAutoDialog
@@ -907,34 +938,7 @@ class MatchingPage extends React.Component {
                             autoHideDuration={4000}
                           />
                         </GridItem>
-                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
-                          <strong>Best Matching Picture Number: </strong>
-                          <Badge color="success">{this.state.horizontal + 1}</Badge>
-                          <br />
-                          <br />
-                          {this.state.similar_pictures.length === 0 ? (
-                            <div style={{ textAlign: "center", marginTop: 100 }}>
-                              Computing similar images.
-                              <br />
-                              <br />
-                              <CircularProgress />
-                              <br />
-                              <br />
-                              Please come back in a few minutes.
-                            </div>
-                          ) : (
-                            <ImageWithInfoComponent
-                              picObj={this.state.simPicObj}
-                              distance={
-                                typeof this.state.similar_pictures[this.state.horizontal] ===
-                                "undefined"
-                                  ? undefined
-                                  : this.state.similar_pictures[this.state.horizontal].distance
-                              }
-                              adminFlag={this.state.adminFlag}
-                              notifyLoadHandler={this.picLoadHandler}
-                            />
-                          )}
+                        <GridItem xs={12} sm={12} md={6}>
                           {/*  new buttons for the matching result */}
                           {this.state.adminFlag ? (
                             <div>
