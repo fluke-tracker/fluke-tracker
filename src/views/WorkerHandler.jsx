@@ -1,9 +1,9 @@
-import Worker from "views/predict.worker.js";
+//import Worker from "views/predict.worker.js";
 
 class WorkerHandler {
   constructor() {
     this.id = 0;
-    this.worker = new Worker();
+    this.worker = new Worker("/predict.worker.js");
     this.promises = {};
     this.worker.onmessage = (evt) => {
       console.log("worker message");

@@ -63,10 +63,10 @@
     "eslint-plugin-prettier": "3.1.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "start_win": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "build_win": "react-app-rewired build",
+    "start": "react-scripts start",
+    "start_win": "react-scripts start",
+    "build": "react-scripts build",
+    "build_win": "react-scripts build",
     "deploy": "node deploy",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject",
