@@ -14,7 +14,6 @@ class CropperComponent extends React.Component {
       isPredicted: false
     };
     this.onReady = this.onReady.bind(this);
-    this.onCrop = this.onCrop.bind(this);
     this.getCroppedImage = this.getCroppedImage.bind(this);
     this.cropperRef = React.createRef(null);
   }
@@ -84,7 +83,6 @@ class CropperComponent extends React.Component {
               initialAspectRatio={16 / 9}
               guides={false}
               ready={this.onReady}
-              crop={this.onCrop}
               ref={this.cropperRef}
             />
             <Tooltip title="Rotate left (45 degree)">
