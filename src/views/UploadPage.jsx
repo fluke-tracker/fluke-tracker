@@ -297,7 +297,7 @@ class UploadPage extends React.Component {
       allowUpload = true;
       console.log("setting allowupload as ", allowUpload);
     } catch (e) {
-      allowUpload = true;
+      allowUpload = false;
       console.log("getting insertImage error", e);
       this.addResponse(
         "Error " +
