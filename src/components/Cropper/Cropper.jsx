@@ -3,6 +3,7 @@ import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import pixels from 'image-pixels'
 import Button from "components/CustomButtons/Button.jsx";
+import ContinuousSlider from "components/Slider/Slider.jsx";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Tooltip from '@material-ui/core/Tooltip'
 
@@ -36,10 +37,10 @@ class CropperComponent extends React.Component {
             this.props.workerHandler.addJob({id: 2, natH: natH, natW: natW, image: pixelz}).then(
                 evt => {
                     this.cropperRef.current.cropper.setData({
-                                                                x: evt.data.prediction.v1,
-                                                                y: evt.data.prediction.v2,
-                                                                width:evt.data.prediction.v3 - evt.data.prediction.v1,
-                                                                height: evt.data.prediction.v4 - evt.data.prediction.v2
+                                                                x: evt.data.prediction.x1,
+                                                                y: evt.data.prediction.y1,
+                                                                width:evt.data.prediction.x2 - evt.data.prediction.x1,
+                                                                height: evt.data.prediction.y2 - evt.data.prediction.y1
                                                             });
                     this.setState({isPredicted: true});
                 }
@@ -85,6 +86,7 @@ class CropperComponent extends React.Component {
               ready={this.onReady}
               ref={this.cropperRef}
             />
+            <ContinuousSlider title="Rotate" value="0" handleChange={(value) => this.cropperRef.current.cropper.rotate(value - this.cropperRef.current.cropper.getData().rotate)} />
             <Tooltip title="Rotate left (45 degree)">
                 <Button onClick={() => this.cropperRef.current.cropper.rotate(45)}>↶</Button>
             </Tooltip>
@@ -96,6 +98,12 @@ class CropperComponent extends React.Component {
             </Tooltip>
             <Tooltip title="Zoom -0.1">
                 <Button onClick={() => this.cropperRef.current.cropper.zoom(-0.1)}>-</Button>
+            </Tooltip>
+            <Tooltip title="Mirror X">
+                <Button onClick={() => this.cropperRef.current.cropper.scaleX(this.cropperRef.current.cropper.getData().scaleX*-1)}>&#8596;</Button>
+            </Tooltip>
+            <Tooltip title="Mirror Y">
+                <Button onClick={() => this.cropperRef.current.cropper.scaleY(this.cropperRef.current.cropper.getData().scaleY*-1)}>&#8597;</Button>
             </Tooltip>
             <Tooltip title="Reset Cropping">
                 <Button onClick={() => this.cropperRef.current.cropper.reset()}>⟳</Button>

@@ -11,7 +11,7 @@ class WorkerHandler {
         console.log("model ready");
       }
       if (evt.data.prediction) {
-        console.log("prediction");
+        console.log("prediction " + JSON.stringify(evt.data.prediction));
         this.promises[evt.data.id].resolve(evt);
       }
     };
