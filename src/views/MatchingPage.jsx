@@ -21,6 +21,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoComponent.jsx";
 import { Dropdown } from 'semantic-ui-react'
 
+
 import { connect } from "react-redux";
 
 import "react-image-picker/dist/index.css";

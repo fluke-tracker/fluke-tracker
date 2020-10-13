@@ -3,7 +3,6 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Badge from "components/Badge/Badge.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 
-import SendPrivateMessage from "components/CustomDialog/sendPrivateMessage.jsx";
 import ImageGallery from "./ImageGallery.jsx";
 
 const ImageWithInfoComponent = (props) => {
@@ -12,7 +11,6 @@ const ImageWithInfoComponent = (props) => {
 
   const picObj = props.picObj;
   const distance = props.distance;
-  const adminFlag = props.adminFlag;
   // handler that will be called after the image has loaded
   const notifyLoadHandler = props.notifyLoadHandler;
 
@@ -45,7 +43,7 @@ const ImageWithInfoComponent = (props) => {
   };
 
   if (typeof picObj !== "undefined") {
-    const labelsAligned = { minWidth: "165px", display: "inline-block" };
+    const labelsAligned = { minWidth: "165px", display: "inline-block", fontSize: "16px", verticalAlign: "middle" };
 
     const whaleId = picObj.whale ? picObj.whale.id: null;
     const uploadedBy = picObj.uploaded_by;
@@ -55,7 +53,7 @@ const ImageWithInfoComponent = (props) => {
 
     picInfosItems = (
       <div style={{ marginBottom: "10px" }}>
-        <strong style={labelsAligned} style={{fontSize: "16px", verticalAlign: "middle"}}>Whale ID: </strong>
+        <strong style={labelsAligned}>Whale ID: </strong>
         <Badge color="info"><p style={{fontSize: "16px", verticalAlign: "bottom"}}>{parseInt(whaleId) === -1 ? "-" : whaleId}</p></Badge>
         {parseInt(whaleId) !== -1 ? (
           <Button style={{ marginLeft: "10px" }} size="sm" onClick={openSearchPage}>
@@ -74,7 +72,7 @@ const ImageWithInfoComponent = (props) => {
         <strong style={labelsAligned}>Coordinates / Place: </strong>
         <Badge color="info">{geoCoordsParsed}</Badge>
         {geoCoordsParsed !== "-" ? (
-          <Button style={{ marginLeft: "10px" }} size="sm" onClick={openMapPage} style={{fontSize: "10px"}}>
+          <Button style={{ marginLeft: "10px", fontSize: "10px"}} size="sm" onClick={openMapPage} >
             Open in map
           </Button>
         ) : (
