@@ -1,42 +1,45 @@
-import React, { Component } from "react";
+import React from "react";
 
 import Header from "components/Header/Header.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Storage from "@aws-amplify/storage";
 import withStyles from "@material-ui/core/styles/withStyles";
-import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
-import Parallax from "components/Parallax/Parallax.jsx";
-import classNames from "classnames";
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { Auth } from "aws-amplify";
+import Auth from "@aws-amplify/auth";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
-import { createPicture, updateConfig, createWhale } from "graphql/mutations";
-import { getConfig } from "graphql/queries";
-import API, { graphqlOperation } from "@aws-amplify/api";
+import { createPicture } from "graphql/mutations";
+import {API, graphqlOperation} from "@aws-amplify/api";
 import exifr from "exifr";
 import basicsStyle from "assets/jss/material-kit-react/views/componentsSections/basicsStyle.jsx";
-const dashboardRoutes = [];
+import CropperComponent from "components/Cropper/Cropper.jsx";
+import WorkerHandler from "views/WorkerHandler.jsx";
+
 class UploadPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      uploadingFiles: false,
       imageNames: [],
       imageFiles: [],
+      imageFilesStrings: [],
       responses: [],
       user: null,
       latitude: null,
       longitude: null,
       imageDate: null,
-      selectedEnabled: "a",
+      cropperComponents: [],
+      selectedEnabled: "browserCropping",
     };
+    this.workerHandler = new WorkerHandler();
     this.authenticate_user();
     this.handleChangeEnabled = this.handleChangeEnabled.bind(this);
+    this.uploadImages = this.uploadImages.bind(this);
+  }
+  componentWillUnmount() {
+    this.workerHandler.worker.terminate();
   }
   handleChangeEnabled(event) {
     this.setState({ selectedEnabled: event.target.value });
@@ -48,112 +51,208 @@ class UploadPage extends React.Component {
         this.setState({ user: user });
       })
       .catch((err) => {
-        console.log("currentAuthenticatedUser uploadpage er pushing to login page", err);
+        console.log(
+          "currentAuthenticatedUser uploadpage er pushing to login page",
+          err
+        );
         this.props.history.push("/login-page");
       });
   }
-  async addResponse(response, color){
+  async addResponse(response, color) {
     console.log("add Response " + response);
-    await this.setState(state => {return {responses: [...state.responses, {response: response, responseColor: color}]}});
+    await this.setState((state) => {
+      return {
+        responses: [
+          ...state.responses,
+          { response: response, responseColor: color },
+        ],
+      };
+    });
+  }
+
+  async readFileAsDataURL(file) {
+    let result_base64 = await new Promise((resolve) => {
+      let fileReader = new FileReader();
+      fileReader.onload = (e) => resolve(fileReader.result);
+      fileReader.readAsDataURL(file);
+    });
+
+    return result_base64;
+  }
+  blobToFile(theBlob, fileName) {
+    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    return theBlob;
   }
 
   async uploadImages() {
-    await this.setState({loading: true});
-    await Promise.all(this.state.imageFiles.map(async file => {
+    await this.setState({ uploadingFiles: true });
+    await Promise.all(
+      this.state.imageFiles.map(async (file) => {
         if (typeof file !== "undefined") {
-              const allowedFileTypes = new Set(["image/jpeg"]);
-              const filetype = file.type;
-              if (!allowedFileTypes.has(filetype)) {
-                this.addResponse("Error " + file.name + "! File could not be uploaded: Expected file type is 'image/jpeg' but received '" +
-                    filetype +
-                    "'.",
-                    "red"
+          const allowedFileTypes = new Set(["image/jpeg"]);
+          const filetype = file.type;
+          if (!allowedFileTypes.has(filetype)) {
+            this.addResponse(
+              "Error " +
+                file.name +
+                "! File could not be uploaded: Expected file type is 'image/jpeg' but received '" +
+                filetype +
+                "'.",
+              "red"
+            );
+            // artifical "break"
+            return;
+          }
+
+          // if we got to this point, we set the response to "" to enable the circularProgress item
+          this.setState({ responses: [] });
+
+          // modify file ending if written in capital letters or as 'jpeg' instead of 'jpg'
+          let splitFileName = file.name.split(".");
+          const fileExt = splitFileName.pop();
+          if (fileExt === "JPG" || fileExt === "jpeg") {
+            file = new File([file], splitFileName.join("") + ".jpg", {
+              type: filetype,
+            });
+            console.log(file);
+          }
+
+          // extract meta data if available
+          try {
+            const output = await exifr.parse(file);
+            this.setState({
+              latitude: output.latitude,
+              longitude: output.longitude,
+              imageData: output.DateTimeOriginal.toGMTString(),
+            });
+            console.log("image output", output);
+          } catch (e) {
+            this.setState({
+              latitude: null,
+              longitude: null,
+              imageData: null,
+            });
+            console.log("error in exifr ", e);
+          }
+
+          let allowUpload = false;
+          try {
+            allowUpload = await this.insertToDynamo(file.name, allowUpload);
+          } catch (e) {
+            console.log("error in insertToDynamo ", e);
+          }
+          console.log("allowUpload ", allowUpload);
+          if (allowUpload == true) {
+            try {
+              console.log("upload image to S3 bucket");
+              let uploadPath;
+              var options = {
+                ACL: "public-read",
+                level: "public",
+                contentType: filetype,
+              };
+              if (this.state.selectedEnabled === "noCropping") {
+                console.log("no cropping selected");
+                const customPrefix = { public: "" };
+                uploadPath = "cropped_images/";
+                Storage.put(uploadPath + file.name, file, {
+                  customPrefix: customPrefix,
+                })
+                  .then((result) => {
+                    this.uploadThumbnail(file);
+                    console.log("image uploaded", result);
+                    this.upload = null;
+                    this.addResponse(
+                      "File " + file.name + " uploaded successfully!",
+                      "green"
+                    );
+                  })
+                  .catch((err) => {
+                    console.log("error while uploading,", err);
+                    this.addResponse(
+                      "Error! File " +
+                        file.name +
+                        " could not be uploaded, please try again.",
+                      "red"
+                    );
+                  });
+              } else if (this.state.selectedEnabled === "browserCropping") {
+                console.log("browser cropping selected");
+                const customPrefix = { public: "" };
+                uploadPath = "cropped_images/";
+                console.log(
+                  this.state.cropperComponents.map(
+                    (comp) => comp.props.filename
+                  )
                 );
-                // artifical "break"
-                return;
-              }
-
-              // if we got to this point, we set the response to "" to enable the circularProgress item
-              this.setState({ responses: [] });
-
-              // modify file ending if written in capital letters or as 'jpeg' instead of 'jpg'
-              let splitFileName = file.name.split(".");
-              const fileExt = splitFileName.pop();
-              if (fileExt === "JPG" || fileExt === "jpeg") {
-                file = new File([file], splitFileName.join("") + ".jpg", { type: filetype });
-                console.log(file);
-              }
-
-              // extract meta data if available
-              try {
-                const output = await exifr.parse(file);
-                this.state.latitude = output.latitude;
-                this.state.longitude = output.longitude;
-                this.state.imageDate = output.DateTimeOriginal.toGMTString();
-                console.log("image output", output);
-              } catch (e) {
-                this.state.latitude = null;
-                this.state.longitude = null;
-                this.state.imageDate = null;
-                console.log("error in exifr ", e);
-              }
-
-              let allowUpload = false;
-              try {
-                allowUpload = await this.insertToDynamo(file.name, allowUpload);
-              } catch (e) {
-                console.log("error in insertToDynamo ", e);
-              }
-              console.log("allowUpload ", allowUpload);
-              if (allowUpload == true) {
-                try {
-                  console.log("upload image to S3 bucket");
-                  let uploadPath;
-                  var options = {
-                    ACL: "public-read",
-                    level: "public",
-                    contentType: filetype,
-                  };
-                  if (this.state.selectedEnabled === "b") {
-                    console.log("no cropping selected");
-                    const customPrefix = { public: "" };
-                    uploadPath = "cropped_images/";
-                    Storage.put(uploadPath + file.name, file, { customPrefix: customPrefix })
-                      .then((result) => {
-                        this.uploadThumbnail(file);
-                        console.log("image uploaded", result);
-                        this.upload = null;
-                        this.addResponse("File " + file.name + " uploaded successfully!", "green");
-                      })
-                      .catch((err) => {
-                        console.log("error while uploading,", err);
-                        this.addResponse("Error! File " + file.name + " could not be uploaded, please try again.", "red");
-                      });
-                  } else {
-                    console.log("cropping algorithm selected");
-                    uploadPath = "embeddings/input/";
-
-                    Storage.put(uploadPath + file.name, file, options)
-                      .then((result) => {
-                        this.uploadThumbnail(file);
-                        console.log("image uploaded", result);
-                        this.upload = null;
-                        this.addResponse("File " + file.name + " uploaded successfully!", "green");
-                      })
-                      .catch((err) => {
-                        console.log("error while uploading,", err);
-                        this.addResponse("Error! File " + file.name + " could not be uploaded, please try again.", "red");
-                      });
-                  }
-                } catch (e) {
-                  console.log("error in uploading", e);
+                const matchingCropperComponents = this.state.cropperComponents.filter(
+                  (comp) => comp.props.filename === file.name
+                );
+                if (matchingCropperComponents.length < 1) {
+                  console.log("no matching cropper component");
                 }
-              } else {
-                console.log("cannot upload image");
+                const cropperComponent = matchingCropperComponents[0];
+                const croppedFile = this.blobToFile(
+                  await cropperComponent.getCroppedImage(),
+                  file.name
+                );
+                Storage.put(uploadPath + croppedFile.name, croppedFile, {
+                  customPrefix: customPrefix,
+                })
+                  .then((result) => {
+                    this.uploadThumbnail(croppedFile);
+                    console.log("image uploaded", result);
+                    this.upload = null;
+                    this.addResponse(
+                      "File " + file.name + " uploaded successfully!",
+                      "green"
+                    );
+                  })
+                  .catch((err) => {
+                    console.log("error while uploading,", err);
+                    this.addResponse(
+                      "Error! File " +
+                        croppedFile.name +
+                        " could not be uploaded, please try again.",
+                      "red"
+                    );
+                  });
+              } else if (this.state.selectedEnabled === "cropping") {
+                console.log("cropping algorithm selected");
+                uploadPath = "embeddings/input/";
+
+                Storage.put(uploadPath + file.name, file, options)
+                  .then((result) => {
+                    this.uploadThumbnail(file);
+                    console.log("image uploaded", result);
+                    this.upload = null;
+                    this.addResponse(
+                      "File " + file.name + " uploaded successfully!",
+                      "green"
+                    );
+                  })
+                  .catch((err) => {
+                    console.log("error while uploading,", err);
+                    this.addResponse(
+                      "Error! File " +
+                        file.name +
+                        " could not be uploaded, please try again.",
+                      "red"
+                    );
+                  });
               }
+            } catch (e) {
+              console.log("error in uploading", e);
             }
-    }));
-    await this.setState({loading: false});
+          } else {
+            console.log("cannot upload image");
+          }
+        }
+      })
+    );
+    await this.setState({ uploadingFiles: false });
   }
 
   async uploadThumbnail(pFile) {
@@ -164,7 +263,11 @@ class UploadPage extends React.Component {
         contentType: pFile.type,
       };
       console.log("upload thumbnail", pFile.name + "thumbnail.jpg");
-      await Storage.put("thumbnails/" + pFile.name + "thumbnail.jpg", pFile, options);
+      await Storage.put(
+        "thumbnails/" + pFile.name + "thumbnail.jpg",
+        pFile,
+        options
+      );
       console.log("AFTER thumbnail upload");
     } catch (e) {
       console.log("cannot upload thumbnail", e);
@@ -196,7 +299,13 @@ class UploadPage extends React.Component {
     } catch (e) {
       allowUpload = false;
       console.log("getting insertImage error", e);
-      this.addResponse("Error " + image + "! Please make sure that the image you are trying to upload does not exist in the database already.", "red");
+      this.addResponse(
+        "Error " +
+          image +
+          "! Please make sure that the image you are trying " +
+          "to upload does not exist in the database already.",
+        "red"
+      );
     }
     return allowUpload;
   }
@@ -237,7 +346,10 @@ class UploadPage extends React.Component {
               }}
             ></div>
             <div className={classes.container}>
-              <div class="section container" style={{ paddingTop: "80px", paddingBottom: "5px" }}>
+              <div
+                class="section container"
+                style={{ paddingTop: "80px", paddingBottom: "5px" }}
+              >
                 <div class="row">
                   <div class="col-12">
                     <div class="article-text">
@@ -248,11 +360,13 @@ class UploadPage extends React.Component {
                         <strong>What is the FlukeTracker website?</strong>
                       </h4>
                       <p style={{ paddingBottom: "5px" }}>
-                        For Whale-Lovers: You can use this website to find sperm whales and match
-                        your whale pictures with others.<br></br> After uploading a whale image,
-                        potential matches generated by the AI can be reviewed on the{" "}
-                        <i>Match Whales</i> page.<br></br> Feel free to view our entire whale
-                        catalogue on the <i> Browse Pictures </i> page.
+                        For Whale-Lovers: You can use this website to find sperm
+                        whales and match your whale pictures with others.
+                        <br></br> After uploading a whale image, potential
+                        matches generated by the AI can be reviewed on the{" "}
+                        <i>Match Whales</i> page.<br></br> Feel free to view our
+                        entire whale catalogue on the <i> Browse Pictures </i>{" "}
+                        page.
                       </p>
                     </div>
                   </div>
@@ -260,7 +374,10 @@ class UploadPage extends React.Component {
               </div>
             </div>
             <div className={classes.container}>
-              <div class="section container" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+              <div
+                class="section container"
+                style={{ paddingTop: "5px", paddingBottom: "5px" }}
+              >
                 <div class="row">
                   <div class="col-12">
                     <div class="article-text">
@@ -270,35 +387,65 @@ class UploadPage extends React.Component {
                       <p style={{ marginBottom: "5px" }}>
                         Here are a few points about the uploading of images:
                       </p>
-                      <ul style={{ listStyleType: "none", paddingBottom: "0px", color: "black" }}>
+                      <ul
+                        style={{
+                          listStyleType: "none",
+                          paddingBottom: "0px",
+                          color: "black",
+                        }}
+                      >
                         <li>
-                          Image must be ventral side of the animal in an upright (or as close to
-                          vertical as possible) position.
+                          Image must be ventral side of the animal in an upright
+                          (or as close to vertical as possible) position.
                         </li>
                         <li>
-                          If the image is taken from the front of the animal, then the image must be
-                          flipped horizontally before uploading.
+                          If the image is taken from the front of the animal,
+                          then the image must be flipped horizontally before
+                          uploading.
                         </li>
                         <li>
-                          If the image is taken on the lifting of the fluke, the image has to be
-                          flipped vertically, so the trailing edge is on the top of the image.
+                          If the image is taken on the lifting of the fluke, the
+                          image has to be flipped vertically, so the trailing
+                          edge is on the top of the image.
                         </li>
                         <li>
-                          Please do not upload dorsal fin or head images as this will confuse the
-                          algorithm.
+                          Please do not upload dorsal fin or head images as this
+                          will confuse the algorithm.
                         </li>
                       </ul>
                       <p style={{ marginBottom: "5px" }}>
                         What is the cropping algorithm?
                       </p>
-                      <ul style={{ listStyleType: "none", paddingBottom: "0px", color: "black" }}>
+                      <ul
+                        style={{
+                          listStyleType: "none",
+                          paddingBottom: "0px",
+                          color: "black",
+                        }}
+                      >
                         <li>
-                      The fluke tracker machine learning model, finds the best matches to images in the
-                      database by using images tightly cropped around the flukes of whales.
-                      </li>
-                      <li> Select the <b>Use Cropping Algorithm </b>option to leverage the algorithm
-                        which automatically crops uploaded images </li>
-                      <li>To upload manually cropped images, select the <b>No Cropping</b> option.</li>
+                          The fluke tracker machine learning model, finds the
+                          best matches to images in the database by using images
+                          tightly cropped around the flukes of whales.
+                        </li>
+                        <li>
+                          {" "}
+                          Select <b>Browser Cropping </b>option to crop images
+                          yourself. You are supported by a algorithm which makes
+                          a suggestion. Depending on your system this can take
+                          some time since the algorithm is running on your
+                          browser.
+                        </li>
+                        <li>
+                          {" "}
+                          Select the <b>Use Cropping Algorithm </b>option to
+                          leverage the algorithm which automatically crops
+                          uploaded images{" "}
+                        </li>
+                        <li>
+                          To upload manually cropped images, select the{" "}
+                          <b>No Cropping</b> option.
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -311,20 +458,41 @@ class UploadPage extends React.Component {
                   accept="image/jpeg"
                   style={{ display: "none" }}
                   ref={(ref) => (this.upload = ref)}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     this.setState({
                       imageFiles: Array.from(this.upload.files),
-                      imageNames: Array.from(this.upload.files).map(item => item.name),
-                    })
-                  }
+                      imageNames: Array.from(this.upload.files).map(
+                        (item) => item.name
+                      ),
+                    });
+                    Promise.all(
+                      Array.from(this.upload.files).map((file) =>
+                        this.readFileAsDataURL(file)
+                      )
+                    ).then((results) => {
+                      this.setState({ imageFilesStrings: results });
+                    });
+                  }}
                   required
                 />
                 <input
                   style={{ "text-align": "center" }}
-                  value={this.state.imageNames.join(',')}
+                  value={this.state.imageNames.join(",")}
                   placeholder="Select file"
                   required
                 />
+                {this.state.selectedEnabled === "browserCropping"
+                  ? this.state.imageFilesStrings.map((image, i) => (
+                      <CropperComponent
+                        filename={this.state.imageNames[i]}
+                        ref={(ref) => (this.state.cropperComponents[i] = ref)}
+                        workerHandler={this.workerHandler}
+                        key={image}
+                        src={image}
+                      />
+                    ))
+                  : ""}
+
                 <Button
                   style={{ marginLeft: "10px" }}
                   variant="contained"
@@ -334,7 +502,9 @@ class UploadPage extends React.Component {
                     this.upload.value = null;
                     this.upload.click();
                   }}
-                  loading={this.state.uploading}
+                  loading={
+                    this.state.uploadingFiles ? "uploading..." : undefined
+                  }
                 >
                   Browse
                 </Button>
@@ -344,23 +514,63 @@ class UploadPage extends React.Component {
                   onClick={() => this.uploadImages()}
                   color="success"
                   size="md"
+                  disabled={this.state.uploadingFiles}
                 >
                   Upload File
                 </Button>
                 <div
-                  className={classes.checkboxAndRadio + " " + classes.checkboxAndRadioHorizontal}
+                  className={
+                    classes.checkboxAndRadio +
+                    " " +
+                    classes.checkboxAndRadioHorizontal
+                  }
                 >
+                  <br />
                   <FormControlLabel
                     control={
                       <Radio
-                        checked={this.state.selectedEnabled === "a"}
+                        checked={
+                          this.state.selectedEnabled === "browserCropping"
+                        }
                         onChange={this.handleChangeEnabled}
-                        value="a"
-                        name="radio button a"
-                        aria-label="A"
+                        value="browserCropping"
+                        name="radio button browserCropping"
+                        aria-label="Browser Cropping"
+                        icon={
+                          <FiberManualRecord
+                            className={classes.radioUnchecked}
+                          />
+                        }
+                        checkedIcon={
+                          <FiberManualRecord className={classes.radioChecked} />
+                        }
+                        classes={{
+                          checked: classes.radio,
+                        }}
+                      />
+                    }
+                    classes={{
+                      label: classes.label,
+                    }}
+                    label="Cropping in Browser"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Radio
+                        checked={this.state.selectedEnabled === "cropping"}
+                        onChange={this.handleChangeEnabled}
+                        value="cropping"
+                        name="radio button cropping"
+                        aria-label="Cropping"
                         color="secondary"
-                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
-                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        icon={
+                          <FiberManualRecord
+                            className={classes.radioUnchecked}
+                          />
+                        }
+                        checkedIcon={
+                          <FiberManualRecord className={classes.radioChecked} />
+                        }
                         classes={{
                           checked: classes.radio,
                         }}
@@ -374,13 +584,19 @@ class UploadPage extends React.Component {
                   <FormControlLabel
                     control={
                       <Radio
-                        checked={this.state.selectedEnabled === "b"}
+                        checked={this.state.selectedEnabled === "noCropping"}
                         onChange={this.handleChangeEnabled}
-                        value="b"
-                        name="radio button b"
-                        aria-label="B"
-                        icon={<FiberManualRecord className={classes.radioUnchecked} />}
-                        checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                        value="noCropping"
+                        name="radio button noCropping"
+                        aria-label="No Cropping"
+                        icon={
+                          <FiberManualRecord
+                            className={classes.radioUnchecked}
+                          />
+                        }
+                        checkedIcon={
+                          <FiberManualRecord className={classes.radioChecked} />
+                        }
                         classes={{
                           checked: classes.radio,
                         }}
@@ -393,14 +609,16 @@ class UploadPage extends React.Component {
                   />
                 </div>
                 <div size="sm">
-                  {this.state.loading === true ? <CircularProgress /> : ""}
-                  {this.state.responses.map(
-                          response =>
-                          (
-                            <h5 style={{ color: response.responseColor }}>{response.response}</h5>
-                          )
-                    )
-                  }
+                  {this.state.uploadingFiles === true ? (
+                    <CircularProgress />
+                  ) : (
+                    ""
+                  )}
+                  {this.state.responses.map((response) => (
+                    <h5 style={{ color: response.responseColor }}>
+                      {response.response}
+                    </h5>
+                  ))}
                 </div>
               </div>
             </div>

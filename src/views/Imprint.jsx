@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 //import { configureAmplify, SetS3Config } from "./services";
 import Header from "components/Header/Header.jsx";
@@ -6,18 +6,12 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Storage from "@aws-amplify/storage";
 import withStyles from "@material-ui/core/styles/withStyles";
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
-import Parallax from "components/Parallax/Parallax.jsx";
-import classNames from "classnames";
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
-import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from "aws-amplify";
-import Footer from "components/Footer/Footer.jsx";
 import { createPicture, updateConfig } from "graphql/mutations";
 import { getConfig } from "graphql/queries";
 import API, { graphqlOperation } from "@aws-amplify/api";
-const dashboardRoutes = [];
-class Impressum extends React.Component {
+
+class Imprint extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -288,4 +282,4 @@ class Impressum extends React.Component {
   }
 }
 
-export default withStyles(landingPageStyle)(Impressum);
+export default withStyles(landingPageStyle)(Imprint);

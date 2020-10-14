@@ -5,7 +5,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Gallery from "react-grid-gallery";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import failImg from "assets/img/fail.svg";
+import failImg from "assets/img/error.jpg";
 
 const ImageGallery = (props) => {
   const [s3BucketPath, setS3BucketPath] = useState("");
@@ -47,12 +47,12 @@ const ImageGallery = (props) => {
     notifyLoadHandler(filename);
   };
 
-  const getimages = (image) => {
+  const getImages = (image) => {
     const image_url = s3BucketPath + "public/thumbnails/" + image + "thumbnail.jpg";
     return image_url;
   };
 
-  const getimagescropped = (image) => {
+  const getImagesCropped = (image) => {
     const image_url = !errorPictures.has(image) ? s3BucketPath + "public/watermark/" + image : failImg;
     return image_url;
   };
@@ -67,12 +67,12 @@ const ImageGallery = (props) => {
             tags: [],
             onError: handleImageErrored,
             onLoad: handleImageLoaded,
-            src: getimagescropped(filename),
+            src: getImagesCropped(filename),
             // setting it to undefined results in keeping the ratio if it's smaller than
             // 490px in width and breaking the ratio if it's wider than 490px
             thumbnailWidth: undefined,
             thumbnailHeight: undefined,
-            thumbnail: getimagescropped(filename),
+            thumbnail: getImagesCropped(filename),
           },
         ]}
         // setting the row height to 125 seemed reasonable after looking at the sizes of the cropped images

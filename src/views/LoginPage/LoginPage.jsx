@@ -48,7 +48,9 @@ const AlwaysOn = (props) => {
   return (
     <div>
       <div>I am always here to show current auth state: {props.authState}</div>
-      <button onClick={() => props.onStateChange("signUp")}>Show Sign Up</button>
+      <button onClick={() => props.onStateChange("signUp")}>
+        Show Sign Up
+      </button>
     </div>
   );
 };
@@ -76,7 +78,7 @@ class LoginPage extends React.Component {
   componentDidMount() {
     // we add a hidden class to the card and after 700 ms we delete it and the transition appears
     setTimeout(
-      function() {
+      function () {
         this.setState({ cardAnimaton: "" });
       }.bind(this),
       700
@@ -94,7 +96,7 @@ class LoginPage extends React.Component {
         .then((data) => console.log("current session data", data))
         .catch((err) => console.log("current session err", err));
       /*       Auth.currentAuthenticatedUser()
-        .then(user => 
+        .then(user =>
           {
             const email = user.attribues.email;
             const user2 = {name: user.username, surname: '', email: email}
@@ -154,7 +156,7 @@ class LoginPage extends React.Component {
             const { token, ...userData } = user;
 
             Cookies.create('token', token, null);
-            
+
             this.props.dispatch(login(userData));
             this.props.history.push('/landing-page');
         }
@@ -194,39 +196,44 @@ class LoginPage extends React.Component {
                     border: "1px solid",
                   }}
                 >
-                  <div className={classes.container} style={{ paddingTop: "0px" }}>
+                  <div
+                    className={classes.container}
+                    style={{ paddingTop: "0px" }}
+                  >
                     <h3>
                       <strong>Welcome to the FlukeTracker</strong>
                     </h3>
                     <h4 style={{ paddingBottom: "5px" }}>
                       <strong>
-                        For whale-lovers, who can use this website to find sperm whales and match
-                        whale pictures with others.
+                        For whale-lovers, who can use this website to find sperm
+                        whales and match whale pictures with others.
                       </strong>
                     </h4>
                     {/*               <form onSubmit={this.submitForm} className={classes.form}>
                 {   <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
                     </CardHeader>
-                     <p className={classes.divider}></p> 
+                     <p className={classes.divider}></p>
                     <CardBody>
                     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
                           <SignIn/>
-                    </Authenticator>  
+                    </Authenticator>
                     </CardBody>
-                      
+
                     <CardFooter className={classes.cardFooter}>
                       <Button type="submit" simple color="primary" size="lg">
                         Login
                       </Button>
                     </CardFooter>
-                  
+
                 </Card> */}
                     {/*     <Authenticator onStateChange={(authState) => this.loginRedirect(authState)} >
                     </Authenticator>   */}
                     <Authenticator
                       hide={[Greetings, SignUp]}
-                      onStateChange={(authState) => this.loginRedirect(authState)}
+                      onStateChange={(authState) =>
+                        this.loginRedirect(authState)
+                      }
                     ></Authenticator>
                   </div>
                 </Card>

@@ -1,16 +1,44 @@
-
-import pathlib
-
-flist = []
-f = open(".\\python_scripts\\demofile3.txt", "w")
-for p in pathlib.Path('C:\\Users\\ksinghko\\Pictures\\Lisa New Pictures\\all images\\').iterdir():
-    if p.is_file():
-        p=str(p)
-        p=p.replace("C:\\Users\\ksinghko\\Pictures\\Lisa New Pictures\\all images\\","")
-        print(p[:-4])
-        p=p[:-4]
-        flist.append(p)
-        f.write(p+"\n")
-f.close()
+import csv
+import boto3
+from decimal import Decimal
+import pandas as pd
+import json
 
 
+
+def main():
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('Picture-huq5xsnrsnbgjcdbxlourmh5he-whaledev')
+    with open('C:\\Users\\ksinghko\\Pictures\\Lisa New Pictures\\WWA_Images\\WWA\\book1.json') as jfile:
+        dic = json.load(jfile)
+    for x in dic:
+        print(x)
+        imagename=x.get('ImageName')+'.jpg'
+        thumbnail_image = imagename + 'thumbnail.jpg'
+        imageid=x.get(('AnimalID'))
+        #pictureWhaleId=x.get('AnimalID')
+        print(imagename)
+        print(imageid)
+        #additional = str({'pictureWhaleId': imageid})
+        table.put_item(
+                Item={
+                    'id': imagename,
+                    'thumbnail': thumbnail_image,
+                    'high_res': imagename,
+                    'filename': imagename,
+                    'geocoords': ",",
+                    'date_taken': '',
+                    'uploaded_by': 'LisaSteiner',
+                    'createdAt': '2020-04-10T16:49:42.406Z',
+                    'uploadedAt': '2020-04-10T16:49:42.406Z',
+                    'updatedAt': '2020-04-10T16:49:42.406Z',
+                    'is_new': 1,
+                    'embedding': 123,
+                    'owner': 'kanwal',
+                    'pictureWhaleId': str(imageid),
+                   # **additional
+                })
+
+
+if __name__ == '__main__':
+    main()
