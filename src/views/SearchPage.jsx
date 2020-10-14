@@ -1,27 +1,19 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import React from "react";
 //import { configureAmplify, SetS3Config } from "./services";
 import Header from "components/Header/Header.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Storage from "@aws-amplify/storage";
 import withStyles from "@material-ui/core/styles/withStyles";
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
-import Parallax from "components/Parallax/Parallax.jsx";
-import classNames from "classnames";
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import { Auth } from "aws-amplify";
-import Footer from "components/Footer/Footer.jsx";
 import { getWhale, listWhales, getPicture } from "graphql/queries";
 import { updatePicture } from "graphql/mutations";
 import API, { graphqlOperation } from "@aws-amplify/api";
-import { render } from "react-dom";
 import Gallery from "react-grid-gallery";
 import Snackbar from "@material-ui/core/Snackbar";
 import CircularProgress from "@material-ui/core/CircularProgress";
-const dashboardRoutes = [];
-const IMAGES = [];
+
 class SearchPage extends React.Component {
   constructor(props) {
     super(props);
@@ -32,7 +24,7 @@ class SearchPage extends React.Component {
       noData: false,
       selectedImages: [],
       dialogMessage: "",
-      reseponse: undefined,
+      response: undefined,
     };
     this.onSelectImage = this.onSelectImage.bind(this);
     this.getSelectedImages = this.getSelectedImages.bind(this);
@@ -62,7 +54,10 @@ class SearchPage extends React.Component {
       console.log("setting whaleid of images -1 and is_new flag as false");
       for (var i = 0; i < this.state.IMAGES.length; i++) {
         if (this.state.IMAGES[i].isSelected == true) {
-          console.log("rematching selected images", this.state.IMAGES[i].caption);
+          console.log(
+            "rematching selected images",
+            this.state.IMAGES[i].caption
+          );
           const selected_image_name = this.state.IMAGES[i].caption;
           queryWasSuccess = await API.graphql(
             graphqlOperation(updatePicture, {
@@ -71,7 +66,10 @@ class SearchPage extends React.Component {
           );
           if (queryWasSuccess) {
             console.log("Successfully assigned whales ", selected_image_name);
-            this.showSnackBar("Picture '" + selected_image_name + "' can now be re-matched", 5000);
+            this.showSnackBar(
+              "Picture '" + selected_image_name + "' can now be re-matched",
+              5000
+            );
           }
         }
       }
@@ -116,22 +114,38 @@ class SearchPage extends React.Component {
       const S3bucket = await Storage.get("");
       returnPath = S3bucket.split("public/")[0];
       console.log("search page bucket path", returnPath);
-      const whale = await API.graphql(graphqlOperation(getWhale, { id: data.searchInput }));
-      const pictures = await API.graphql(graphqlOperation(getPicture, { id: data.searchInput }));
+      const whale = await API.graphql(
+        graphqlOperation(getWhale, { id: data.searchInput })
+      );
+      const pictures = await API.graphql(
+        graphqlOperation(getPicture, { id: data.searchInput })
+      );
       console.log("whale output aws", whale);
       console.log("pictures output aws", pictures);
       if (whale.data.getWhale) {
-        console.log("whale ID output present. length", whale.data.getWhale.pictures.items.length);
+        console.log(
+          "whale ID output present. length",
+          whale.data.getWhale.pictures.items.length
+        );
         this.state.IMAGES = [];
         whale.data.getWhale.pictures.items.forEach((item) => {
-          this.state.IMAGES.push(this.formatImages(item, data.searchInput, returnPath));
+          this.state.IMAGES.push(
+            this.formatImages(item, data.searchInput, returnPath)
+          );
         });
         this.setState({ noData: false });
       } else if (pictures.data.getPicture) {
-        console.log("pictures name output present. ", pictures.data.getPicture.id);
+        console.log(
+          "pictures name output present. ",
+          pictures.data.getPicture.id
+        );
         this.state.IMAGES = [];
         this.state.IMAGES.push(
-          this.formatImages(pictures.data.getPicture, pictures.data.getPicture.whale.id, returnPath)
+          this.formatImages(
+            pictures.data.getPicture,
+            pictures.data.getPicture.whale.id,
+            returnPath
+          )
         );
         this.setState({ noData: false });
       } else {
@@ -162,21 +176,32 @@ class SearchPage extends React.Component {
       const S3bucket = await Storage.get("");
       returnPath = S3bucket.split("public/")[0];
       console.log("search page bucket path", returnPath);
-      const whale = await API.graphql(graphqlOperation(listWhales, { limit: 3000 }));
+      const whale = await API.graphql(
+        graphqlOperation(listWhales, { limit: 3000 })
+      );
       console.log("whale output aws", whale);
       const whale_items = whale.data.listWhales.items;
       console.log("whale_items", whale_items);
-      const randomID = whale_items[Math.floor(Math.random() * whale_items.length)];
+      const randomID =
+        whale_items[Math.floor(Math.random() * whale_items.length)];
       console.log("randomID", randomID);
-      const random_whale = await API.graphql(graphqlOperation(getWhale, { id: randomID.name }));
+      const random_whale = await API.graphql(
+        graphqlOperation(getWhale, { id: randomID.name })
+      );
       console.log("random_whale", random_whale);
       const picture_items = random_whale.data.getWhale.pictures.items;
       console.log("picture_items", picture_items);
       this.state.IMAGES = [];
       picture_items.forEach((item) => {
-        this.state.IMAGES.push(this.formatImages(item, randomID.name, returnPath));
+        this.state.IMAGES.push(
+          this.formatImages(item, randomID.name, returnPath)
+        );
       });
-      this.setState({ noData: false, searchInput: randomID.name, response: undefined });
+      this.setState({
+        noData: false,
+        searchInput: randomID.name,
+        response: undefined,
+      });
     } catch (e) {
       this.setState({ noData: true, IMAGES: [] });
       console.log("no results found for random whale", e);
@@ -210,11 +235,16 @@ class SearchPage extends React.Component {
       <div>
         <Header
           color="blue"
-          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
-                        width: "90%",
-                        paddingBottom: "0px",
-                        margin: "0 auto",
-                      }} />}
+          brand={
+            <img
+              src={require("assets/img/fluketracker-logo(blue-bg).jpg")}
+              style={{
+                width: "90%",
+                paddingBottom: "0px",
+                margin: "0 auto",
+              }}
+            />
+          }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
@@ -225,29 +255,41 @@ class SearchPage extends React.Component {
         />
         {this.state.user != null ? (
           <div className={classes.container}>
-            <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
+            <div
+              class="section container"
+              style={{ paddingTop: "180px", paddingBottom: "5px" }}
+            >
               <div class="row">
                 <div class="col-12">
                   <div class="article-text">
                     <h2 style={{ paddingTop: "5px" }}>
                       <strong>Search Whale Image 🐳</strong>
                     </h2>
-                    <p style={{ paddingBottom: "5px" }}>You can search for whale images using:</p>
-                    <ul style={{ listStyleType:"none", paddingBottom: "5px", color: "black" }}>
+                    <p style={{ paddingBottom: "5px" }}>
+                      You can search for whale images using:
+                    </p>
+                    <ul
+                      style={{
+                        listStyleType: "none",
+                        paddingBottom: "5px",
+                        color: "black",
+                      }}
+                    >
                       <li>
-                        <strong>Search whale / image: </strong>This will display all whales tagged
-                        to the given ID
+                        <strong>Search whale / image: </strong>This will display
+                        all whales tagged to the given ID
                       </li>
                       <li>
-                        <strong>Display random whale: </strong>This will display the images of a
-                        random whale
+                        <strong>Display random whale: </strong>This will display
+                        the images of a random whale
                       </li>
                       <li>
-                        <strong>Re-match whale: </strong>After searching for a whale ID you can
-                        select one of the displayed pictures and remove the ID from it.
+                        <strong>Re-match whale: </strong>After searching for a
+                        whale ID you can select one of the displayed pictures
+                        and remove the ID from it.
                         <br />
-                        This way you will be able to re-match it again, in case of a
-                        matching-mistake.
+                        This way you will be able to re-match it again, in case
+                        of a matching-mistake.
                       </li>
                     </ul>
                   </div>
@@ -295,7 +337,9 @@ class SearchPage extends React.Component {
             ) : (
               <div></div>
             )}
-            <div size="sm">{this.state.response === "" ? <CircularProgress /> : ""}</div>
+            <div size="sm">
+              {this.state.response === "" ? <CircularProgress /> : ""}
+            </div>
             <Gallery
               images={this.state.IMAGES}
               rowHeight={90}
@@ -305,9 +349,15 @@ class SearchPage extends React.Component {
             />
 
             {this.state.noData && (
-              <p style={{ color: "red" }}>No results found. Please try again.</p>
+              <p style={{ color: "red" }}>
+                No results found. Please try again.
+              </p>
             )}
-            <Snackbar open={dialogMessage !== ""} message={dialogMessage} autoHideDuration={4000} />
+            <Snackbar
+              open={dialogMessage !== ""}
+              message={dialogMessage}
+              autoHideDuration={4000}
+            />
           </div>
         ) : (
           <div></div>
