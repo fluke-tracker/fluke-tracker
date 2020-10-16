@@ -1,6 +1,6 @@
 import React from "react";
 
-import 'semantic-ui-css/semantic.min.css'
+import "semantic-ui-css/semantic.min.css";
 
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -19,8 +19,7 @@ import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.js
 import LinearProgress from "@material-ui/core/LinearProgress";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoComponent.jsx";
-import { Dropdown } from 'semantic-ui-react'
-
+import { Dropdown } from "semantic-ui-react";
 
 import { connect } from "react-redux";
 
@@ -89,14 +88,14 @@ class MatchingPage extends React.Component {
     this.authenticate_user();
   }
 
-   authenticate_user() {
+  authenticate_user() {
     const admins = new Set(["LisaSteiner", "whalewatching"]);
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log("MATCHINGPAGE user", user, user.username);
         this.setState({
           user: user.username,
-          adminFlag: admins.has(user.username)
+          adminFlag: admins.has(user.username),
         });
       })
       .catch((err) => {
@@ -142,9 +141,17 @@ class MatchingPage extends React.Component {
       console.log("whaleObjs", whaleObjs.data);
 
       if (whaleObjs.data.getWhale == null) {
-        console.log("Ooops, This Whale ID doesn't exist. Please select valid Whale ID");
-        idOrFalse = false;
-        existsError = true;
+        console.log("Ooops, This Whale ID doesn't exist. Creating Whale ID with given new ID");
+        const newWhale = await API.graphql(
+          graphqlOperation(createWhale, { input: { id: pId, name: pId } })
+        );
+        const newID = await API.graphql(
+          graphqlOperation(updatePicture, {
+            input: { id: leftImgFileName, is_new: 0, pictureWhaleId: pId },
+          })
+        );
+        idOrFalse = pId;
+        existsError = false;
       } else {
         console.log("whale exists with given id as,", whaleObjs.data.getWhale);
         //mapping whale to existing id and set is_new = 0
@@ -744,15 +751,15 @@ class MatchingPage extends React.Component {
     });
   }
 
-  handlePictureChange(event, data){
-     console.log( "change to picture " + data.options[data.value].text);
-      this.setState({
-        picsLoaded: [false, false],
-        simPicObj: undefined,
-        similar_pictures: [undefined],
-        vertical: parseInt(data.value),
-        horizontal: 0,
-      });
+  handlePictureChange(event, data) {
+    console.log("change to picture " + data.options[data.value].text);
+    this.setState({
+      picsLoaded: [false, false],
+      simPicObj: undefined,
+      similar_pictures: [undefined],
+      vertical: parseInt(data.value),
+      horizontal: 0,
+    });
   }
 
   async fetchNewPicturesList(nextToken, pics, numReq) {
@@ -822,12 +829,16 @@ class MatchingPage extends React.Component {
                       </h2>
                     </div>
                     <Dropdown
-                        placeholder='Select Uploaded Picture'
-                        fluid
-                        search
-                        selection
-                        onChange={this.handlePictureChange}
-                        options={this.state.newPicsList.filter(pic => pic).map((pic, i) => {return {key: i, value: i,text: pic.id}})}
+                      placeholder="Select Uploaded Picture"
+                      fluid
+                      search
+                      selection
+                      onChange={this.handlePictureChange}
+                      options={this.state.newPicsList
+                        .filter((pic) => pic)
+                        .map((pic, i) => {
+                          return { key: i, value: i, text: pic.id };
+                        })}
                     />
                     {this.state.newPicsList.length > 0 ? (
                       <GridContainer>
@@ -908,7 +919,7 @@ class MatchingPage extends React.Component {
                             autoHideDuration={4000}
                           />
                         </GridItem>
-                                                <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
+                        <GridItem xs={12} sm={12} md={6} style={{ color: "black" }}>
                           <strong>Best Matching Picture Number: </strong>
                           <Badge color="success">{this.state.horizontal + 1}</Badge>
                           <br />

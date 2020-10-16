@@ -34,7 +34,7 @@ def main():
                     'updatedAt': '2020-04-10T16:49:42.406Z',
                     'is_new': 1,
                     'embedding': 123,
-                    'owner': 'kanwal',
+                    'owner': 'LisaSteiner',
                     'pictureWhaleId': str(imageid),
                    # **additional
                 })
