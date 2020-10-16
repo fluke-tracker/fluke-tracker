@@ -22,9 +22,35 @@ class CropperComponent extends React.Component {
   tg(natH, natW, guess) {
 	return {v1: guess[0] / 128 * natW, v2: guess[1] / 128 * natH, v3: guess[2] / 128 * natW, v4: guess[3] / 128 * natH};
   }
+
+  dataURItoBlob(dataURI) {
+      // convert base64 to raw binary data held in a string
+      // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+      var byteString = atob(dataURI.split(',')[1]);
+
+      // separate out the mime component
+      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+      // write the bytes of the string to an ArrayBuffer
+      var ab = new ArrayBuffer(byteString.length);
+
+      // create a view into the buffer
+      var ia = new Uint8Array(ab);
+
+      // set the bytes of the buffer to the correct values
+      for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+      }
+
+      // write the ArrayBuffer to a blob, and you're done
+      var blob = new Blob([ab], {type: mimeString});
+      return blob;
+
+  }
+
   async getCroppedImage() {
     return await new Promise(resolve => {
-            return this.cropperRef.current ? this.cropperRef.current.cropper.getCroppedCanvas().toBlob((e) => resolve(e)): resolve(undefined)
+            return this.cropperRef.current ? resolve(this.dataURItoBlob(this.cropperRef.current.cropper.getCroppedCanvas().toDataURL('image/jpeg'))): resolve(undefined)
     });  }
 
   trigger_prediction() {
