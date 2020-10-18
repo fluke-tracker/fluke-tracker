@@ -93,7 +93,7 @@ function HeaderLinks({ ...props }) {
 </>
 }
 {
-            props.user ? <ListItem className={classes.listItem}><Logout {...props}/></ListItem> : <div></div>
+            props.user ? <Logout {...props}/> : <div></div>
 }
 
     </List>

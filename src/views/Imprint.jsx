@@ -154,11 +154,11 @@ class Imprint extends React.Component {
           {...rest}
         />
         <div className={classes.container}>
-          <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
-            <div class="row">
-              <div class="col-12">
+          <div className="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
+            <div className="row">
+              <div className="col-12">
                 <div
-                  class="article-text"
+                  className="article-text"
                   style={{
                     textAlign: "center",
                     color: "black",
@@ -202,7 +202,7 @@ class Imprint extends React.Component {
                 </div>
                 <br />
                 <br />
-                <div class="article-text">
+                <div className="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
                     <b>Collaborator</b>
                   </h1>
@@ -222,7 +222,7 @@ class Imprint extends React.Component {
                     <div>
                     <p style={{ fontFamily: "Roboto, Helvetica, Arial, sans-serif", fontSize: "16px", lineHeight: "24px", fontWeight: "300"}}>In 1988, after graduating with a degree in Marine Science, Lisa joined “Song of the Whale”, the International Fund for Animal Welfare’s research boat in the Azores studying sperm whales. When the boat moved on to other projects in 1992, she became co-founder of Whale Watch Azores to continue that research and now is based permanently in the Azores. Lisa’s main focus has always been in photo identification, be it sperm whales or other species. She has several publications based on photo-id work and presented findings at International marine mammal conferences. For several years, she developed B&W films, printed the flukes and matched them on her living room floor! In 2002, an semi-automated system was developed as part of “Europhlukes” a EU funded project, to do the matching and she has been using that program ever since. But technology has come a long way since 1992 and when the offer came to develop a new algorithm as part of Capgemini’s annual competition, she accepted the offer and the rest as they say is history!</p>
                   </div></div>
-                                <div class="article-text">
+                                <div className="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
                     <b>Development Team</b>
                   </h1>
@@ -238,7 +238,7 @@ class Imprint extends React.Component {
                   </ul>
                   </div>
                   {/* comment
-                <div class="article-text">
+                <div className="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
                     <b>Imprint</b>
                   </h1>
