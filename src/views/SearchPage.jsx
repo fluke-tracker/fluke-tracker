@@ -97,7 +97,7 @@ class SearchPage extends React.Component {
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser searchpage err", err);
-        this.props.history.push("/login-page");
+      /*  this.props.history.push("/login-page"); */
       });
   }
   handleInputChange(event) {
@@ -253,7 +253,6 @@ class SearchPage extends React.Component {
           }}
           {...rest}
         />
-        {this.state.user != null ? (
           <div className={classes.container}>
             <div
               class="section container"
@@ -361,7 +360,6 @@ class SearchPage extends React.Component {
           </div>
         ) : (
           <div></div>
-        )}
       </div>
     );
   }

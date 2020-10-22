@@ -38,7 +38,7 @@ ReactDOM.render(
         <Route path="/browse-pictures/:whale_id" component={SearchPage} />
         <Route path="/browse-pictures" component={SearchPage} />
         <Route path="/about" component={Imprint} />
-        <Route path="/" component={LoginPage} />
+        <Route path="/" component={UploadPage} />
       </Switch>
     </Router>
   </Provider>,
