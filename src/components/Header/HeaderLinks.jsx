@@ -25,7 +25,6 @@ const RegisterButton = (props) => (
         href=""
         color="transparent"
         target="_blank"
-        style={{ color: "white" }}
         className={props.classes.navLink}
       >
         Register
@@ -49,7 +48,7 @@ function HeaderLinks({ ...props }) {
   return (
 
     <List className={classes.list}>
-      { props.user ?
+      {
       <>
       <ListItem className={classes.listItem}>
         <Link to= {"/welcome-upload"} className={classes.navLink} user={props.user}>
@@ -72,28 +71,9 @@ function HeaderLinks({ ...props }) {
            </Link>
       </ListItem>
       </>
-:
-<>
-         <ListItem className={classes.listItem}>
-            <Link to={props.user ? "/welcome-upload" : "/login"} className={classes.navLink} >
-                <Button
-                href=""
-                color="transparent"
-                target="_blank"
-                className={classes.navLink}>{props.user ? `${props.user.name} ${props.user.surname}` : `Login`}</Button>
-            </Link>
-            <Link to={"/about"} className={classes.navLink} >
-                <Button
-                href=""
-                color="transparent"
-                target="_blank"
-                className={classes.navLink}>About</Button>
-            </Link>
-        </ListItem>
-</>
 }
 {
-            props.user ? <Logout {...props}/> : <div></div>
+            props.user ? <Logout {...props}/> : <RegisterButton {...props}/>
 }
 
     </List>

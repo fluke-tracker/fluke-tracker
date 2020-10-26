@@ -32,13 +32,13 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
       <Switch>
-        <Route path="/match-whales" component={MatchingPage} />
-        <Route path="/welcome-upload" component={UploadPage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/browse-pictures/:whale_id" component={SearchPage} />
-        <Route path="/browse-pictures" component={SearchPage} />
-        <Route path="/about" component={Imprint} />
-        <Route path="/" component={LoginPage} />
+        <Route path="/match-whales" render= {() => <MatchingPage/>} />
+        <Route path="/welcome-upload" render= {() => <UploadPage/>} />
+        <Route path="/login" render= {() => <LoginPage/>} />
+        <Route path="/browse-pictures/:whale_id" render= {(props) => <SearchPage {...props}/>} />
+        <Route path="/browse-pictures" render= {(props) => <SearchPage {...props}/>} />
+        <Route path="/about" render= {() => <Imprint/>} />
+        <Route path="/" render= {() => <LoginPage/>} />
       </Switch>
     </Router>
   </Provider>,

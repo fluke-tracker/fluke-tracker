@@ -100,7 +100,8 @@ class MatchingPage extends React.Component {
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser landing page err redirect to login", err);
-        this.props.history.push("/login-page");
+        this.setState({ user: null });
+        //this.props.history.push("/login-page");
       });
   }
 
@@ -817,13 +818,13 @@ class MatchingPage extends React.Component {
           }}
           {...rest}
         />
-        {this.state.user != null ? (
+        {
           <div>
             <div className={classes.container}>
-              <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="article-text">
+              <div className="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="article-text">
                       <h2 style={{ paddingTop: "5px" }}>
                         <strong>Do these whales match?</strong>
                       </h2>
@@ -1011,9 +1012,7 @@ class MatchingPage extends React.Component {
               </div>
             </div>
           </div>
-        ) : (
-          <div></div>
-        )}
+        }
       </div>
     );
   }

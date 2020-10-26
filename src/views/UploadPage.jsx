@@ -55,7 +55,8 @@ class UploadPage extends React.Component {
           "currentAuthenticatedUser uploadpage er pushing to login page",
           err
         );
-        this.props.history.push("/login-page");
+        this.setState({ user: null });
+        //this.props.history.push("/login-page");
       });
   }
   async addResponse(response, color) {
@@ -320,7 +321,7 @@ class UploadPage extends React.Component {
           rightLinks={<HeaderLinks user={this.state.user} />}
           {...rest}
         />
-        {this.state.user != null ? (
+        { (
           <div>
             <div
               className="section container"
@@ -461,6 +462,8 @@ class UploadPage extends React.Component {
                   }}
                   required
                 />
+            {this.state.user != null ? (
+            <>
                 <input
                   style={{ "textAlign": "center" }}
                   value={this.state.imageNames.join(",")}
@@ -468,16 +471,17 @@ class UploadPage extends React.Component {
                   readOnly
                   required
                 />
+
                 {this.state.selectedEnabled === "browserCropping"
-                  ? this.state.imageFilesStrings.map((image, i) => (
-                      <CropperComponent
-                        filename={this.state.imageNames[i]}
-                        ref={(ref) => (this.state.cropperComponents[i] = ref)}
+                  ? this.state.imageFilesStrings.map( (image, i) =>
+                     <CropperComponent
+                        filename={this.state.imageNames[this.i]}
+                        ref={(ref) => (this.state.cropperComponents[this.i] = ref)}
                         workerHandler={this.workerHandler}
-                        key={image}
-                        src={image}
+                        key={this.image}
+                        src={this.image}
                       />
-                    ))
+                    )
                   : ""}
 
                 <Button
@@ -607,12 +611,13 @@ class UploadPage extends React.Component {
                     </h5>
                   ))}
                 </div>
+                    </>
+                   ): "" }
               </div>
+
             </div>
           </div>
-        ) : (
-          <div></div>
-        )}
+        ) }
       </div>
     );
   }

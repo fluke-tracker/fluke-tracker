@@ -31,7 +31,7 @@ type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "Pictu
   whale: Whale @connection(name: "PictureWhale")
   geocoords: String
   date_taken: String
-  embedding: String
+     embedding: String
   uploaded_by: String
   matchLeft: Match @connection(name: "MatchLeftPicture")
   matchRight: Match @connection(name: "MatchRightPicture")

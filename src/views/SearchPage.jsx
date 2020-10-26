@@ -97,7 +97,8 @@ class SearchPage extends React.Component {
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser searchpage err", err);
-        this.props.history.push("/login-page");
+        this.setState({ user: null });
+        //this.props.history.push("/login-page");
       });
   }
   handleInputChange(event) {
@@ -253,7 +254,7 @@ class SearchPage extends React.Component {
           }}
           {...rest}
         />
-        {this.state.user != null ? (
+        { (
           <div className={classes.container}>
             <div
               class="section container"
@@ -359,9 +360,7 @@ class SearchPage extends React.Component {
               autoHideDuration={4000}
             />
           </div>
-        ) : (
-          <div></div>
-        )}
+        ) }
       </div>
     );
   }
