@@ -44,6 +44,8 @@ import { listEuclidianDistances, euclidianDistanceByPicture2 } from "graphql/que
 
 import { Auth } from "aws-amplify";
 
+import moment from "moment";
+
 class MatchingPage extends React.Component {
   constructor(props) {
     super(props);
@@ -60,6 +62,7 @@ class MatchingPage extends React.Component {
       // first array value represents left img, second one the right img
       picsLoaded: [false, false],
       isDeleting: false,
+      imageCreatedAt: "",
     };
 
     this.intervalIds = [];
@@ -792,8 +795,19 @@ class MatchingPage extends React.Component {
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
 
-    const leftButtonsDisabled = !this.state.picsLoaded[0] || this.state.isDeleting;
-    const rightButtonsDisabled = leftButtonsDisabled || !this.state.picsLoaded[1];
+    const leftPicObj = this.state.newPicsList[this.state.vertical];
+    if (leftPicObj !== undefined) {
+      this.state.imageCreatedAt = this.state.newPicsList[this.state.vertical].createdAt;
+    }
+    const myMoment = moment();
+    const myMoment5 = moment(this.state.imageCreatedAt).add(100, "seconds");
+    var allowDelete = false;
+    allowDelete = Boolean(myMoment.diff(myMoment5) > 0);
+    console.log("time diff ", myMoment.diff(myMoment5));
+    console.log("allowdelete ", allowDelete);
+    const leftButtonsDisabled = !allowDelete || this.state.isDeleting;
+    //const rightButtonsDisabled = leftButtonsDisabled || !this.state.picsLoaded[1];
+    const rightButtonsDisabled = leftButtonsDisabled;
 
     return (
       <div>
