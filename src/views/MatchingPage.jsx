@@ -800,7 +800,7 @@ class MatchingPage extends React.Component {
       this.state.imageCreatedAt = this.state.newPicsList[this.state.vertical].createdAt;
     }
     const myMoment = moment();
-    const myMoment5 = moment(this.state.imageCreatedAt).add(100, "seconds");
+    const myMoment5 = moment(this.state.imageCreatedAt).add(300, "seconds");
     var allowDelete = false;
     allowDelete = Boolean(myMoment.diff(myMoment5) > 0);
     console.log("time diff ", myMoment.diff(myMoment5));
