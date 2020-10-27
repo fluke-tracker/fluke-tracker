@@ -54,6 +54,7 @@ export const pictureByIsNewFiltered = /* GraphQL */ `
         geocoords
         date_taken
         uploaded_by
+        createdAt
       }
       nextToken
     }
@@ -76,6 +77,7 @@ export const getPictureFiltered = /* GraphQL */ `
       geocoords
       date_taken
       uploaded_by
+      createdAt
     }
   }
 `;

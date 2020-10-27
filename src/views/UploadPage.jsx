@@ -316,28 +316,14 @@ class UploadPage extends React.Component {
     return (
       <div style={{ minHeight: "100vh" }}>
         <Header
-          brand={
-            <img
-              src={require("assets/img/fluketracker-logo(blue-bg).jpg")}
-              style={{
-                width: "90%",
-                paddingBottom: "0px",
-                margin: "0 auto",
-              }}
-            />
-          }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
-          changeColorOnScroll={{
-            height: "200",
-            color: "black",
-          }}
           {...rest}
         />
         {this.state.user != null ? (
           <div>
             <div
-              class="section container"
+              className="section container"
               style={{
                 backgroundImage: 'url(require("../assets/img/tail.jpg"))',
                 backgroundPosition: "center",
@@ -347,12 +333,12 @@ class UploadPage extends React.Component {
             ></div>
             <div className={classes.container}>
               <div
-                class="section container"
+                className="section container"
                 style={{ paddingTop: "80px", paddingBottom: "5px" }}
               >
-                <div class="row">
-                  <div class="col-12">
-                    <div class="article-text">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="article-text">
                       <h1 style={{ paddingTop: "5px" }}>
                         <strong>FlukeTracker</strong>
                       </h1>
@@ -375,12 +361,12 @@ class UploadPage extends React.Component {
             </div>
             <div className={classes.container}>
               <div
-                class="section container"
+                className="section container"
                 style={{ paddingTop: "5px", paddingBottom: "5px" }}
               >
-                <div class="row">
-                  <div class="col-12">
-                    <div class="article-text">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="article-text">
                       <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
                         <strong>Upload Whale Image 🐳</strong>
                       </h4>
@@ -476,9 +462,10 @@ class UploadPage extends React.Component {
                   required
                 />
                 <input
-                  style={{ "text-align": "center" }}
+                  style={{ "textAlign": "center" }}
                   value={this.state.imageNames.join(",")}
                   placeholder="Select file"
+                  readOnly
                   required
                 />
                 {this.state.selectedEnabled === "browserCropping"
@@ -497,7 +484,7 @@ class UploadPage extends React.Component {
                   style={{ marginLeft: "10px" }}
                   variant="contained"
                   color="info"
-                  size="md"
+                  size="lg"
                   onClick={(e) => {
                     this.upload.value = null;
                     this.upload.click();
@@ -513,7 +500,7 @@ class UploadPage extends React.Component {
                   variant="contained"
                   onClick={() => this.uploadImages()}
                   color="success"
-                  size="md"
+                  size="lg"
                   disabled={this.state.uploadingFiles}
                 >
                   Upload File
