@@ -320,7 +320,6 @@ class UploadPage extends React.Component {
           rightLinks={<HeaderLinks user={this.state.user} />}
           {...rest}
         />
-        {this.state.user != null ? (
           <div>
             <div
               className="section container"
@@ -368,7 +367,7 @@ class UploadPage extends React.Component {
                   <div className="col-12">
                     <div className="article-text">
                       <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
-                        <strong>Upload Whale Image 🐳</strong>
+                        <strong>Upload Whale Image 🐳</strong> (Registration required)
                       </h4>
                       <p style={{ marginBottom: "5px" }}>
                         Here are a few points about the uploading of images:
@@ -437,6 +436,7 @@ class UploadPage extends React.Component {
                   </div>
                 </div>
               </div>
+     {this.state.user != null ? (
               <div style={{ paddingRight: "15px", paddingLeft: "15px" }}>
                 <input
                   multiple={true}
@@ -608,11 +608,12 @@ class UploadPage extends React.Component {
                   ))}
                 </div>
               </div>
-            </div>
-          </div>
+
         ) : (
           <div></div>
         )}
+                    </div>
+          </div>
       </div>
     );
   }

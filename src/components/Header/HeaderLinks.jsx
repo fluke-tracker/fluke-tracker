@@ -49,8 +49,6 @@ function HeaderLinks({ ...props }) {
   return (
 
     <List className={classes.list}>
-      { props.user ?
-      <>
       <ListItem className={classes.listItem}>
         <Link to= {"/welcome-upload"} className={classes.navLink} user={props.user}>
             Welcome &amp; Upload
@@ -71,23 +69,14 @@ function HeaderLinks({ ...props }) {
              About
            </Link>
       </ListItem>
-      </>
+      { props.user ?
+      <>
+     </>
 :
 <>
-         <ListItem className={classes.listItem}>
+       <ListItem className={classes.listItem}>
             <Link to={props.user ? "/welcome-upload" : "/login"} className={classes.navLink} >
-                <Button
-                href=""
-                color="transparent"
-                target="_blank"
-                className={classes.navLink}>{props.user ? `${props.user.name} ${props.user.surname}` : `Login`}</Button>
-            </Link>
-            <Link to={"/about"} className={classes.navLink} >
-                <Button
-                href=""
-                color="transparent"
-                target="_blank"
-                className={classes.navLink}>About</Button>
+            Login
             </Link>
         </ListItem>
 </>

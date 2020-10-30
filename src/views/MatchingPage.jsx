@@ -103,7 +103,7 @@ class MatchingPage extends React.Component {
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser landing page err redirect to login", err);
-        this.props.history.push("/login-page");
+        /* this.props.history.push("/login-page"); */
       });
   }
 
@@ -831,7 +831,6 @@ class MatchingPage extends React.Component {
           }}
           {...rest}
         />
-        {this.state.user != null ? (
           <div>
             <div className={classes.container}>
               <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
@@ -1027,7 +1026,6 @@ class MatchingPage extends React.Component {
           </div>
         ) : (
           <div></div>
-        )}
       </div>
     );
   }
