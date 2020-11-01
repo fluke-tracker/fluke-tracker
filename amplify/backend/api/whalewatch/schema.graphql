@@ -22,7 +22,13 @@ type EuclidianDistance
   distance: Float
 }
 
-type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "PictureByIsNew") {
+type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "PictureByIsNew")
+ @auth(rules: [
+  { allow: owner },
+  { allow: groups, groups: ["Admin"] },
+  { allow: private, operations: [read]},
+  { allow: public, provider: apiKey, operations: [read] },
+]){
   id: ID!
   is_new: Int
   high_res: String
