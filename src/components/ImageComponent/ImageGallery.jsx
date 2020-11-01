@@ -5,7 +5,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Gallery from "react-grid-gallery";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import failImg from "assets/img/error.jpg";
+import failImg from "assets/img/notfound.svg";
 
 const ImageGallery = (props) => {
   const [s3BucketPath, setS3BucketPath] = useState("");

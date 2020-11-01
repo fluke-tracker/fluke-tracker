@@ -369,7 +369,7 @@ class UploadPage extends React.Component {
                   <div className="col-12">
                     <div className="article-text">
                       <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
-                        <strong>Upload Whale Image 🐳</strong>
+                        <strong>Upload Whale Image 🐳</strong> (Registration required)
                       </h4>
                       <p style={{ marginBottom: "5px" }}>
                         Here are a few points about the uploading of images:
