@@ -35,6 +35,9 @@ class UploadPage extends React.Component {
       selectedEnabled: "browserCropping",
     };
     this.workerHandler = new WorkerHandler();
+    Amplify.configure({
+        "aws_appsync_authenticationType": "API_KEY",
+    });
     this.authenticate_user();
     this.handleChangeEnabled = this.handleChangeEnabled.bind(this);
     this.uploadImages = this.uploadImages.bind(this);
@@ -512,7 +515,7 @@ class UploadPage extends React.Component {
                   size="lg"
                   disabled={this.state.uploadingFiles}
                 >
-                  {this.state.user ? "Upload File": "Register to upload"}
+                  {this.state.user ? "Upload File": "Login to upload"}
                 </Button>
                 <div
                   className={

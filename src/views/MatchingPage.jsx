@@ -65,6 +65,9 @@ class MatchingPage extends React.Component {
       isDeleting: false,
       imageCreatedAt: "",
     };
+    Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+    });
 
     this.intervalIds = [];
 

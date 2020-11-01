@@ -21,7 +21,14 @@ type EuclidianDistance
     name: "byPicture2"
     fields: ["picture2", "picture1"]
     queryField: "EuclidianDistanceByPicture2"
-  ) {
+  )
+   @auth(rules: [
+      { allow: owner },
+      { allow: groups, groups: ["Admin"] },
+      { allow: private, operations: [create, read, update, delete]},
+      { allow: public, provider: apiKey, operations: [read] },
+  ])
+{
   picture1: String!
   picture2: String!
   distance: Float

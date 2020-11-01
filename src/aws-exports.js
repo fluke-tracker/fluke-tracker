@@ -11,6 +11,7 @@ const awsmobile = {
     "aws_appsync_graphqlEndpoint": "https://opky2tnssbhnbp3wxvvz2igcle.appsync-api.eu-central-1.amazonaws.com/graphql",
     "aws_appsync_region": "eu-central-1",
     "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+    "aws_appsync_apiKey": "da2-jg6ushv6dffoxkmzfhugmqbx7i",
     "aws_content_delivery_bucket": "haleatch-20200418183437-hostingbucket-whaledev",
     "aws_content_delivery_bucket_region": "eu-central-1",
     "aws_content_delivery_url": "https://d2jrjvkivy5vnq.cloudfront.net",

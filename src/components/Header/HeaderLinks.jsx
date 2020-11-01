@@ -27,7 +27,7 @@ const RegisterButton = (props) => (
         target="_blank"
         className={props.classes.navLink}
       >
-        Register
+        Login/Register
       </Button>
     </Link>
   </ListItem>

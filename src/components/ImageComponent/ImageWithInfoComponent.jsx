@@ -42,7 +42,7 @@ const ImageWithInfoComponent = (props) => {
     }
   };
 
-  if (typeof picObj !== "undefined") {
+  if (typeof picObj !== "undefined" && picObj !== null) {
     const labelsAligned = { minWidth: "165px", display: "inline-block", fontSize: "16px", verticalAlign: "middle" };
 
     const whaleId = picObj.whale ? picObj.whale.id: null;
