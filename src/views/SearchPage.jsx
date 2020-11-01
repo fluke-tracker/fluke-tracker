@@ -13,6 +13,7 @@ import API, { graphqlOperation } from "@aws-amplify/api";
 import Gallery from "react-grid-gallery";
 import Snackbar from "@material-ui/core/Snackbar";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Amplify from '@aws-amplify/core';
 
 class SearchPage extends React.Component {
   constructor(props) {
@@ -26,6 +27,9 @@ class SearchPage extends React.Component {
       dialogMessage: "",
       response: undefined,
     };
+    Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+    });
     this.onSelectImage = this.onSelectImage.bind(this);
     this.getSelectedImages = this.getSelectedImages.bind(this);
     this.authenticate_user();
@@ -94,10 +98,16 @@ class SearchPage extends React.Component {
       .then((user) => {
         console.log("searchpage user", user.username);
         this.setState({ user: user.username });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+        });
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser searchpage err", err);
         this.setState({ user: null });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+        });
         //this.props.history.push("/login-page");
       });
   }
