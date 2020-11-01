@@ -38,7 +38,7 @@ ReactDOM.render(
         <Route path="/browse-pictures/:whale_id" render= {(props) => <SearchPage {...props} history={hist} />} />
         <Route path="/browse-pictures" render= {(props) => <SearchPage {...props} history={hist} />} />
         <Route path="/about" render= {() => <Imprint history={hist} />} />
-        <Route path="/" render= {() => <LoginPage history={hist} />} />
+        <Route path="/" render= {() => <UploadPage history={hist} />} />
       </Switch>
     </Router>
   </Provider>,

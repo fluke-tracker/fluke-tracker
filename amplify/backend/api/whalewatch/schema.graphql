@@ -1,4 +1,9 @@
-type Whale @model {
+type Whale @model @auth(rules: [
+  { allow: owner },
+  { allow: groups, groups: ["Admin"] },
+  { allow: private, operations: [create, read, update, delete]},
+  { allow: public, provider: apiKey, operations: [read] },
+]){
   id: ID!
   name: String!
   pictures: [Picture] @connection(name: "PictureWhale")
@@ -26,7 +31,7 @@ type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "Pictu
  @auth(rules: [
   { allow: owner },
   { allow: groups, groups: ["Admin"] },
-  { allow: private, operations: [read]},
+  { allow: private, operations: [create, read, update, delete]},
   { allow: public, provider: apiKey, operations: [read] },
 ]){
   id: ID!
