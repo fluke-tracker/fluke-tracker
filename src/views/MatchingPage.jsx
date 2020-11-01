@@ -20,6 +20,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoComponent.jsx";
 import { Dropdown } from "semantic-ui-react";
+import Amplify from '@aws-amplify/core';
 
 import { connect } from "react-redux";
 
@@ -100,10 +101,16 @@ class MatchingPage extends React.Component {
           user: user.username,
           adminFlag: admins.has(user.username),
         });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+        });
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser landing page err redirect to login", err);
         this.setState({ user: null });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+        });
         //this.props.history.push("/login-page");
       });
   }

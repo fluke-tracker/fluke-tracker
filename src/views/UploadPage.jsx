@@ -16,6 +16,7 @@ import exifr from "exifr";
 import basicsStyle from "assets/jss/material-kit-react/views/componentsSections/basicsStyle.jsx";
 import CropperComponent from "components/Cropper/Cropper.jsx";
 import WorkerHandler from "views/WorkerHandler.jsx";
+import Amplify from '@aws-amplify/core';
 
 class UploadPage extends React.Component {
   constructor(props) {
@@ -49,6 +50,9 @@ class UploadPage extends React.Component {
       .then((user) => {
         console.log("uploadpage user", user.username);
         this.setState({ user: user });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+        });
       })
       .catch((err) => {
         console.log(
@@ -56,6 +60,9 @@ class UploadPage extends React.Component {
           err
         );
         this.setState({ user: null });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+        });
         //this.props.history.push("/login-page");
       });
   }
@@ -321,7 +328,6 @@ class UploadPage extends React.Component {
           rightLinks={<HeaderLinks user={this.state.user} />}
           {...rest}
         />
-        { (
           <div>
             <div
               className="section container"
@@ -462,8 +468,7 @@ class UploadPage extends React.Component {
                   }}
                   required
                 />
-            {this.state.user != null ? (
-            <>
+
                 <input
                   style={{ "textAlign": "center" }}
                   value={this.state.imageNames.join(",")}
@@ -502,12 +507,12 @@ class UploadPage extends React.Component {
                 <Button
                   style={{ marginLeft: "10px" }}
                   variant="contained"
-                  onClick={() => this.uploadImages()}
+                  onClick={() => this.state.user ? this.uploadImages(): this.props.history.push(`/login`)}
                   color="success"
                   size="lg"
                   disabled={this.state.uploadingFiles}
                 >
-                  Upload File
+                  {this.state.user ? "Upload File": "Register to upload"}
                 </Button>
                 <div
                   className={
@@ -611,13 +616,9 @@ class UploadPage extends React.Component {
                     </h5>
                   ))}
                 </div>
-                    </>
-                   ): "" }
               </div>
-
             </div>
           </div>
-        ) }
       </div>
     );
   }

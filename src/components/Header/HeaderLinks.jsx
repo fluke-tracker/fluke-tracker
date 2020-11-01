@@ -25,7 +25,6 @@ const RegisterButton = (props) => (
         href=""
         color="transparent"
         target="_blank"
-        style={{ color: "white" }}
         className={props.classes.navLink}
       >
         Register
@@ -74,7 +73,7 @@ function HeaderLinks({ ...props }) {
       </>
 }
 {
-            props.user ? <Logout {...props}/> : <div></div>
+            props.user ? <Logout {...props}/> : <RegisterButton {...props}/>
 }
 
     </List>

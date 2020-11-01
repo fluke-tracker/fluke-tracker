@@ -1,96 +1,104 @@
 {
-	"function": {
-		"S3Triggereb38f992": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true
-		},
-		"scanPictures": {
-			"build": true,
-			"providerPlugin": "awscloudformation",
-			"service": "Lambda",
-			"dependsOn": [
-				{
-					"category": "hosting",
-					"resourceName": "S3AndCloudFront",
-					"attributes": [
-						"HostingBucketName"
-					]
-				},
-				{
-					"category": "api",
-					"resourceName": "whalewatch",
-					"attributes": [
-						"GraphQLAPIIdOutput"
-					]
-				}
-			]
-		},
-		"createwatermark": {
-			"build": true,
-			"providerPlugin": "awscloudformation",
-			"service": "Lambda",
-			"dependsOn": [
-				{
-					"category": "api",
-					"resourceName": "whalewatch",
-					"attributes": [
-						"GraphQLAPIIdOutput"
-					]
-				}
-			]
-		}
-	},
-	"auth": {
-		"cognitoed159519": {
-			"service": "Cognito",
-			"providerPlugin": "awscloudformation",
-			"dependsOn": []
-		},
-		"userPoolGroups": {
-			"service": "Cognito-UserPool-Groups",
-			"providerPlugin": "awscloudformation",
-			"dependsOn": [
-				{
-					"category": "auth",
-					"resourceName": "cognitoed159519",
-					"attributes": [
-						"UserPoolId",
-						"AppClientIDWeb",
-						"AppClientID",
-						"IdentityPoolId"
-					]
-				}
-			]
-		}
-	},
-	"api": {
-		"whalewatch": {
-			"service": "AppSync",
-			"providerPlugin": "awscloudformation",
-			"output": {
-				"authConfig": {
-					"additionalAuthenticationProviders": [],
-					"defaultAuthentication": {
-						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
-						"userPoolConfig": {
-							"userPoolId": "authcognitoed159519"
-						}
-					}
-				}
-			}
-		}
-	},
-	"hosting": {
-		"S3AndCloudFront": {
-			"service": "S3AndCloudFront",
-			"providerPlugin": "awscloudformation"
-		}
-	},
-	"storage": {
-		"whaleimages": {
-			"service": "S3",
-			"providerPlugin": "awscloudformation"
-		}
-	}
+  "function": {
+    "S3Triggereb38f992": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true
+    },
+    "scanPictures": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "hosting",
+          "resourceName": "S3AndCloudFront",
+          "attributes": [
+            "HostingBucketName"
+          ]
+        },
+        {
+          "category": "api",
+          "resourceName": "whalewatch",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    },
+    "createwatermark": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "whalewatch",
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ]
+        }
+      ]
+    }
+  },
+  "auth": {
+    "cognitoed159519": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    },
+    "userPoolGroups": {
+      "service": "Cognito-UserPool-Groups",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "cognitoed159519",
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ]
+        }
+      ]
+    }
+  },
+  "api": {
+    "whalewatch": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "API_KEY",
+              "apiKeyConfig": {
+                "apiKeyExpirationDays": 365,
+                "description": "unauthenticatedUsage"
+              }
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authcognitoed159519"
+            }
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "S3AndCloudFront": {
+      "service": "S3AndCloudFront",
+      "providerPlugin": "awscloudformation"
+    }
+  },
+  "storage": {
+    "whaleimages": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
+  }
 }
