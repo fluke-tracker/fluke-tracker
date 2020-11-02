@@ -1,4 +1,9 @@
-type Whale @model {
+type Whale @model @auth(rules: [
+  { allow: owner },
+  { allow: groups, groups: ["Admin"] },
+  { allow: private, operations: [create, read, update, delete]},
+  { allow: public, provider: apiKey, operations: [read] },
+]){
   id: ID!
   name: String!
   pictures: [Picture] @connection(name: "PictureWhale")
@@ -16,13 +21,26 @@ type EuclidianDistance
     name: "byPicture2"
     fields: ["picture2", "picture1"]
     queryField: "EuclidianDistanceByPicture2"
-  ) {
+  )
+   @auth(rules: [
+      { allow: owner },
+      { allow: groups, groups: ["Admin"] },
+      { allow: private, operations: [create, read, update, delete]},
+      { allow: public, provider: apiKey, operations: [read] },
+  ])
+{
   picture1: String!
   picture2: String!
   distance: Float
 }
 
-type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "PictureByIsNew") {
+type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "PictureByIsNew")
+ @auth(rules: [
+  { allow: owner },
+  { allow: groups, groups: ["Admin"] },
+  { allow: private, operations: [create, read, update, delete]},
+  { allow: public, provider: apiKey, operations: [read] },
+]){
   id: ID!
   is_new: Int
   high_res: String
@@ -31,7 +49,7 @@ type Picture @model @key(name: "byIsNew", fields: ["is_new"], queryField: "Pictu
   whale: Whale @connection(name: "PictureWhale")
   geocoords: String
   date_taken: String
-  embedding: String
+     embedding: String
   uploaded_by: String
   matchLeft: Match @connection(name: "MatchLeftPicture")
   matchRight: Match @connection(name: "MatchRightPicture")

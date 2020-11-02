@@ -16,6 +16,8 @@ import exifr from "exifr";
 import basicsStyle from "assets/jss/material-kit-react/views/componentsSections/basicsStyle.jsx";
 import CropperComponent from "components/Cropper/Cropper.jsx";
 import WorkerHandler from "views/WorkerHandler.jsx";
+import { Icon } from 'semantic-ui-react'
+import Amplify from '@aws-amplify/core';
 
 class UploadPage extends React.Component {
   constructor(props) {
@@ -34,6 +36,9 @@ class UploadPage extends React.Component {
       selectedEnabled: "browserCropping",
     };
     this.workerHandler = new WorkerHandler();
+    Amplify.configure({
+        "aws_appsync_authenticationType": "API_KEY",
+    });
     this.authenticate_user();
     this.handleChangeEnabled = this.handleChangeEnabled.bind(this);
     this.uploadImages = this.uploadImages.bind(this);
@@ -49,13 +54,20 @@ class UploadPage extends React.Component {
       .then((user) => {
         console.log("uploadpage user", user.username);
         this.setState({ user: user });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+        });
       })
       .catch((err) => {
         console.log(
           "currentAuthenticatedUser uploadpage er pushing to login page",
           err
         );
-        this.props.history.push("/login-page");
+        this.setState({ user: null });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+        });
+        //this.props.history.push("/login-page");
       });
   }
   async addResponse(response, color) {
@@ -320,7 +332,6 @@ class UploadPage extends React.Component {
           rightLinks={<HeaderLinks user={this.state.user} />}
           {...rest}
         />
-        {this.state.user != null ? (
           <div>
             <div
               className="section container"
@@ -354,6 +365,14 @@ class UploadPage extends React.Component {
                         entire whale catalogue on the <i> Browse Pictures </i>{" "}
                         page.
                       </p>
+                      <video id="vid" src={require("../assets/mp4/whatcanyoudo.mp4")} height="200px" width="400px" autoPlay muted loop>
+                          Ihr Browser kann dieses Video nicht wiedergeben.<br/>
+                          Dieser Film zeigt eine Demonstration der Website.
+                          Sie können ihn unter <a href={require("../assets/mp4/whatcanyoudo.mp4")}>Link-Addresse</a> abrufen.
+                      </video>
+                      <script>
+                        document.getElementById('vid').play();
+                      </script>
                     </div>
                   </div>
                 </div>
@@ -368,7 +387,7 @@ class UploadPage extends React.Component {
                   <div className="col-12">
                     <div className="article-text">
                       <h4 style={{ paddingTop: "5px", marginTop: "10px" }}>
-                        <strong>Upload Whale Image 🐳</strong>
+                        <strong>Upload Whale Image 🐳</strong> (Registration required)
                       </h4>
                       <p style={{ marginBottom: "5px" }}>
                         Here are a few points about the uploading of images:
@@ -461,23 +480,29 @@ class UploadPage extends React.Component {
                   }}
                   required
                 />
+
                 <input
                   style={{ "textAlign": "center" }}
                   value={this.state.imageNames.join(",")}
+                  onClick={(e) => {
+                    this.upload.value = null;
+                    this.upload.click();
+                  }}
                   placeholder="Select file"
                   readOnly
                   required
                 />
+
                 {this.state.selectedEnabled === "browserCropping"
-                  ? this.state.imageFilesStrings.map((image, i) => (
-                      <CropperComponent
+                  ? this.state.imageFilesStrings.map( (image, i) =>
+                     <CropperComponent
                         filename={this.state.imageNames[i]}
                         ref={(ref) => (this.state.cropperComponents[i] = ref)}
                         workerHandler={this.workerHandler}
                         key={image}
                         src={image}
                       />
-                    ))
+                    )
                   : ""}
 
                 <Button
@@ -493,17 +518,17 @@ class UploadPage extends React.Component {
                     this.state.uploadingFiles ? "uploading..." : undefined
                   }
                 >
-                  Browse
+                  <Icon name="folder open outline"/>Browse
                 </Button>
                 <Button
                   style={{ marginLeft: "10px" }}
                   variant="contained"
-                  onClick={() => this.uploadImages()}
+                  onClick={() => this.state.user ? this.uploadImages(): this.props.history.push(`/login`)}
                   color="success"
                   size="lg"
                   disabled={this.state.uploadingFiles}
                 >
-                  Upload File
+                  {this.state.user ? <><Icon name="cloud upload"/><div>Upload File</div></> : <><Icon name="address book outline"/><div>Login to upload</div></>}
                 </Button>
                 <div
                   className={
@@ -596,7 +621,7 @@ class UploadPage extends React.Component {
                   />
                 </div>
                 <div size="sm">
-                  {this.state.uploadingFiles === true ? (
+                  {this.state.uploadingFiles ? (
                     <CircularProgress />
                   ) : (
                     ""
@@ -610,9 +635,6 @@ class UploadPage extends React.Component {
               </div>
             </div>
           </div>
-        ) : (
-          <div></div>
-        )}
       </div>
     );
   }

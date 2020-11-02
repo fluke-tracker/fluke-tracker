@@ -168,10 +168,23 @@ class LoginPage extends React.Component {
     return (
       <div>
         <Header
-          absolute
-          color="transparent"
-          brand=""
-          rightLinks={<HeaderLinks user={this.state.user} state={this.state} />}
+          color="blue"
+          brand={
+            <img
+              src={require("assets/img/fluketracker-logo(blue-bg).jpg")}
+              style={{
+                width: "90%",
+                paddingBottom: "0px",
+                margin: "0 auto",
+              }}
+            />
+          }
+          fixed
+          rightLinks={<HeaderLinks user={this.state.user} />}
+          changeColorOnScroll={{
+            height: "400",
+            color: "black",
+          }}
           {...rest}
         />
         <div
@@ -194,6 +207,7 @@ class LoginPage extends React.Component {
                     fontSize: "100%",
                     lineHeight: "1.6",
                     border: "1px solid",
+                    'marginTop': "10%"
                   }}
                 >
                   <div

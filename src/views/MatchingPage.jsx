@@ -20,6 +20,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ImageWithInfoComponent from "components/ImageComponent/ImageWithInfoComponent.jsx";
 import { Dropdown } from "semantic-ui-react";
+import Amplify from '@aws-amplify/core';
 
 
 import { connect } from "react-redux";
@@ -65,6 +66,9 @@ class MatchingPage extends React.Component {
       isDeleting: false,
       imageCreatedAt: "",
     };
+    Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+    });
 
     this.intervalIds = [];
 
@@ -101,10 +105,17 @@ class MatchingPage extends React.Component {
           user: user.username,
           adminFlag: admins.has(user.username),
         });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+        });
       })
       .catch((err) => {
         console.log("currentAuthenticatedUser landing page err redirect to login", err);
-        this.props.history.push("/login-page");
+        this.setState({ user: null });
+        Amplify.configure({
+            "aws_appsync_authenticationType": "API_KEY",
+        });
+        //this.props.history.push("/login-page");
       });
   }
 
@@ -187,7 +198,7 @@ class MatchingPage extends React.Component {
         5000
       );
     }
-    this.fetchNewPicturesList(undefined, [], 0);
+    this.fetchNewPicturesList();
   }
 
   async deleteLeftPicture() {
@@ -236,7 +247,7 @@ class MatchingPage extends React.Component {
           .catch((err) => console.log("watermark err", err));
 
         // update view
-        this.fetchNewPicturesList(undefined, [], 0);
+        this.fetchNewPicturesList();
       } catch (error) {
         console.log(error);
         this.showSnackBarError();
@@ -379,7 +390,7 @@ class MatchingPage extends React.Component {
       await API.graphql(
         graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } })
       );
-      this.fetchNewPicturesList(undefined, [], 0);
+      this.fetchNewPicturesList();
     }
   }
 
@@ -562,7 +573,7 @@ class MatchingPage extends React.Component {
   componentDidMount() {
     document.addEventListener("keydown", this._handleKeyDown);
 
-    this.fetchNewPicturesList(undefined, [], 0);
+    this.fetchNewPicturesList();
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -766,15 +777,30 @@ class MatchingPage extends React.Component {
     });
   }
 
-  async fetchNewPicturesList(nextToken, pics, numReq) {
+  async fetchNewPicturesList() {
+    let pics = [];
+    let nextToken = undefined;
+    const filename = this.props.match ? this.props.match.params.filename: undefined;
     console.log("AT BEGINNING OF FETCHNEWPICTURESLIST");
     try {
-      const result = await API.graphql(
-        // retrieving only the necessary information, therefore using the pictureByIsNewFiltered query
-        graphqlOperation(pictureByIsNewFiltered, { is_new: 1, limit: 2000, nextToken: nextToken })
-      );
-      result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
-      nextToken = result.data.PictureByIsNew.nextToken;
+      if (filename !== undefined) {
+            const result = await API.graphql(
+                graphqlOperation(getPictureFiltered, {id: filename})
+            );
+            pics.push(result.data.getPicture);
+      }
+      else {
+          let i = 0;
+          while(nextToken && i < 5 || nextToken === undefined) {
+              const result = await API.graphql(
+                // retrieving only the necessary information, therefore using the pictureByIsNewFiltered query
+                graphqlOperation(pictureByIsNewFiltered, { is_new: 1, limit: 2000, nextToken: nextToken })
+              );
+              result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
+              nextToken = result.data.PictureByIsNew.nextToken;
+              i = i+1;
+          }
+      }
 
       console.log("IN PROCESSING - SETTING STATE");
       console.log(pics);
@@ -832,13 +858,13 @@ class MatchingPage extends React.Component {
           }}
           {...rest}
         />
-        {this.state.user != null ? (
+        {
           <div>
             <div className={classes.container}>
-              <div class="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="article-text">
+              <div className="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="article-text">
                       <h2 style={{ paddingTop: "5px" }}>
                         <strong>Do these whales match?</strong>
                       </h2>
@@ -1026,9 +1052,7 @@ class MatchingPage extends React.Component {
               </div>
             </div>
           </div>
-        ) : (
-          <div></div>
-        )}
+        }
       </div>
     );
   }
