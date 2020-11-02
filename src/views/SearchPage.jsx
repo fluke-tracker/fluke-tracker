@@ -20,7 +20,6 @@ class SearchPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchInput: "",
       user: null,
       IMAGES: [],
       noData: false,
@@ -29,6 +28,7 @@ class SearchPage extends React.Component {
       response: undefined,
       loading: true,
       whales: [],
+      searchResult: [],
     };
     Amplify.configure({
             "aws_appsync_authenticationType": "API_KEY",
@@ -42,10 +42,10 @@ class SearchPage extends React.Component {
 
   }
   componentDidMount() {
-    if (this.props.match.params.whale_id) {
-      this.state.searchInput = this.props.match.params.whale_id;
-      this.searchRef.current.state.value = this.state.searchInput;
-      this.searchWhales(this.state);
+    const whale_id = this.props.match.params.whale_id;
+    if (whale_id) {
+      this.searchRef.current.state.value = whale_id;
+      this.searchWhales(this.state, whale_id);
     }
   }
 
@@ -55,6 +55,7 @@ class SearchPage extends React.Component {
     );
     console.log("whale output aws", _whales);
     const whale_items = _whales.data.listWhales.items;
+    await this.setState({searchResult: this.state.whales.map(item => {return {'title': item}})});
     await this.setState({whales: whale_items.map(item => item.name)})
     await this.setState({loading: false})
     return whale_items
@@ -97,7 +98,8 @@ class SearchPage extends React.Component {
           }
         }
       }
-      this.searchWhales(this.state);
+      const searchInput = this.searchRef.current.state.value
+      this.searchWhales(this.state, searchInput);
     } catch (e) {
       console.log("error while re-setting whaleID and is_new flag");
     }
@@ -139,7 +141,7 @@ class SearchPage extends React.Component {
       [event.target.name]: event.target.value,
     });
   }
-  async searchWhales(data) {
+  async searchWhales(data, query) {
     let returnPath;
     try {
       await this.setState({loading: true})
@@ -147,10 +149,10 @@ class SearchPage extends React.Component {
       returnPath = S3bucket.split("public/")[0];
       console.log("search page bucket path", returnPath);
       const whale = await API.graphql(
-        graphqlOperation(getWhale, { id: data.searchInput })
+        graphqlOperation(getWhale, { id: query })
       );
       const pictures = await API.graphql(
-        graphqlOperation(getPicture, { id: data.searchInput })
+        graphqlOperation(getPicture, { id: query })
       );
       await this.setState({loading: false})
       console.log("whale output aws", whale);
@@ -163,7 +165,7 @@ class SearchPage extends React.Component {
         this.state.IMAGES = [];
         whale.data.getWhale.pictures.items.forEach((item) => {
           this.state.IMAGES.push(
-            this.formatImages(item, data.searchInput, returnPath)
+            this.formatImages(item, query, returnPath)
           );
         });
         this.setState({ noData: false });
@@ -193,10 +195,10 @@ class SearchPage extends React.Component {
   }
   async handleSubmit(event) {
     event.preventDefault();
-    await this.setState({searchInput: this.searchRef.current.state.value});
+    const searchInput = event.target.textContent;
     const data = this.state;
     console.log("state before submit", data);
-    this.searchWhales(data);
+    this.searchWhales(data, searchInput);
     console.log("state after submit", this.state);
   }
 
@@ -208,7 +210,7 @@ class SearchPage extends React.Component {
     let returnPath;
     try {
       this.setState({loading: true})
-      this.setState({ IMAGES: [], searchInput: "", response: "" });
+      this.setState({ IMAGES: [], response: "" });
       const S3bucket = await Storage.get("");
       returnPath = S3bucket.split("public/")[0];
       console.log("search page bucket path", returnPath);
@@ -232,7 +234,6 @@ class SearchPage extends React.Component {
       });
       this.setState({
         noData: false,
-        searchInput: randomID,
         response: undefined,
       });
       this.searchRef.current.state.value = randomID;
@@ -260,15 +261,16 @@ class SearchPage extends React.Component {
     };
   }
   async _handleKeyDown(e) {
+    const searchInput = this.searchRef.current.state.value + (e.key === "Backspace" ? "" : String.fromCharCode(e.keyCode));
+    console.log(searchInput);
+    this.setState({searchResult: this.state.whales.filter(item => { return item.toString().startsWith(searchInput)}).map(item => {return {'title': item}})});
     if (e.key === 'Enter') {
-      await this.setState({searchInput: this.searchRef.current.state.value});
-      this.searchWhales(this.state);
+      this.searchWhales(this.state, searchInput);
     }
   }
   render() {
     const { dialogMessage } = this.state;
     const { classes, ...rest } = this.props;
-    const searchInput = this.state.searchInput;
     const admins = new Set(["LisaSteiner", "whalewatching"]);
     const adminFlag = admins.has(this.state.user) ? true : false;
     console.log("adminFlag", adminFlag);
@@ -340,12 +342,13 @@ class SearchPage extends React.Component {
             </div>
 
             <Search
-              results={this.state.whales.map(item => {return {'title': item}})}
+              results={this.state.searchResult}
               placeholder="whale ID / image name"
               loading={this.state.loading}
               onResultSelect={this.handleSubmit.bind(this)}
               ref={this.searchRef}
               onKeyDown={this._handleKeyDown.bind(this)}
+              noResultsMessage="Whale id not found, search if you want to query image"
             />
 
             <Button
