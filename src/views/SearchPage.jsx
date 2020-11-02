@@ -27,7 +27,7 @@ class SearchPage extends React.Component {
       selectedImages: [],
       dialogMessage: "",
       response: undefined,
-      loading: false,
+      loading: true,
       whales: [],
     };
     Amplify.configure({
@@ -52,7 +52,8 @@ class SearchPage extends React.Component {
     );
     console.log("whale output aws", _whales);
     const whale_items = _whales.data.listWhales.items;
-    await this.setState({whales: whale_items.map(item => {return {title: item.id}})})
+    await this.setState({whales: whale_items.map(item => item.name)})
+    await this.setState({loading: false})
     return whale_items
   }
   onSelectImage(index, image) {
@@ -189,9 +190,9 @@ class SearchPage extends React.Component {
   }
   async handleSubmit(event) {
     event.preventDefault();
+    await this.setState({searchInput: this.searchRef.current.state.value});
     const data = this.state;
     console.log("state before submit", data);
-    await this.setState({searchInput: this.searchRef.current.state.value});
     this.searchWhales(data);
     console.log("state after submit", this.state);
   }
@@ -208,17 +209,14 @@ class SearchPage extends React.Component {
       const S3bucket = await Storage.get("");
       returnPath = S3bucket.split("public/")[0];
       console.log("search page bucket path", returnPath);
-      const whale = await API.graphql(
-        graphqlOperation(listWhales, { limit: 3000 })
-      );
-      console.log("whale output aws", whale);
-      const whale_items = whale.data.listWhales.items;
+
+      const whale_items = this.state.whales;
       console.log("whale_items", whale_items);
       const randomID =
         whale_items[Math.floor(Math.random() * whale_items.length)];
       console.log("randomID", randomID);
       const random_whale = await API.graphql(
-        graphqlOperation(getWhale, { id: randomID.name })
+        graphqlOperation(getWhale, { id: randomID })
       );
       console.log("random_whale", random_whale);
       const picture_items = random_whale.data.getWhale.pictures.items;
@@ -226,15 +224,15 @@ class SearchPage extends React.Component {
       this.state.IMAGES = [];
       picture_items.forEach((item) => {
         this.state.IMAGES.push(
-          this.formatImages(item, randomID.name, returnPath)
+          this.formatImages(item, randomID, returnPath)
         );
       });
       this.setState({
         noData: false,
-        searchInput: randomID.name,
+        searchInput: randomID,
         response: undefined,
       });
-      this.searchRef.current.state.value = randomID.name;
+      this.searchRef.current.state.value = randomID;
       this.setState({loading: false})
     } catch (e) {
       this.setState({ noData: true, IMAGES: [] });
@@ -339,7 +337,7 @@ class SearchPage extends React.Component {
             </div>
 
             <Search
-              results={this.state.whales}
+              results={this.state.whales.map(item => {return {'title': item}})}
               placeholder="whale ID / image name"
               loading={this.state.loading}
               onResultSeleect={this.handleSubmit.bind(this)}
