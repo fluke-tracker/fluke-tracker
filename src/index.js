@@ -32,6 +32,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
       <Switch>
+        <Route path="/match-whales/:filename" render= {(props) => <MatchingPage {...props} history={hist} />} />
         <Route path="/match-whales" render= {() => <MatchingPage history={hist} />} />
         <Route path="/welcome-upload" render= {() => <UploadPage history={hist} />} />
         <Route path="/login" render= {() => <LoginPage history={hist} />} />

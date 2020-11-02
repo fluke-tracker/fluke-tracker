@@ -197,7 +197,7 @@ class MatchingPage extends React.Component {
         5000
       );
     }
-    this.fetchNewPicturesList(undefined, [], 0);
+    this.fetchNewPicturesList();
   }
 
   async deleteLeftPicture() {
@@ -246,7 +246,7 @@ class MatchingPage extends React.Component {
           .catch((err) => console.log("watermark err", err));
 
         // update view
-        this.fetchNewPicturesList(undefined, [], 0);
+        this.fetchNewPicturesList();
       } catch (error) {
         console.log(error);
         this.showSnackBarError();
@@ -389,7 +389,7 @@ class MatchingPage extends React.Component {
       await API.graphql(
         graphqlOperation(updatePicture, { input: { id: left_img_name, is_new: 0 } })
       );
-      this.fetchNewPicturesList(undefined, [], 0);
+      this.fetchNewPicturesList();
     }
   }
 
@@ -572,7 +572,7 @@ class MatchingPage extends React.Component {
   componentDidMount() {
     document.addEventListener("keydown", this._handleKeyDown);
 
-    this.fetchNewPicturesList(undefined, [], 0);
+    this.fetchNewPicturesList();
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -776,18 +776,29 @@ class MatchingPage extends React.Component {
     });
   }
 
-  async fetchNewPicturesList(nextToken, pics, numReq) {
+  async fetchNewPicturesList() {
+    let pics = [];
+    let nextToken = undefined;
+    const filename = this.props.match ? this.props.match.params.filename: undefined;
     console.log("AT BEGINNING OF FETCHNEWPICTURESLIST");
     try {
-     let i = 0;
-      while(nextToken && i < 5 || nextToken === undefined) {
-          const result = await API.graphql(
-            // retrieving only the necessary information, therefore using the pictureByIsNewFiltered query
-            graphqlOperation(pictureByIsNewFiltered, { is_new: 1, limit: 2000, nextToken: nextToken })
-          );
-          result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
-          nextToken = result.data.PictureByIsNew.nextToken;
-          i = i+1;
+      if (filename !== undefined) {
+            const result = await API.graphql(
+                graphqlOperation(getPictureFiltered, {id: filename})
+            );
+            pics.push(result.data.getPicture);
+      }
+      else {
+          let i = 0;
+          while(nextToken && i < 5 || nextToken === undefined) {
+              const result = await API.graphql(
+                // retrieving only the necessary information, therefore using the pictureByIsNewFiltered query
+                graphqlOperation(pictureByIsNewFiltered, { is_new: 1, limit: 2000, nextToken: nextToken })
+              );
+              result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
+              nextToken = result.data.PictureByIsNew.nextToken;
+              i = i+1;
+          }
       }
 
       console.log("IN PROCESSING - SETTING STATE");
