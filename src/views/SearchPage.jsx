@@ -378,9 +378,7 @@ class SearchPage extends React.Component {
             ) : (
               <div></div>
             )}
-            <div size="sm">
-              {this.state.response === "" ? <CircularProgress /> : ""}
-            </div>
+
             <Gallery
               images={this.state.IMAGES}
               rowHeight={90}
