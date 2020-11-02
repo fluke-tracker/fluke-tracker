@@ -207,7 +207,7 @@ class LoginPage extends React.Component {
                     fontSize: "100%",
                     lineHeight: "1.6",
                     border: "1px solid",
-                    'margin-top': "10%"
+                    'marginTop': "10%"
                   }}
                 >
                   <div

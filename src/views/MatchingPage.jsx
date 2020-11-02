@@ -779,12 +779,16 @@ class MatchingPage extends React.Component {
   async fetchNewPicturesList(nextToken, pics, numReq) {
     console.log("AT BEGINNING OF FETCHNEWPICTURESLIST");
     try {
-      const result = await API.graphql(
-        // retrieving only the necessary information, therefore using the pictureByIsNewFiltered query
-        graphqlOperation(pictureByIsNewFiltered, { is_new: 1, limit: 2000, nextToken: nextToken })
-      );
-      result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
-      nextToken = result.data.PictureByIsNew.nextToken;
+     let i = 0;
+      while(nextToken && i < 5 || nextToken === undefined) {
+          const result = await API.graphql(
+            // retrieving only the necessary information, therefore using the pictureByIsNewFiltered query
+            graphqlOperation(pictureByIsNewFiltered, { is_new: 1, limit: 2000, nextToken: nextToken })
+          );
+          result.data.PictureByIsNew.items.forEach((picItem) => pics.push(picItem));
+          nextToken = result.data.PictureByIsNew.nextToken;
+          i = i+1;
+      }
 
       console.log("IN PROCESSING - SETTING STATE");
       console.log(pics);

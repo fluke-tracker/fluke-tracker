@@ -16,6 +16,7 @@ import exifr from "exifr";
 import basicsStyle from "assets/jss/material-kit-react/views/componentsSections/basicsStyle.jsx";
 import CropperComponent from "components/Cropper/Cropper.jsx";
 import WorkerHandler from "views/WorkerHandler.jsx";
+import { Icon } from 'semantic-ui-react'
 import Amplify from '@aws-amplify/core';
 
 class UploadPage extends React.Component {
@@ -364,6 +365,14 @@ class UploadPage extends React.Component {
                         entire whale catalogue on the <i> Browse Pictures </i>{" "}
                         page.
                       </p>
+                      <video id="vid" src={require("../assets/mp4/whatcanyoudo.mp4")} height="200px" width="400px" autoPlay muted loop>
+                          Ihr Browser kann dieses Video nicht wiedergeben.<br/>
+                          Dieser Film zeigt eine Demonstration der Website.
+                          Sie können ihn unter <a href={require("../assets/mp4/whatcanyoudo.mp4")}>Link-Addresse</a> abrufen.
+                      </video>
+                      <script>
+                        document.getElementById('vid').play();
+                      </script>
                     </div>
                   </div>
                 </div>
@@ -475,6 +484,10 @@ class UploadPage extends React.Component {
                 <input
                   style={{ "textAlign": "center" }}
                   value={this.state.imageNames.join(",")}
+                  onClick={(e) => {
+                    this.upload.value = null;
+                    this.upload.click();
+                  }}
                   placeholder="Select file"
                   readOnly
                   required
@@ -483,11 +496,11 @@ class UploadPage extends React.Component {
                 {this.state.selectedEnabled === "browserCropping"
                   ? this.state.imageFilesStrings.map( (image, i) =>
                      <CropperComponent
-                        filename={this.state.imageNames[this.i]}
-                        ref={(ref) => (this.state.cropperComponents[this.i] = ref)}
+                        filename={this.state.imageNames[i]}
+                        ref={(ref) => (this.state.cropperComponents[i] = ref)}
                         workerHandler={this.workerHandler}
-                        key={this.image}
-                        src={this.image}
+                        key={image}
+                        src={image}
                       />
                     )
                   : ""}
@@ -505,7 +518,7 @@ class UploadPage extends React.Component {
                     this.state.uploadingFiles ? "uploading..." : undefined
                   }
                 >
-                  Browse
+                  <Icon name="folder open outline"/>Browse
                 </Button>
                 <Button
                   style={{ marginLeft: "10px" }}
@@ -515,7 +528,7 @@ class UploadPage extends React.Component {
                   size="lg"
                   disabled={this.state.uploadingFiles}
                 >
-                  {this.state.user ? "Upload File": "Login to upload"}
+                  {this.state.user ? <><Icon name="cloud upload"/><div>Upload File</div></> : <><Icon name="address book outline"/><div>Login to upload</div></>}
                 </Button>
                 <div
                   className={
@@ -608,7 +621,7 @@ class UploadPage extends React.Component {
                   />
                 </div>
                 <div size="sm">
-                  {this.state.uploadingFiles === true ? (
+                  {this.state.uploadingFiles ? (
                     <CircularProgress />
                   ) : (
                     ""

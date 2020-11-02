@@ -6,6 +6,7 @@ import Button from "components/CustomButtons/Button.jsx";
 import ContinuousSlider from "components/Slider/Slider.jsx";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Tooltip from '@material-ui/core/Tooltip'
+import { Icon } from 'semantic-ui-react'
 
 class CropperComponent extends React.Component {
   constructor(props) {
@@ -137,8 +138,8 @@ class CropperComponent extends React.Component {
             <Tooltip title="Predict cropping automatically">
                 <Button onClick={() => this.trigger_prediction()}>★</Button>
             </Tooltip>
-            <Tooltip title="Save cropped image">
-                <Button onClick={() => this.download_file()}>💾</Button>
+            <Tooltip title="Open cropped image">
+                <Button onClick={() => this.download_file()}><Icon name="folder open outline"/></Button>
             </Tooltip>
                 {!this.state.isPredicted ? <Tooltip title="Waiting for autocrop to finish"><CircularProgress /></Tooltip> : ""}
             <br/>
