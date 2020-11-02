@@ -20,15 +20,8 @@ import { Auth } from "aws-amplify";
 
 const RegisterButton = (props) => (
   <ListItem className={props.classes.listItem}>
-    <Link to={"/login"}>
-      <Button
-        href=""
-        color="transparent"
-        target="_blank"
-        className={props.classes.navLink}
-      >
+    <Link to={"/login"} className={props.classes.navLink} user={props.user}>
         Login/Register
-      </Button>
     </Link>
   </ListItem>
 );
