@@ -38,14 +38,17 @@ class SearchPage extends React.Component {
     this.getSelectedImages = this.getSelectedImages.bind(this);
     this.authenticate_user();
 
-    if (props.match.params.whale_id) {
-      this.state.searchInput = props.match.params.whale_id;
-      this.searchRef.current.state.value = this.state.searchInput;
-      this.searchWhales(this.state);
-    }
     this.getWhales();
 
   }
+  componentDidMount() {
+    if (this.props.match.params.whale_id) {
+      this.state.searchInput = this.props.match.params.whale_id;
+      this.searchRef.current.state.value = this.state.searchInput;
+      this.searchWhales(this.state);
+    }
+  }
+
   async getWhales() {
     const _whales = await API.graphql(
         graphqlOperation(listWhales, { limit: 3000 })
@@ -340,9 +343,9 @@ class SearchPage extends React.Component {
               results={this.state.whales.map(item => {return {'title': item}})}
               placeholder="whale ID / image name"
               loading={this.state.loading}
-              onResultSeleect={this.handleSubmit.bind(this)}
-              onKeyDown={this._handleKeyDown.bind(this)}
+              onResultSelect={this.handleSubmit.bind(this)}
               ref={this.searchRef}
+              onKeyDown={this._handleKeyDown.bind(this)}
             />
 
             <Button
@@ -361,7 +364,7 @@ class SearchPage extends React.Component {
               color="info"
               size="sm"
             >
-              Display Random Whale
+              🎲 Display Random Whale
             </Button>
             {adminFlag ? (
               <Button
