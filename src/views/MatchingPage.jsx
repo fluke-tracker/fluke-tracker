@@ -834,7 +834,7 @@ class MatchingPage extends React.Component {
     console.log("allowdelete ", allowDelete);
     const leftButtonsDisabled = !allowDelete || this.state.isDeleting;
     //const rightButtonsDisabled = leftButtonsDisabled || !this.state.picsLoaded[1];
-    const rightButtonsDisabled = leftButtonsDisabled;
+    const rightButtonsDisabled = this.state.isDeleting;
 
     return (
       <div>
