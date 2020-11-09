@@ -365,7 +365,7 @@ class UploadPage extends React.Component {
                         entire whale catalogue on the <i> Browse Pictures </i>{" "}
                         page.
                       </p>
-                      <video id="vid" src={require("../assets/mp4/whatcanyoudo.mp4")} height="200px" width="400px" autoPlay muted loop>
+                      <video id="vid" src={require("../assets/mp4/whatcanyoudo.mp4")} height="auto" width="600px" autoPlay muted loop>
                           Ihr Browser kann dieses Video nicht wiedergeben.<br/>
                           Dieser Film zeigt eine Demonstration der Website.
                           Sie können ihn unter <a href={require("../assets/mp4/whatcanyoudo.mp4")}>Link-Addresse</a> abrufen.
