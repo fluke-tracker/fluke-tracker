@@ -42,7 +42,8 @@
       },
       "function": {
         "S3Triggereb38f992": {},
-        "scanPictures": {}
+        "scanPictures": {},
+        "createwatermark": {}
       }
     }
   }

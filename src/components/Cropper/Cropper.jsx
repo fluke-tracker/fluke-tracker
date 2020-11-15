@@ -13,11 +13,11 @@ class CropperComponent extends React.Component {
     super(props);
     this.state = {
       show: true,
-      isPredicted: false
+      isPredicted: false,
+      cropper: null,
     };
     this.onReady = this.onReady.bind(this);
     this.getCroppedImage = this.getCroppedImage.bind(this);
-    this.cropperRef = React.createRef(null);
   }
 
   tg(natH, natW, guess) {
@@ -25,6 +25,7 @@ class CropperComponent extends React.Component {
   }
 
   dataURItoBlob(dataURI) {
+      if(!dataURI) return null;
       // convert base64 to raw binary data held in a string
       // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
       var byteString = atob(dataURI.split(',')[1]);
@@ -51,19 +52,19 @@ class CropperComponent extends React.Component {
 
   async getCroppedImage() {
     return await new Promise(resolve => {
-            return this.cropperRef.current ? resolve(this.dataURItoBlob(this.cropperRef.current.cropper.getCroppedCanvas().toDataURL('image/jpeg'))): resolve(undefined)
+            return this.state.cropper ? resolve(this.dataURItoBlob(this.state.cropper.getCroppedCanvas()?.toDataURL('image/jpeg'))): resolve(undefined)
     });  }
 
   trigger_prediction() {
     this.setState({isPredicted: false});
-    const imageData = this.cropperRef.current.cropper.getImageData();
+    const imageData = this.state.cropper.getImageData();
     const natH = imageData.naturalHeight;
     const natW = imageData.naturalWidth;
     const image = this.props.src;
     pixels(image).then(pixelz =>
             this.props.workerHandler.addJob({id: 2, natH: natH, natW: natW, image: pixelz}).then(
                 evt => {
-                    this.cropperRef.current.cropper.setData({
+                    this.state.cropper.setData({
                                                                 x: evt.data.prediction.x1,
                                                                 y: evt.data.prediction.y1,
                                                                 width:evt.data.prediction.x2 - evt.data.prediction.x1,
@@ -101,6 +102,7 @@ class CropperComponent extends React.Component {
   }
 
   render() {
+      const cropper = this.state.cropper;
       return (
         <>
             <h1>{this.props.filename}</h1>
@@ -111,29 +113,31 @@ class CropperComponent extends React.Component {
               initialAspectRatio={16 / 9}
               guides={false}
               ready={this.onReady}
-              ref={this.cropperRef}
+              onInitialized={(instance) => {
+                    this.setState({cropper: instance});
+              }}
             />
-            <ContinuousSlider title="Rotate" value="0" handleChange={(value) => this.cropperRef.current.cropper.rotate(value - this.cropperRef.current.cropper.getData().rotate)} />
+            <ContinuousSlider title="Rotate" value="0" handleChange={(value) => cropper.rotate(value - cropper.getData().rotate)} />
             <Tooltip title="Rotate left (45 degree)">
-                <Button onClick={() => this.cropperRef.current.cropper.rotate(45)}>↶</Button>
+                <Button onClick={() => cropper.rotate(45)}>↶</Button>
             </Tooltip>
             <Tooltip title="Rotate right (45 degree)">
-                <Button onClick={() => this.cropperRef.current.cropper.rotate(-45)}>↷</Button>
+                <Button onClick={() => cropper.rotate(-45)}>↷</Button>
             </Tooltip>
             <Tooltip title="Zoom +0.1">
-                <Button onClick={() => this.cropperRef.current.cropper.zoom(0.1)}>+</Button>
+                <Button onClick={() => cropper.zoom(0.1)}>+</Button>
             </Tooltip>
             <Tooltip title="Zoom -0.1">
-                <Button onClick={() => this.cropperRef.current.cropper.zoom(-0.1)}>-</Button>
+                <Button onClick={() => cropper.zoom(-0.1)}>-</Button>
             </Tooltip>
             <Tooltip title="Mirror X">
-                <Button onClick={() => this.cropperRef.current.cropper.scaleX(this.cropperRef.current.cropper.getData().scaleX*-1)}>&#8596;</Button>
+                <Button onClick={() => cropper.scaleX(cropper.getData().scaleX*-1)}>&#8596;</Button>
             </Tooltip>
             <Tooltip title="Mirror Y">
-                <Button onClick={() => this.cropperRef.current.cropper.scaleY(this.cropperRef.current.cropper.getData().scaleY*-1)}>&#8597;</Button>
+                <Button onClick={() => cropper.scaleY(cropper.getData().scaleY*-1)}>&#8597;</Button>
             </Tooltip>
             <Tooltip title="Reset Cropping">
-                <Button onClick={() => this.cropperRef.current.cropper.reset()}>⟳</Button>
+                <Button onClick={() => cropper.reset()}>⟳</Button>
             </Tooltip>
             <Tooltip title="Predict cropping automatically">
                 <Button onClick={() => this.trigger_prediction()}>★</Button>

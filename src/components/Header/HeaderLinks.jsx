@@ -45,7 +45,12 @@ function HeaderLinks({ ...props }) {
       <>
       <ListItem className={classes.listItem}>
         <Link to= {"/welcome-upload"} className={classes.navLink} user={props.user}>
-            Welcome &amp; Upload
+            Welcome
+          </Link>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+          <Link to= {"/upload"} className={classes.navLink} user={props.user}>
+            Upload
           </Link>
       </ListItem>
       <ListItem className={classes.listItem}>

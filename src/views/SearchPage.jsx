@@ -12,7 +12,6 @@ import { updatePicture } from "graphql/mutations";
 import API, { graphqlOperation } from "@aws-amplify/api";
 import Gallery from "react-grid-gallery";
 import Snackbar from "@material-ui/core/Snackbar";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Amplify from '@aws-amplify/core';
 import { Search } from 'semantic-ui-react'
 
@@ -261,12 +260,18 @@ class SearchPage extends React.Component {
     };
   }
   async _handleKeyDown(e) {
-    const searchInput = this.searchRef.current.state.value + (e.key === "Backspace" ? "" : String.fromCharCode(e.keyCode));
-    console.log(searchInput);
-    this.setState({searchResult: this.state.whales.filter(item => { return item.toString().startsWith(searchInput)}).map(item => {return {'title': item}})});
-    if (e.key === 'Enter') {
-      this.searchWhales(this.state, searchInput);
+    const isEnter = (e.key === 'Enter');
+    if (isEnter) {
+      console.log("ENTER");
     }
+    setTimeout(() => {
+      const searchInput = this.searchRef.current.state.value;
+      this.setState({searchResult: this.state.whales.filter(item => { return item.toString().startsWith(searchInput)}).map(item => {return {'title': item}})});
+      if (isEnter) {
+        this.searchWhales(this.state, searchInput);
+      }
+    }, 1);
+    
   }
   render() {
     const { dialogMessage } = this.state;
