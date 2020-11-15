@@ -1,29 +1,27 @@
-//import Worker from "views/predict.worker.js";
-
 class WorkerHandler {
   constructor() {
     this.id = 0;
-    this.worker = new Worker("/predict.worker.js");
+    this.worker = new Worker('/predict.worker.js');
     this.promises = {};
     this.worker.onmessage = (evt) => {
-      console.log("worker message");
+      console.log('worker message');
       if (evt.data.modelIsReady) {
-        console.log("model ready");
+        console.log('model ready');
       }
       if (evt.data.prediction) {
-        console.log("prediction " + JSON.stringify(evt.data.prediction));
+        console.log('prediction ' + JSON.stringify(evt.data.prediction));
         this.promises[evt.data.id].resolve(evt);
       }
     };
   }
 
   addJob(args) {
-    console.log("add job " + args);
+    console.log('add job ' + args);
     this.id += 1;
     const _id = this.id;
     let promiseFct = function (resolve, reject) {
       args.id = _id;
-      console.log("postMessageToWorker");
+      console.log('postMessageToWorker');
       this.worker.postMessage(args);
       // you can save all relevant things in your object.
       this.promises[_id].resolve = resolve;
