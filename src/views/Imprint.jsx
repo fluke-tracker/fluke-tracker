@@ -227,11 +227,11 @@ class Imprint extends React.Component {
                     <b>Development Team</b>
                   </h1>
                   <ul style={{listStyleType:"none", color:"black"}}>
-                  <li><a href="">Daniel Kühlwein</a> (Germany)</li>
-                  <li><a href="">Marcel Bergmann</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/daniel-k%C3%BChlwein-a0b6051/" target="_blank">Daniel Kühlwein</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/bergmannmarcel/" target="_blank">Marcel Bergmann</a> (Germany)</li>
                   <li><a href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de" target="_blank">Moritz Schaffenroth</a> (Germany)</li>
                   <li><a href="">Kanwalmeet Singh Kochar</a> (Germany)</li>
-                  <li><a href="">Hartvig Johannson</a> (Normay)</li>
+                  <li><a href="https://www.linkedin.com/in/hartvig-johannson-04a0b6193" target="_blank">Hartvig Johannson</a> (Normay)</li>
                   <li><a href="">Simen Norrheim Larsen</a> (Norway)</li>
                   <li><a href="">Robin Wulfes</a> (Germany)</li>
                   <li><a href="mailto:gdsc3_core.iandd@capgemini.com">Sophie (Nien-chun) Yin</a> (Germany)</li>
