@@ -352,7 +352,7 @@ class WhaleUploaderComponent extends React.Component {
   }
 
   render() {
-    const { classes, user, ...rest } = this.props;
+    const { classes } = this.props;
     const BrowserCropping = this.state.imageFilesStrings.map((image, i) => (
       <CropperComponent
         filename={this.state.imageNames[i]}

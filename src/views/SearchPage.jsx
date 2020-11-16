@@ -68,8 +68,9 @@ class SearchPage extends React.Component {
     console.log('image', image);
     var images = this.state.IMAGES.slice();
     var img = images[index];
-    if (img.hasOwnProperty('isSelected')) img.isSelected = !img.isSelected;
-    else img.isSelected = true;
+    if (Object.property.hasOwnProperty.call(img, 'isSelected')) {
+      img.isSelected = !img.isSelected;
+    } else img.isSelected = true;
     this.setState({
       IMAGES: images,
     });
@@ -115,7 +116,7 @@ class SearchPage extends React.Component {
     this.setState({
       dialogMessage: message,
     });
-    setTimeout((_) => this.setState({ dialogMessage: '' }), timeout);
+    setTimeout(() => this.setState({ dialogMessage: '' }), timeout);
   }
 
   authenticate_user() {

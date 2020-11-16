@@ -1,17 +1,17 @@
-import ImageComponent from "./ImageComponent.jsx";
-import getS3Bucket from "../../utils/utilFunctions";
+import ImageComponent from './ImageComponent.jsx';
+import getS3Bucket from '../../utils/utilFunctions';
 
-import * as React from "react";
-import { useState, useEffect } from "react";
-import Gallery from "react-grid-gallery";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import failImg from "assets/img/notfound.svg";
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import Gallery from 'react-grid-gallery';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import failImg from 'assets/img/notfound.svg';
 
 const ImageGallery = (props) => {
-  const [s3BucketPath, setS3BucketPath] = useState("");
+  const [s3BucketPath, setS3BucketPath] = useState('');
   const [loadedPictures, setLoadedPictures] = useState(new Set());
   const [errorPictures, setErrorPictures] = useState(new Set());
-  let imageStatus = "";
+  let imageStatus = '';
   const filename = props.filename;
   // handler that will be called after the image has loaded
   const notifyLoadHandler = props.notifyLoadHandler;
@@ -33,7 +33,7 @@ const ImageGallery = (props) => {
     const newSet = new Set(loadedPictures);
     newSet.add(filename);
     setLoadedPictures(newSet);
-    imageStatus = "loaded picture successfully";
+    imageStatus = 'loaded picture successfully';
     console.log(imageStatus);
     notifyLoadHandler(filename);
   };
@@ -42,23 +42,26 @@ const ImageGallery = (props) => {
     const newSet = new Set(errorPictures);
     newSet.add(filename);
     setErrorPictures(newSet);
-    imageStatus = "failed to load picture";
+    imageStatus = 'failed to load picture';
     console.log(imageStatus);
     notifyLoadHandler(filename);
   };
 
   const getImages = (image) => {
-    const image_url = s3BucketPath + "public/thumbnails/" + image + "thumbnail.jpg";
+    const image_url =
+      s3BucketPath + 'public/thumbnails/' + image + 'thumbnail.jpg';
     return image_url;
   };
 
   const getImagesCropped = (image) => {
-    const image_url = !errorPictures.has(image) ? s3BucketPath + "public/watermark/" + image : failImg;
+    const image_url = !errorPictures.has(image)
+      ? s3BucketPath + 'public/watermark/' + image
+      : failImg;
     return image_url;
   };
 
-  let imageGallery = "";
-  if (typeof filename !== "undefined" && s3BucketPath !== "") {
+  let imageGallery = '';
+  if (typeof filename !== 'undefined' && s3BucketPath !== '') {
     imageGallery = (
       <Gallery
         thumbnailImageComponent={ImageComponent}
@@ -88,7 +91,11 @@ const ImageGallery = (props) => {
 
   return (
     <div>
-      {loadedPictures.has(filename) || errorPictures.has(filename) ? "" : <CircularProgress />}
+      {loadedPictures.has(filename) || errorPictures.has(filename) ? (
+        ''
+      ) : (
+        <CircularProgress />
+      )}
       {imageGallery}
     </div>
   );

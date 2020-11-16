@@ -1,59 +1,23 @@
-import React from "react";
-import { connect } from "react-redux";
-// utils
-import Cookies from "../../utils/Cookies";
-import { login } from "../../store/actions";
+import React from 'react';
+import { connect } from 'react-redux';
 // @material-ui/core components
-import withStyles from "@material-ui/core/styles/withStyles";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Icon from "@material-ui/core/Icon";
-// @material-ui/icons
-import Email from "@material-ui/icons/Email";
-import People from "@material-ui/icons/People";
+import withStyles from '@material-ui/core/styles/withStyles';
 // core components
-import Header from "components/Header/Header.jsx";
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import Footer from "components/Footer/Footer.jsx";
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
-import Button from "components/CustomButtons/Button.jsx";
-import Card from "components/Card/Card.jsx";
-import CardBody from "components/Card/CardBody.jsx";
-import CardHeader from "components/Card/CardHeader.jsx";
-import CardFooter from "components/Card/CardFooter.jsx";
-import CustomInput from "components/CustomInput/CustomInput.jsx";
-// assets
-import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
-import image from "assets/img/bg.jpg";
-import { Authenticator, Greetings } from "aws-amplify-react";
-import { Auth } from "aws-amplify";
-import {
-  ConfirmSignIn,
-  ConfirmSignUp,
-  ForgotPassword,
-  RequireNewPassword,
-  SignIn,
-  SignUp,
-  VerifyContact,
-  withAuthenticator,
-} from "aws-amplify-react";
+import Header from 'components/Header/Header.jsx';
+import HeaderLinks from 'components/Header/HeaderLinks.jsx';
+import Footer from 'components/Footer/Footer.jsx';
+import GridContainer from 'components/Grid/GridContainer.jsx';
+import GridItem from 'components/Grid/GridItem.jsx';
+import Card from 'components/Card/Card.jsx';
 
-//amplify
-import Amplify, { Storage } from "aws-amplify";
-//import awsconfig from 'aws-exports';
+// assets
+import loginPageStyle from 'assets/jss/material-kit-react/views/loginPage.jsx';
+import image from 'assets/img/bg.jpg';
+import { Authenticator, Greetings } from 'aws-amplify-react';
+import { Auth } from 'aws-amplify';
+import { SignUp } from 'aws-amplify-react';
 
 //Amplify.configure(awsconfig);
-
-const AlwaysOn = (props) => {
-  return (
-    <div>
-      <div>I am always here to show current auth state: {props.authState}</div>
-      <button onClick={() => props.onStateChange("signUp")}>
-        Show Sign Up
-      </button>
-    </div>
-  );
-};
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -79,7 +43,7 @@ class LoginPage extends React.Component {
     // we add a hidden class to the card and after 700 ms we delete it and the transition appears
     setTimeout(
       function () {
-        this.setState({ cardAnimaton: "" });
+        this.setState({ cardAnimaton: '' });
       }.bind(this),
       700
     );
@@ -87,14 +51,13 @@ class LoginPage extends React.Component {
   handleInputChange(e) {
     const { name, value } = e.target;
 
-    this.setState((state) => ({ [name]: { ...this.state[name], value } }));
+    this.setState(() => ({ [name]: { ...this.state[name], value } }));
   }
   loginRedirect(authState) {
-    if (authState == "signedIn") {
-      const _this = this;
+    if (authState == 'signedIn') {
       Auth.currentSession()
-        .then((data) => console.log("current session data", data))
-        .catch((err) => console.log("current session err", err));
+        .then((data) => console.log('current session data', data))
+        .catch((err) => console.log('current session err', err));
       /*       Auth.currentAuthenticatedUser()
         .then(user =>
           {
@@ -107,11 +70,11 @@ class LoginPage extends React.Component {
 
       Auth.currentAuthenticatedUser()
         .then((user) => {
-          console.log("loginpage user", user.username);
+          console.log('loginpage user', user.username);
           this.setState({ user: user.username });
-          this.props.history.push("/welcome-upload");
+          this.props.history.push('/welcome-upload');
         })
-        .catch((err) => console.log("currentAuthenticatedUser err", err));
+        .catch((err) => console.log('currentAuthenticatedUser err', err));
     }
   }
 
@@ -171,28 +134,28 @@ class LoginPage extends React.Component {
           color="blue"
           brand={
             <img
-              src={require("assets/img/fluketracker-logo(blue-bg).jpg")}
+              src={require('assets/img/fluketracker-logo(blue-bg).jpg')}
               style={{
-                width: "90%",
-                paddingBottom: "0px",
-                margin: "0 auto",
+                width: '90%',
+                paddingBottom: '0px',
+                margin: '0 auto',
               }}
             />
           }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
-            height: "400",
-            color: "black",
+            height: '400',
+            color: 'black',
           }}
           {...rest}
         />
         <div
           className={classes.pageHeader}
           style={{
-            backgroundImage: "url(" + image + ")",
-            backgroundSize: "cover",
-            backgroundPosition: "top center",
+            backgroundImage: 'url(' + image + ')',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top center',
           }}
         >
           <div className={classes.container}>
@@ -201,23 +164,23 @@ class LoginPage extends React.Component {
                 <Card
                   className={classes[this.state.cardAnimaton]}
                   style={{
-                    backgroundColor: "#434245",
-                    color: "black",
-                    boxShadow: "7px 8px",
-                    fontSize: "100%",
-                    lineHeight: "1.6",
-                    border: "1px solid",
-                    'marginTop': "10%"
+                    backgroundColor: '#434245',
+                    color: 'black',
+                    boxShadow: '7px 8px',
+                    fontSize: '100%',
+                    lineHeight: '1.6',
+                    border: '1px solid',
+                    marginTop: '10%',
                   }}
                 >
                   <div
                     className={classes.container}
-                    style={{ paddingTop: "0px" }}
+                    style={{ paddingTop: '0px' }}
                   >
                     <h3>
                       <strong>Welcome to the FlukeTracker</strong>
                     </h3>
-                    <h4 style={{ paddingBottom: "5px" }}>
+                    <h4 style={{ paddingBottom: '5px' }}>
                       <strong>
                         For whale-lovers, who can use this website to find sperm
                         whales and match whale pictures with others.

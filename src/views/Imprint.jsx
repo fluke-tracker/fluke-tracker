@@ -50,7 +50,7 @@ class Imprint extends React.Component {
             contentType: this.upload.files[0].type,
           }
         )
-          .then((result) => {
+          .then(() => {
             const image = `${this.upload.files[0].name}`;
             console.log('image name', image);
             this.upload = null;
@@ -240,6 +240,7 @@ class Imprint extends React.Component {
                     <a
                       href="https://www.facebook.com/WhaleWatchAzores"
                       target="_blank"
+                      rel="noreffer"
                     >
                       Lisa Steiner
                     </a>
@@ -296,6 +297,7 @@ class Imprint extends React.Component {
                       <a
                         href="https://www.linkedin.com/in/daniel-k%C3%BChlwein-a0b6051/"
                         target="_blank"
+                        rel="noreffer"
                       >
                         Daniel Kühlwein
                       </a>{' '}
@@ -305,6 +307,7 @@ class Imprint extends React.Component {
                       <a
                         href="https://www.linkedin.com/in/bergmannmarcel/"
                         target="_blank"
+                        rel="noreffer"
                       >
                         Marcel Bergmann
                       </a>{' '}
@@ -314,6 +317,7 @@ class Imprint extends React.Component {
                       <a
                         href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de"
                         target="_blank"
+                        rel="noreffer"
                       >
                         Moritz Schaffenroth
                       </a>{' '}
@@ -326,6 +330,7 @@ class Imprint extends React.Component {
                       <a
                         href="https://www.linkedin.com/in/hartvig-johannson-04a0b6193"
                         target="_blank"
+                        rel="noreffer"
                       >
                         Hartvig Johannson
                       </a>{' '}

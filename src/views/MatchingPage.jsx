@@ -52,6 +52,7 @@ import {
 import { Auth } from 'aws-amplify';
 
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 class MatchingPage extends React.Component {
   constructor(props) {
@@ -560,16 +561,11 @@ class MatchingPage extends React.Component {
     this.setState({
       dialogMessage: message,
     });
-    setTimeout((_) => this.setState({ dialogMessage: '' }), timeout);
+    setTimeout(() => this.setState({ dialogMessage: '' }), timeout);
   }
 
   unmatchPictures() {
-    const [
-      left_img_name,
-      right_img_name,
-      leftWhaleId,
-      rightWhaleId,
-    ] = this.getCurrentNamesIds();
+    const [left_img_name, right_img_name] = this.getCurrentNamesIds();
 
     // to have a unique ID with concatenate the two file names
     const constructedId = left_img_name + '_' + right_img_name;
@@ -924,9 +920,9 @@ class MatchingPage extends React.Component {
 
     const leftPicObj = this.state.newPicsList[this.state.vertical];
     if (leftPicObj !== undefined) {
-      this.state.imageCreatedAt = this.state.newPicsList[
-        this.state.vertical
-      ].createdAt;
+      this.setState({
+        imageCreatedAt: this.state.newPicsList[this.state.vertical].createdAt,
+      });
     }
     const myMoment = moment();
     const myMoment5 = moment(this.state.imageCreatedAt).add(300, 'seconds');
@@ -1202,6 +1198,11 @@ class MatchingPage extends React.Component {
     );
   }
 }
+
+MatchingPage.propTypes = {
+  match: PropTypes.element,
+  classes: PropTypes.element.isRequired,
+};
 
 const MatchingPageContainer = connect((dispatch) => ({ dispatch }))(
   MatchingPage
