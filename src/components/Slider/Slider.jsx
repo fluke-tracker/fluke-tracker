@@ -1,7 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 
 const useStyles = makeStyles({
@@ -21,7 +19,13 @@ export default function ContinuousSlider(props) {
 
   return (
     <div className={classes.root}>
-        <Slider value={value} onChange={handleChange} aria-labelledby="continuous-slider" min={0} max={360} />
+      <Slider
+        value={value}
+        onChange={handleChange}
+        aria-labelledby="continuous-slider"
+        min={0}
+        max={360}
+      />
     </div>
   );
 }

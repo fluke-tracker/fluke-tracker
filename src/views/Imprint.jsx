@@ -1,23 +1,23 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
 //import { configureAmplify, SetS3Config } from "./services";
-import Header from "components/Header/Header.jsx";
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import Storage from "@aws-amplify/storage";
-import withStyles from "@material-ui/core/styles/withStyles";
-import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
-import { Auth } from "aws-amplify";
-import { createPicture, updateConfig } from "graphql/mutations";
-import { getConfig } from "graphql/queries";
-import API, { graphqlOperation } from "@aws-amplify/api";
+import Header from 'components/Header/Header.jsx';
+import HeaderLinks from 'components/Header/HeaderLinks.jsx';
+import Storage from '@aws-amplify/storage';
+import withStyles from '@material-ui/core/styles/withStyles';
+import landingPageStyle from 'assets/jss/material-kit-react/views/landingPage.jsx';
+import { Auth } from 'aws-amplify';
+import { createPicture, updateConfig } from 'graphql/mutations';
+import { getConfig } from 'graphql/queries';
+import API, { graphqlOperation } from '@aws-amplify/api';
+import PropTypes from 'prop-types';
 
 class Imprint extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageName: "",
-      imageFile: "",
-      response: "",
+      imageName: '',
+      imageFile: '',
+      response: '',
       user: null,
     };
     this.authenticate_user();
@@ -26,91 +26,105 @@ class Imprint extends React.Component {
   authenticate_user() {
     Auth.currentAuthenticatedUser()
       .then((user) => {
-        console.log("profilepage user", user.username);
+        console.log('profilepage user', user.username);
         this.setState({ user: user });
       })
-      .catch((err) => console.log("currentAuthenticatedUser profilepage err", err));
+      .catch((err) =>
+        console.log('currentAuthenticatedUser profilepage err', err)
+      );
   }
   async uploadImage() {
     var allowUpload = false;
-    allowUpload = await this.insertToDynamo(`${this.upload.files[0].name}`, allowUpload);
-    console.log("allowUpload ", allowUpload);
+    allowUpload = await this.insertToDynamo(
+      `${this.upload.files[0].name}`,
+      allowUpload
+    );
+    console.log('allowUpload ', allowUpload);
     if (allowUpload == true) {
       try {
-        console.log("upload image to S3 bucket");
-        Storage.put("embeddings/input/" + `${this.upload.files[0].name}`, this.upload.files[0], {
-          contentType: this.upload.files[0].type,
-        })
-          .then((result) => {
+        console.log('upload image to S3 bucket');
+        Storage.put(
+          'embeddings/input/' + `${this.upload.files[0].name}`,
+          this.upload.files[0],
+          {
+            contentType: this.upload.files[0].type,
+          }
+        )
+          .then(() => {
             const image = `${this.upload.files[0].name}`;
-            console.log("image name", image);
+            console.log('image name', image);
             this.upload = null;
-            console.log("upload success,");
-            this.setState({ response: "Success uploading file!", imageName: "" });
+            console.log('upload success,');
+            this.setState({
+              response: 'Success uploading file!',
+              imageName: '',
+            });
           })
           .catch((err) => {
-            console.log("error while uploading,", err);
+            console.log('error while uploading,', err);
             this.setState({ response: `Cannot uploading file: ${err}` });
           });
       } catch (e) {
-        console.log("error in uploading", e);
+        console.log('error in uploading', e);
       }
     } else {
-      console.log("cannot upload image");
+      console.log('cannot upload image');
     }
   }
   async insertToDynamo(image, allowUpload) {
     try {
-      console.log("getting config from dynamodb");
-      const getWhaleConfig = await API.graphql(graphqlOperation(getConfig, { id: "maxWhaleId" }));
-      console.log("getConfig output aws", getWhaleConfig);
+      console.log('getting config from dynamodb');
+      const getWhaleConfig = await API.graphql(
+        graphqlOperation(getConfig, { id: 'maxWhaleId' })
+      );
+      console.log('getConfig output aws', getWhaleConfig);
       const maxWhaleID = getWhaleConfig.data.getConfig.value;
-      console.log("maxWhaleID", maxWhaleID);
+      console.log('maxWhaleID', maxWhaleID);
       var newWhaleID = parseInt(maxWhaleID) + 1;
     } catch (e) {
       allowUpload = false;
-      console.log("getting config error", e);
+      console.log('getting config error', e);
       this.setState({
         response: `Error: while fetching AWS Config for upload: ${e}`,
-        imageName: "",
+        imageName: '',
       });
     }
     try {
-      console.log("inserting image record to dynamodb");
-      console.log("newWhaleID", newWhaleID);
+      console.log('inserting image record to dynamodb');
+      console.log('newWhaleID', newWhaleID);
       const insertImage = await API.graphql(
         graphqlOperation(createPicture, {
           input: {
             id: image,
             filename: image,
-            geocoords: ",",
-            thumbnail: image + "thumbnail.jpg",
+            geocoords: ',',
+            thumbnail: image + 'thumbnail.jpg',
             pictureWhaleId: newWhaleID,
             is_new: true,
             embedding: 123,
-            uploaded_by: "whalewatching",
+            uploaded_by: 'whalewatching',
           },
         })
       );
-      console.log("insertImage output aws", insertImage);
-      console.log("updating maxwhaleID config", newWhaleID);
+      console.log('insertImage output aws', insertImage);
+      console.log('updating maxwhaleID config', newWhaleID);
       const updateWhaleConfig = await API.graphql(
         graphqlOperation(updateConfig, {
           input: {
-            id: "maxWhaleId",
+            id: 'maxWhaleId',
             value: newWhaleID,
           },
         })
       );
-      console.log("updateWhaleConfig output aws", updateWhaleConfig);
+      console.log('updateWhaleConfig output aws', updateWhaleConfig);
       allowUpload = true;
-      console.log("setting allowupload as ", allowUpload);
+      console.log('setting allowupload as ', allowUpload);
     } catch (e) {
       allowUpload = false;
-      console.log("getting insertImage error", e);
+      console.log('getting insertImage error', e);
       this.setState({
         response: `Error while upload. Check if Image already exists in the Database: ${e}`,
-        imageName: "",
+        imageName: '',
       });
     }
     return allowUpload;
@@ -120,41 +134,49 @@ class Imprint extends React.Component {
     const { classes, ...rest } = this.props;
 
     let boxStyle = {
-      border: "2px solid white",
-      borderRadius: "12px",
-      paddingLeft: "20px",
-      paddingRight: "20px",
-      paddingTop: "25px",
-      paddingBottom: "15px",
-      backgroundColor: "#f0f0f0", // "#ebf7ff",
+      border: '2px solid white',
+      borderRadius: '12px',
+      paddingLeft: '20px',
+      paddingRight: '20px',
+      paddingTop: '25px',
+      paddingBottom: '15px',
+      backgroundColor: '#f0f0f0', // "#ebf7ff",
     };
     boxStyle = {
-      paddingLeft: "20px",
-      paddingRight: "20px",
-      paddingTop: "15px",
-      paddingBottom: "15px",
+      paddingLeft: '20px',
+      paddingRight: '20px',
+      paddingTop: '15px',
+      paddingBottom: '15px',
     };
 
     return (
-      <div style={{ minHeight: "100vh" }}>
+      <div style={{ minHeight: '100vh' }}>
         <Header
           color="blue"
-          brand={<img src={require("assets/img/fluketracker-logo(blue-bg).jpg")}           style={{
-                        width: "90%",
-                        paddingBottom: "0px",
-                        margin: "0 auto 0 0",
-                        "max-width": "40%"
-                      }} />}
+          brand={
+            <img
+              src={require('assets/img/fluketracker-logo(blue-bg).jpg')}
+              style={{
+                width: '90%',
+                paddingBottom: '0px',
+                margin: '0 auto 0 0',
+                'max-width': '40%',
+              }}
+            />
+          }
           fixed
           rightLinks={<HeaderLinks user={this.state.user} />}
           changeColorOnScroll={{
-            height: "400",
-            color: "black",
+            height: '400',
+            color: 'black',
           }}
           {...rest}
         />
         <div className={classes.container}>
-          <div className="section container" style={{ paddingTop: "180px", paddingBottom: "5px" }}>
+          <div
+            className="section container"
+            style={{ paddingTop: '180px', paddingBottom: '5px' }}
+          >
             <div className="row">
               <div className="col-12">
                 <div
@@ -166,7 +188,13 @@ class Imprint extends React.Component {
                     paddingRight: "0px",
                   }}
                 >
-                  <h1 style={{ paddingTop: "40px", textAlign: "center", fontSize: "40px" }}>
+                  <h1
+                    style={{
+                      paddingTop: '40px',
+                      textAlign: 'center',
+                      fontSize: '40px',
+                    }}
+                  >
                     <strong>A big THANK YOU to our SPONSORS!</strong>
                   </h1>
                   <hr />
@@ -204,21 +232,49 @@ class Imprint extends React.Component {
                   <h3 style={{ marginTop: "5px" }}><a href="https://www.facebook.com/WhaleWatchAzores" target="_blank">Lisa Steiner</a></h3>
                   <div>
                     <img
-                      src={require("assets/img/Lisa-2018-MLI7527.jpg")}
+                      src={require('assets/img/Lisa-2018-MLI7527.jpg')}
                       style={{
-                        width: "38%",
-                        paddingBottom: "15px",
-                        paddingTop: "5px",
-                        marginRight: "15px",
-                        float: "left"
-
+                        width: '38%',
+                        paddingBottom: '15px',
+                        paddingTop: '5px',
+                        marginRight: '15px',
+                        float: 'left',
                       }}
-                    /></div>
-                    <div>
-                    <p style={{ fontFamily: "Roboto, Helvetica, Arial, sans-serif", fontSize: "16px", lineHeight: "24px", fontWeight: "300"}}>In 1988, after graduating with a degree in Marine Science, Lisa joined “Song of the Whale”, the International Fund for Animal Welfare’s research boat in the Azores studying sperm whales. When the boat moved on to other projects in 1992, she became co-founder of Whale Watch Azores to continue that research and now is based permanently in the Azores. Lisa’s main focus has always been in photo identification, be it sperm whales or other species. She has several publications based on photo-id work and presented findings at International marine mammal conferences. For several years, she developed B&W films, printed the flukes and matched them on her living room floor! In 2002, an semi-automated system was developed as part of “Europhlukes” a EU funded project, to do the matching and she has been using that program ever since. But technology has come a long way since 1992 and when the offer came to develop a new algorithm as part of Capgemini’s annual competition, she accepted the offer and the rest as they say is history!</p>
-                  </div></div>
-                                <div className="article-text">
-                  <h1 style={{ paddingTop: "20px" }}>
+                    />
+                  </div>
+                  <div>
+                    <p
+                      style={{
+                        fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+                        fontSize: '16px',
+                        lineHeight: '24px',
+                        fontWeight: '300',
+                      }}
+                    >
+                      In 1988, after graduating with a degree in Marine Science,
+                      Lisa joined “Song of the Whale”, the International Fund
+                      for Animal Welfare’s research boat in the Azores studying
+                      sperm whales. When the boat moved on to other projects in
+                      1992, she became co-founder of Whale Watch Azores to
+                      continue that research and now is based permanently in the
+                      Azores. Lisa’s main focus has always been in photo
+                      identification, be it sperm whales or other species. She
+                      has several publications based on photo-id work and
+                      presented findings at International marine mammal
+                      conferences. For several years, she developed B&W films,
+                      printed the flukes and matched them on her living room
+                      floor! In 2002, an semi-automated system was developed as
+                      part of “Europhlukes” a EU funded project, to do the
+                      matching and she has been using that program ever since.
+                      But technology has come a long way since 1992 and when the
+                      offer came to develop a new algorithm as part of
+                      Capgemini’s annual competition, she accepted the offer and
+                      the rest as they say is history!
+                    </p>
+                  </div>
+                </div>
+                <div className="article-text">
+                  <h1 style={{ paddingTop: '20px' }}>
                     <b>Development Team</b>
                   </h1>
                   <ul style={{listStyleType:"none", color:"black"}}>
@@ -231,8 +287,8 @@ class Imprint extends React.Component {
                   <li><a href="">Robin Wulfes</a> (Germany)</li>
                   <li><a href="mailto:gdsc3_core.iandd@capgemini.com">Sophie (Nien-chun) Yin</a> (Germany)</li>
                   </ul>
-                  </div>
-                  {/* comment
+                </div>
+                {/* comment
                 <div className="article-text">
                   <h1 style={{ paddingTop: "20px" }}>
                     <b>Imprint</b>
@@ -276,5 +332,8 @@ class Imprint extends React.Component {
     );
   }
 }
+Imprint.propTypes = {
+  classes: PropTypes.element.isRequired,
+};
 
 export default withStyles(landingPageStyle)(Imprint);

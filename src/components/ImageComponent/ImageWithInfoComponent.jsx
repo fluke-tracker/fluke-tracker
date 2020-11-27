@@ -1,12 +1,12 @@
-import * as React from "react";
-import GridItem from "components/Grid/GridItem.jsx";
-import Badge from "components/Badge/Badge.jsx";
-import Button from "components/CustomButtons/Button.jsx";
+import * as React from 'react';
+import GridItem from 'components/Grid/GridItem.jsx';
+import Badge from 'components/Badge/Badge.jsx';
+import Button from 'components/CustomButtons/Button.jsx';
 
-import ImageGallery from "./ImageGallery.jsx";
+import ImageGallery from './ImageGallery.jsx';
 
 const ImageWithInfoComponent = (props) => {
-  console.log("IMAGEwINFO PROPS");
+  console.log('IMAGEwINFO PROPS');
   console.log(props);
 
   const picObj = props.picObj;
@@ -18,69 +18,94 @@ const ImageWithInfoComponent = (props) => {
   let picInfosItems = <br />;
 
   const openSearchPage = () => {
-    const url = "/browse-pictures/" + picObj.whale.id;
-    window.open(url, "_blank");
+    const url = '/browse-pictures/' + picObj.whale.id;
+    window.open(url, '_blank');
   };
 
   const openMapPage = () => {
-    const url = "https://www.google.de/maps/search/" + getGeocoordsParsed(true);
-    window.open(url, "_blank");
+    const url = 'https://www.google.de/maps/search/' + getGeocoordsParsed(true);
+    window.open(url, '_blank');
   };
 
   const getGeocoordsParsed = (detailed) => {
     const geocoords = picObj.geocoords;
-    const geocoordsErrs = new Set(["undefined,undefined", ",", null, "null,null"]);
+    const geocoordsErrs = new Set([
+      'undefined,undefined',
+      ',',
+      null,
+      'null,null',
+    ]);
     if (geocoordsErrs.has(geocoords)) {
-      return "-";
+      return '-';
     } else {
       let coordResult = geocoords;
       if (!detailed) {
-        const [firstCoord, secondCoord] = geocoords.split(",");
-        coordResult = parseFloat(firstCoord).toFixed(7) + ", " + parseFloat(secondCoord).toFixed(7);
+        const [firstCoord, secondCoord] = geocoords.split(',');
+        coordResult =
+          parseFloat(firstCoord).toFixed(7) +
+          ', ' +
+          parseFloat(secondCoord).toFixed(7);
       }
       return coordResult;
     }
   };
 
-  if (typeof picObj !== "undefined" && picObj !== null) {
-    const labelsAligned = { minWidth: "165px", display: "inline-block", fontSize: "16px", verticalAlign: "middle" };
+  if (typeof picObj !== 'undefined' && picObj !== null) {
+    const labelsAligned = {
+      minWidth: '165px',
+      display: 'inline-block',
+      fontSize: '16px',
+      verticalAlign: 'middle',
+    };
 
-    const whaleId = picObj.whale ? picObj.whale.id: null;
+    const whaleId = picObj.whale ? picObj.whale.id : null;
     const uploadedBy = picObj.uploaded_by;
     const geoCoordsParsed = getGeocoordsParsed(false);
     const date = picObj.date_taken;
-    const dateErrs = new Set(["", " ", null]);
+    const dateErrs = new Set(['', ' ', null]);
 
     picInfosItems = (
-      <div style={{ marginBottom: "10px" }}>
+      <div style={{ marginBottom: '10px' }}>
         <strong style={labelsAligned}>Whale ID: </strong>
-        <Badge color="info"><p style={{fontSize: "16px", verticalAlign: "bottom"}}>{parseInt(whaleId) === -1 ? "-" : whaleId}</p></Badge>
+        <Badge color="info">
+          <p style={{ fontSize: '16px', verticalAlign: 'bottom' }}>
+            {parseInt(whaleId) === -1 ? '-' : whaleId}
+          </p>
+        </Badge>
         {parseInt(whaleId) !== -1 ? (
-          <Button style={{ marginLeft: "10px" }} size="sm" onClick={openSearchPage}>
+          <Button
+            style={{ marginLeft: '10px' }}
+            size="sm"
+            onClick={openSearchPage}
+          >
             Show more pictures
           </Button>
         ) : (
-          ""
+          ''
         )}
         <br />
         <div>
           <strong style={labelsAligned}>Picture owner: </strong>
-          <Badge color="info">{uploadedBy !== "" ? uploadedBy : "-"}</Badge>
+          <Badge color="info">{uploadedBy !== '' ? uploadedBy : '-'}</Badge>
           {/*<SendPrivateMessage />*/}
           <br />
         </div>
         <strong style={labelsAligned}>Coordinates / Place: </strong>
         <Badge color="info">{geoCoordsParsed}</Badge>
-        {geoCoordsParsed !== "-" ? (
-          <Button style={{ marginLeft: "10px", fontSize: "10px"}} size="sm" onClick={openMapPage} >
+        {geoCoordsParsed !== '-' ? (
+          <Button
+            style={{ marginLeft: '10px', fontSize: '10px' }}
+            size="sm"
+            onClick={openMapPage}
+          >
             Open in map
           </Button>
         ) : (
-          ""
+          ''
         )}
         <br />
         <strong style={labelsAligned}>Date: </strong>
-        <Badge color="info">{dateErrs.has(date) ? "-" : date}</Badge>
+        <Badge color="info">{dateErrs.has(date) ? '-' : date}</Badge>
         <br />
         {distance != null ? (
           <div>
@@ -94,19 +119,21 @@ const ImageWithInfoComponent = (props) => {
     );
     filename = picObj.filename;
   }
-  const imageGallery = <ImageGallery filename={filename} notifyLoadHandler={notifyLoadHandler} />;
+  const imageGallery = (
+    <ImageGallery filename={filename} notifyLoadHandler={notifyLoadHandler} />
+  );
 
   return (
     <div>
-      <GridItem xs={12} style={{ color: "black" }}>
+      <GridItem xs={12} style={{ color: 'black' }}>
         {picInfosItems}
         {imageGallery}
         <br />
       </GridItem>
-      <GridItem xs={12} style={{ color: "black", clear: "both" }}>
+      <GridItem xs={12} style={{ color: 'black', clear: 'both' }}>
         <div>
           <h4>
-            <a href={"browse-pictures/" + filename}>{filename}</a>
+            <a href={'browse-pictures/' + filename}>{filename}</a>
           </h4>
         </div>
       </GridItem>
