@@ -80,6 +80,9 @@ class WelcomePage extends React.Component {
                         minHeight: '400px',
                         backgroundImage:
                           'url("https://upload.wikimedia.org/wikipedia/commons/b/b8/Sperm_whale_pod.jpg")',
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
                       }}
                     >
                       <Button
@@ -139,7 +142,17 @@ class WelcomePage extends React.Component {
             </div>
           </div>
         </div>
+        <footer style={{backgroundColor: "rgb(211,211,211)", margin: "20px 0px", padding:"20px", weight: "1100vh"}}>
+          <div className='container'>
+        <div className='row'>
+        <div style={{margin: "auto 10px"}}>
+        <a href="#" onClick={this.handleClick}>Privacy Policy</a></div>
+        <div>
+        <a href="#" onClick={this.handleClick}>Term of Use</a></div>
+        </div></div>
+        </footer>
       </div>
+
     );
   }
 }
