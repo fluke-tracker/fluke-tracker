@@ -910,6 +910,12 @@ class MatchingPage extends React.Component {
       console.log('IN CATCH');
       console.log(error);
     }
+    const leftPicObj = this.state.newPicsList[this.state.vertical];
+    if (leftPicObj !== undefined) {
+      this.setState({
+        imageCreatedAt: this.state.newPicsList[this.state.vertical].createdAt,
+      });
+    }
   }
 
   render() {
@@ -918,12 +924,6 @@ class MatchingPage extends React.Component {
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
 
-    const leftPicObj = this.state.newPicsList[this.state.vertical];
-    if (leftPicObj !== undefined) {
-      this.setState({
-        imageCreatedAt: this.state.newPicsList[this.state.vertical].createdAt,
-      });
-    }
     const myMoment = moment();
     const myMoment5 = moment(this.state.imageCreatedAt).add(300, 'seconds');
     var allowDelete = false;
