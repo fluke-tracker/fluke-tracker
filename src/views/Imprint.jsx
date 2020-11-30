@@ -182,10 +182,10 @@ class Imprint extends React.Component {
                 <div
                   className="article-text"
                   style={{
-                    textAlign: 'center',
-                    color: 'black',
-                    paddingLeft: '50px',
-                    paddingRight: '50px',
+                    textAlign: "center",
+                    color: "black",
+                    paddingLeft: "0px",
+                    paddingRight: "0px",
                   }}
                 >
                   <h1
@@ -198,53 +198,38 @@ class Imprint extends React.Component {
                     <strong>A big THANK YOU to our SPONSORS!</strong>
                   </h1>
                   <hr />
-                  <div style={{ ...boxStyle }}>
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/314px-Amazon_Web_Services_Logo.svg.png"
-                      style={{
-                        width: '9%',
-                        paddingBottom: '15px',
-                        margin: '0 auto',
-                      }}
-                    />
-                    We're proud to present AWS as our official cloud-service
-                    partner whose team supported us throughout the whole journey
-                    of this amazing project: Starting with their assistance
-                    during the development of the AI up to the use of their
-                    technology that makes hosting this website possible.
-                  </div>
-                  <hr />
-                  <div style={{ ...boxStyle, marginTop: '15px' }}>
-                    <img
+                  <div style={{ display: "inline-block", width: "50%", float: "left", marginTop: "10px"}}>
+                    <a href="https://www.capgemini.com" target="_blank"><img
                       src="https://www.capgemini.com/de-de/wp-content/themes/capgemini-komposite/assets/images/logo.svg"
                       style={{
-                        paddingBottom: '10px',
-                        margin: '0 auto',
+                        paddingBottom: "10px",
+                        margin: "10px auto",
                       }}
-                    />
-                    As the founder and organizer of the Global Data Science
-                    Challenge 2020, Capgemini is another big sponsor who really
-                    pushed this project forward. The constant innovation and
-                    dedication of Capgemini brought this idea to life and
-                    ensured creating an AI for good.
-                  </div>
-                  <hr />
+                    /></a>
+                    <div className="article-text" style={{textAlign: "justify", margin: "5px 25px 5px 15px"}}>
+                    Capgemini is a global leader in consulting, digital transformation, technology, and engineering services. The Group is at the forefront of innovation to address the entire breadth of clients’ opportunities in the evolving world of cloud, digital and platforms. Capgemini founded the annual Global Data Science Challenge, a Group-wide internal competition where hundreds of employees from all over the world compete in small teams to solve a given AI-related task. Capgemini believes that digital transformation should benefit all of humanity and its projects like the Global Data Science Challenge will continue to focus on addressing issues relating to sustainability by unleashing human energy through technology for an inclusive and sustainable future.
+                  </div></div>
+                  <div style={{ display: "inline-block", width: "50%", marginTop: "10px" }}>
+                    <a href="https://www.aws.com" target="_blank"><img
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/314px-Amazon_Web_Services_Logo.svg.png"
+                      style={{
+                        width: "58px",
+                        height: "auto",
+                        paddingBottom: "15px",
+                        margin: "10px auto",
+                      }}
+                    /></a>
+                    <div className="article-text" style={{textAlign: "justify", margin: "5px 15px 5px 25px"}}>
+                    Amazon Web Services (AWS) is the world’s most comprehensive and broadly adopted cloud platform, offering over 175 fully featured services from data centers globally. AWS were delighted to work with Capgemini and sponsor the Global Data Science Challenge, enabling us to use AWS Machine Learning technology to build solutions that directly address sustainability and the environment, showcasing how ML can benefit society in many ways.
+                  </div></div>
                 </div>
                 <br />
                 <br />
-                <div className="article-text">
-                  <h1 style={{ paddingTop: '20px' }}>
+                <div className="article-text" style={{ paddingTop: "60px" }}>
+                  <h1 style={{ paddingTop: "5px" }}>
                     <b>Collaborator</b>
                   </h1>
-                  <h3>
-                    <a
-                      href="https://www.facebook.com/WhaleWatchAzores"
-                      target="_blank"
-                      rel="noreffer"
-                    >
-                      Lisa Steiner
-                    </a>
-                  </h3>
+                  <h3 style={{ marginTop: "5px" }}><a href="https://www.facebook.com/WhaleWatchAzores" target="_blank">Lisa Steiner</a></h3>
                   <div>
                     <img
                       src={require('assets/img/Lisa-2018-MLI7527.jpg')}
@@ -292,62 +277,15 @@ class Imprint extends React.Component {
                   <h1 style={{ paddingTop: '20px' }}>
                     <b>Development Team</b>
                   </h1>
-                  <ul style={{ listStyleType: 'none', color: 'black' }}>
-                    <li>
-                      <a
-                        href="https://www.linkedin.com/in/daniel-k%C3%BChlwein-a0b6051/"
-                        target="_blank"
-                        rel="noreffer"
-                      >
-                        Daniel Kühlwein
-                      </a>{' '}
-                      (Germany)
-                    </li>
-                    <li>
-                      <a
-                        href="https://www.linkedin.com/in/bergmannmarcel/"
-                        target="_blank"
-                        rel="noreffer"
-                      >
-                        Marcel Bergmann
-                      </a>{' '}
-                      (Germany)
-                    </li>
-                    <li>
-                      <a
-                        href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de"
-                        target="_blank"
-                        rel="noreffer"
-                      >
-                        Moritz Schaffenroth
-                      </a>{' '}
-                      (Germany)
-                    </li>
-                    <li>
-                      <a href="">Kanwalmeet Singh Kochar</a> (Germany)
-                    </li>
-                    <li>
-                      <a
-                        href="https://www.linkedin.com/in/hartvig-johannson-04a0b6193"
-                        target="_blank"
-                        rel="noreffer"
-                      >
-                        Hartvig Johannson
-                      </a>{' '}
-                      (Normay)
-                    </li>
-                    <li>
-                      <a href="">Simen Norrheim Larsen</a> (Norway)
-                    </li>
-                    <li>
-                      <a href="">Robin Wulfes</a> (Germany)
-                    </li>
-                    <li>
-                      <a href="mailto:gdsc3_core.iandd@capgemini.com">
-                        Sophie (Nien-chun) Yin
-                      </a>{' '}
-                      (Germany)
-                    </li>
+                  <ul style={{listStyleType:"none", color:"black"}}>
+                  <li><a href="https://www.linkedin.com/in/daniel-k%C3%BChlwein-a0b6051/" target="_blank">Daniel Kühlwein</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/bergmannmarcel/" target="_blank">Marcel Bergmann</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de" target="_blank">Moritz Schaffenroth</a> (Germany)</li>
+                  <li><a href="">Kanwalmeet Singh Kochar</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/hartvig-johannson-04a0b6193" target="_blank">Hartvig Johannson</a> (Normay)</li>
+                  <li><a href="">Simen Norrheim Larsen</a> (Norway)</li>
+                  <li><a href="">Robin Wulfes</a> (Germany)</li>
+                  <li><a href="mailto:gdsc3_core.iandd@capgemini.com">Sophie (Nien-chun) Yin</a> (Germany)</li>
                   </ul>
                 </div>
                 {/* comment
