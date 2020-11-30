@@ -18,6 +18,7 @@ import UploadPage from 'views/UploadPage.jsx';
 import WelcomePage from 'views/WelcomePage.jsx';
 import SearchPage from 'views/SearchPage.jsx';
 import Imprint from 'views/Imprint.jsx';
+import Term from 'views/Term.jsx';
 
 var hist = createBrowserHistory();
 Amplify.configure(awsmobile);
@@ -58,6 +59,7 @@ ReactDOM.render(
         />
         <Route path="/about" render={() => <Imprint history={hist} />} />
         <Route path="/" render={() => <WelcomePage history={hist} />} />
+        <Route path="/term-of-use" render={() => <Term history={hist} />} />
       </Switch>
     </Router>
   </Provider>,
