@@ -10,6 +10,7 @@ import { createPicture, updateConfig } from 'graphql/mutations';
 import { getConfig } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
 import PropTypes from 'prop-types';
+import Footer from 'components/Footer/Footer.jsx';
 
 class Term extends React.Component {
   constructor(props) {
@@ -85,26 +86,18 @@ class Term extends React.Component {
               <div className="col-12">
                 <div className="article-text" style={{ paddingTop: "60px" }}>
                   <h1 style={{ paddingTop: "5px" }}>
-                    <b>Collaborator</b>
+                    <b>FlukeTracker’s Privacy Policy</b>
                   </h1>
-                  <h3 style={{ marginTop: "5px" }}><a href="https://www.facebook.com/WhaleWatchAzores" target="_blank">Lisa Steiner</a></h3>
-                                    <div>
-                    <p
-                      style={{
-                        fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-                        fontSize: '16px',
-                        lineHeight: '24px',
-                        fontWeight: '300',
-                      }}
-                    >
-                      Text for Term of Use
-                    </p>
+                  <div style={{
+                        fontFamily: 'Roboto, Helvetica, Arial, sans-serif', color: 'black'
+                      }}>
                   </div>
                 </div>
                               </div>
             </div>
           </div>
         </div>
+        <Footer whiteFont />
       </div>
     );
   }
