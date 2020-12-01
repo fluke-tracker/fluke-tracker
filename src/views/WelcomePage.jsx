@@ -11,7 +11,7 @@ import Amplify from '@aws-amplify/core';
 import 'react-dropzone-uploader/dist/styles.css';
 import PropTypes from 'prop-types';
 import CookieBanner from 'react-cookie-banner';
-
+import Footer from 'components/Footer/Footer.jsx';
 class WelcomePage extends React.Component {
   constructor(props) {
     super(props);
