@@ -160,7 +160,10 @@ class WhaleUploaderComponent extends React.Component {
       console.log('no matching cropper component');
     }
     const cropperComponent = matchingCropperComponents[0];
-    const croppedFile = await cropperComponent.getCroppedImage();
+    const fileName =  this.state.cropperComponents
+    .filter((comp) => comp)
+    .map((comp) => comp.props.filename)[0];
+    const croppedFile = await cropperComponent.getCroppedImage(fileName);
     Storage.put(uploadPath + croppedFile.name, croppedFile, {
       customPrefix: customPrefix,
       progressCallback: (progress) => {
@@ -450,6 +453,7 @@ class WhaleUploaderComponent extends React.Component {
           classes={this.props.classes}
           user={this.props.user}
           selectedMode={this.state.selectedEnabled}
+          history={this.props.history}
         />
         <ModeSelection />
       </>
