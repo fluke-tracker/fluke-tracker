@@ -33,7 +33,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
       <Switch>
-        <Route
+      <Route
           path="/match-whales/:filename"
           render={(props) => <MatchingPage {...props} history={hist} />}
         />
