@@ -621,12 +621,12 @@ class MatchingPage extends React.Component {
     const U_KEY = 85;
 
     switch (event.keyCode) {
-      case M_KEY:
-        if (this.state.adminFlag) this.matchPicture();
-        break;
-      case U_KEY:
-        if (this.state.adminFlag) this.unmatchPictures();
-        break;
+      //case M_KEY:
+      //  if (this.state.adminFlag) this.matchPicture();
+      //  break;
+      //case U_KEY:
+      //  if (this.state.adminFlag) this.unmatchPictures();
+      //  break;
       case LEFT_ARROW_KEY:
         this.navigationAction('left');
         break;
