@@ -15,6 +15,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Amplify from '@aws-amplify/core';
 import { Search } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+import Footer from 'components/Footer/Footer.jsx';
 
 class SearchPage extends React.Component {
   constructor(props) {
@@ -311,7 +312,7 @@ class SearchPage extends React.Component {
           {...rest}
         />
         {
-          <div className={classes.container}>
+          <div className={classes.container} style={{ minHeight: '95vh' }}>
             <div
               className="section container"
               style={{ paddingTop: '180px', paddingBottom: '5px' }}
@@ -416,6 +417,7 @@ class SearchPage extends React.Component {
             />
           </div>
         }
+        <Footer whiteFont />
       </div>
     );
   }

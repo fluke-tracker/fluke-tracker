@@ -10,6 +10,7 @@ import { createPicture, updateConfig } from 'graphql/mutations';
 import { getConfig } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
 import PropTypes from 'prop-types';
+import Footer from 'components/Footer/Footer.jsx';
 
 class Imprint extends React.Component {
   constructor(props) {
@@ -232,6 +233,7 @@ class Imprint extends React.Component {
             </div>
           </div>
         </div>
+        <Footer whiteFont />
       </div>
     );
   }
