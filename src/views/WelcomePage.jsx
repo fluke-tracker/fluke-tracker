@@ -10,7 +10,7 @@ import { Icon } from 'semantic-ui-react';
 import Amplify from '@aws-amplify/core';
 import 'react-dropzone-uploader/dist/styles.css';
 import PropTypes from 'prop-types';
-import Footer from 'components/Footer/Footer.jsx';
+import CookieBanner from 'react-cookie-banner';
 
 class WelcomePage extends React.Component {
   constructor(props) {
@@ -57,6 +57,11 @@ class WelcomePage extends React.Component {
           {...rest}
         />
         <div>
+        <CookieBanner
+            message="We use cookies to track login informations."
+            onAccept={() => {}}
+            cookie="user-has-accepted-cookies" />
+          </div>
           <div
             className="section container"
             style={{
@@ -142,6 +147,7 @@ class WelcomePage extends React.Component {
               </div>
             </div>
           </div>
+          <div>
         </div>
 <Footer whiteFont />
       </div>
