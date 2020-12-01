@@ -8,6 +8,7 @@ import Amplify from '@aws-amplify/core';
 import 'react-dropzone-uploader/dist/styles.css';
 import WhaleUploader from 'components/WhaleUploader/WhaleUploader.jsx';
 import PropTypes from 'prop-types';
+import Footer from 'components/Footer/Footer.jsx';
 
 class UploadPage extends React.Component {
   constructor(props) {
@@ -65,7 +66,7 @@ class UploadPage extends React.Component {
           <br />
           <br />
 
-          <div className={classes.container}>
+          <div className={classes.container} style={{ minHeight: '79vh' }}>
             <div className="section container">
               <div className="row">
                 <div className="col-12">
@@ -148,6 +149,7 @@ class UploadPage extends React.Component {
             </div>
           </div>
         </div>
+        <Footer whiteFont />
       </div>
     );
   }

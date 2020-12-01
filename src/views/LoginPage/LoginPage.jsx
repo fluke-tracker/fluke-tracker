@@ -217,8 +217,8 @@ class LoginPage extends React.Component {
               </GridItem>
             </GridContainer>
           </div>
-          <Footer whiteFont />
         </div>
+        <Footer whiteFont />
       </div>
     );
   }

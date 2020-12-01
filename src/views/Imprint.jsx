@@ -10,6 +10,7 @@ import { createPicture, updateConfig } from 'graphql/mutations';
 import { getConfig } from 'graphql/queries';
 import API, { graphqlOperation } from '@aws-amplify/api';
 import PropTypes from 'prop-types';
+import Footer from 'components/Footer/Footer.jsx';
 
 class Imprint extends React.Component {
   constructor(props) {
@@ -32,102 +33,6 @@ class Imprint extends React.Component {
       .catch((err) =>
         console.log('currentAuthenticatedUser profilepage err', err)
       );
-  }
-  async uploadImage() {
-    var allowUpload = false;
-    allowUpload = await this.insertToDynamo(
-      `${this.upload.files[0].name}`,
-      allowUpload
-    );
-    console.log('allowUpload ', allowUpload);
-    if (allowUpload == true) {
-      try {
-        console.log('upload image to S3 bucket');
-        Storage.put(
-          'embeddings/input/' + `${this.upload.files[0].name}`,
-          this.upload.files[0],
-          {
-            contentType: this.upload.files[0].type,
-          }
-        )
-          .then(() => {
-            const image = `${this.upload.files[0].name}`;
-            console.log('image name', image);
-            this.upload = null;
-            console.log('upload success,');
-            this.setState({
-              response: 'Success uploading file!',
-              imageName: '',
-            });
-          })
-          .catch((err) => {
-            console.log('error while uploading,', err);
-            this.setState({ response: `Cannot uploading file: ${err}` });
-          });
-      } catch (e) {
-        console.log('error in uploading', e);
-      }
-    } else {
-      console.log('cannot upload image');
-    }
-  }
-  async insertToDynamo(image, allowUpload) {
-    try {
-      console.log('getting config from dynamodb');
-      const getWhaleConfig = await API.graphql(
-        graphqlOperation(getConfig, { id: 'maxWhaleId' })
-      );
-      console.log('getConfig output aws', getWhaleConfig);
-      const maxWhaleID = getWhaleConfig.data.getConfig.value;
-      console.log('maxWhaleID', maxWhaleID);
-      var newWhaleID = parseInt(maxWhaleID) + 1;
-    } catch (e) {
-      allowUpload = false;
-      console.log('getting config error', e);
-      this.setState({
-        response: `Error: while fetching AWS Config for upload: ${e}`,
-        imageName: '',
-      });
-    }
-    try {
-      console.log('inserting image record to dynamodb');
-      console.log('newWhaleID', newWhaleID);
-      const insertImage = await API.graphql(
-        graphqlOperation(createPicture, {
-          input: {
-            id: image,
-            filename: image,
-            geocoords: ',',
-            thumbnail: image + 'thumbnail.jpg',
-            pictureWhaleId: newWhaleID,
-            is_new: true,
-            embedding: 123,
-            uploaded_by: 'whalewatching',
-          },
-        })
-      );
-      console.log('insertImage output aws', insertImage);
-      console.log('updating maxwhaleID config', newWhaleID);
-      const updateWhaleConfig = await API.graphql(
-        graphqlOperation(updateConfig, {
-          input: {
-            id: 'maxWhaleId',
-            value: newWhaleID,
-          },
-        })
-      );
-      console.log('updateWhaleConfig output aws', updateWhaleConfig);
-      allowUpload = true;
-      console.log('setting allowupload as ', allowUpload);
-    } catch (e) {
-      allowUpload = false;
-      console.log('getting insertImage error', e);
-      this.setState({
-        response: `Error while upload. Check if Image already exists in the Database: ${e}`,
-        imageName: '',
-      });
-    }
-    return allowUpload;
   }
 
   render() {
@@ -281,7 +186,7 @@ class Imprint extends React.Component {
                   <li><a href="https://www.linkedin.com/in/daniel-k%C3%BChlwein-a0b6051/" target="_blank">Daniel Kühlwein</a> (Germany)</li>
                   <li><a href="https://www.linkedin.com/in/bergmannmarcel/" target="_blank">Marcel Bergmann</a> (Germany)</li>
                   <li><a href="https://www.linkedin.com/in/moritz-schaffenroth-bbaa84142/?originalSubdomain=de" target="_blank">Moritz Schaffenroth</a> (Germany)</li>
-                  <li><a href="">Kanwalmeet Singh Kochar</a> (Germany)</li>
+                  <li><a href="https://www.linkedin.com/in/kanwalmeet-singh/" target="_blank">Kanwalmeet Singh</a> (Germany)</li>
                   <li><a href="https://www.linkedin.com/in/hartvig-johannson-04a0b6193" target="_blank">Hartvig Johannson</a> (Normay)</li>
                   <li><a href="">Simen Norrheim Larsen</a> (Norway)</li>
                   <li><a href="">Robin Wulfes</a> (Germany)</li>
@@ -328,6 +233,7 @@ class Imprint extends React.Component {
             </div>
           </div>
         </div>
+        <Footer whiteFont />
       </div>
     );
   }

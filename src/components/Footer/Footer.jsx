@@ -22,21 +22,17 @@ function Footer({ ...props }) {
     [classes.footerWhiteFont]: whiteFont
   });
   return (
-    <footer className={footerClasses}>
-      <div className={classes.container}>
-        <div className={classes.left}>
-          <List className={classes.list}>
-            
-            <ListItem className={classes.inlineBlock}>
-              
-            </ListItem>
-          </List>
-        </div>
-        <div className={classes.right}>
-          &copy; {1900 + new Date().getYear()}       
-        </div>
-      </div>
-    </footer>
+                <footer className='footerClasses' style={{backgroundColor: "#0070AD", padding:"20px", fontFamily: "Verdana, Arial, sans-serif", fontSize: "9px", color: "white", bottom: "0%"}}>
+          <div className='container'>
+        <div className='row' style={{textAlign: "center"}}>
+        <div style={{margin: "auto 250px auto 25px"}}>
+        <p style={{fontSize: "9px"}}>All rights reserved by fluke-tracker. Copyright © 2020</p></div>
+                <div style={{margin: "auto 0px auto 200px"}}>
+        <a href={"/term-of-condition"} style={{color: "white"}}>Term of Condition</a></div>
+        <div style={{margin: "auto 0px auto 25px"}}>
+        <a href={"/privacy-policy"} style={{color: "white"}}>Privacy Policy</a></div>
+        </div></div>
+        </footer>
   );
 }
 

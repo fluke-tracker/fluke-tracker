@@ -21,7 +21,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ImageWithInfoComponent from 'components/ImageComponent/ImageWithInfoComponent.jsx';
 import { Dropdown } from 'semantic-ui-react';
 import Amplify from '@aws-amplify/core';
-
+import Footer from 'components/Footer/Footer.jsx';
 import { connect } from 'react-redux';
 
 import 'react-image-picker/dist/index.css';
@@ -958,7 +958,7 @@ class MatchingPage extends React.Component {
         />
         {
           <div>
-            <div className={classes.container}>
+            <div className={classes.container} style={{ minHeight: '95vh' }}>
               <div
                 className="section container"
                 style={{ paddingTop: '180px', paddingBottom: '5px' }}
@@ -1194,6 +1194,7 @@ class MatchingPage extends React.Component {
             </div>
           </div>
         }
+        <Footer whiteFont />
       </div>
     );
   }
