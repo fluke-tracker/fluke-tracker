@@ -86,6 +86,9 @@ class WelcomePage extends React.Component {
                         minHeight: '400px',
                         backgroundImage:
                           'url("https://upload.wikimedia.org/wikipedia/commons/b/b8/Sperm_whale_pod.jpg")',
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
                       }}
                     >
                       <Button
@@ -146,7 +149,19 @@ class WelcomePage extends React.Component {
           </div>
           <div>
         </div>
+        <footer style={{backgroundColor: "#f3f3f3", margin: "20px 0px", padding:"20px", fontFamily: "Verdana, Arial, sans-serif"}}>
+          <div className='container'>
+        <div className='row'>
+        <div style={{margin: "auto 100px auto 25px"}}>
+        <p>All rights reserved by fluck-tracker. Copyright © 2020</p></div>
+        <div style={{margin: "auto 100px auto 25px"}}>
+        <a href="#" onClick={this.handleClick}>Privacy Policy</a></div>
+        <div style={{margin: "auto 25px auto 25px"}}>
+        <a href={"/term-of-use"} onClick={this.handleClick}>Term of Use</a></div>
+        </div></div>
+        </footer>
       </div>
+
     );
   }
 }
