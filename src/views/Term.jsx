@@ -114,8 +114,6 @@ class Term extends React.Component {
 <p>Without prior approval and written permission, you may not create frames around our Webpages that alter in any way the visual presentation or appearance of our website. </p>
 <h2>Content Liability</h2>
 <p>We shall not be hold responsible for any content that appears on your website. You agree to protect and defend us against all claims that is rising on your website. No link(s) should appear on any website that may be interpreted as libelous, obscene or criminal, or which infringes, otherwise violates, or advocates the infringement or other violation of, any third party rights. </p>
-<h2>Your Privacy</h2>
-<p>Please read our <a href={"/privacy-policy"}>Privacy Policy</a></p>
 <h2>Reservation of Rights</h2>
 <p>We reserve the right to request that you remove all links or any particular link to our website. You approve to immediately remove all links to our website upon request. We also reserve the right to amen these terms and conditions and it’s linking policy at any time. By continuously linking to our website, you agree to be bound to and follow these linking terms and conditions. </p>
 <h2>Removal of links from our website</h2>
