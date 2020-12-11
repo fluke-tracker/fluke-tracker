@@ -112,12 +112,8 @@ class Term extends React.Component {
 <p>FlukeTracker contains Content of different Users. Except as provided within this Agreement, you may not copy, modify, translate, publish, broadcast, transmit, distribute, perform, display, or sell any Content appearing on our website without the explicit approval from the Content owner. </p>
 <h2>iFrames</h2>
 <p>Without prior approval and written permission, you may not create frames around our Webpages that alter in any way the visual presentation or appearance of our website. </p>
-<h2>Content Liability</h2>
-<p>We shall not be hold responsible for any content that appears on your website. You agree to protect and defend us against all claims that is rising on your website. No link(s) should appear on any website that may be interpreted as libelous, obscene or criminal, or which infringes, otherwise violates, or advocates the infringement or other violation of, any third party rights. </p>
-<h2>Your Privacy</h2>
-<p>Please read our <a href={"/privacy-policy"}>Privacy Policy</a></p>
 <h2>Reservation of Rights</h2>
-<p>We reserve the right to request that you remove all links or any particular link to our website. You approve to immediately remove all links to our website upon request. We also reserve the right to amen these terms and conditions and it’s linking policy at any time. By continuously linking to our website, you agree to be bound to and follow these linking terms and conditions. </p>
+<p>We reserve the right to request that you remove all links or any particular link to our website. You approve to immediately remove all links to our website upon request. We also reserve the right to amend these terms and conditions and its linking policy at any time. By continuously linking to our website, you agree to be bound to and follow these linking terms and conditions. </p>
 <h2>Removal of links from our website</h2>
 <p>If you find any link on our website that is offensive for any reason, you are free to contact and inform us any moment. We will consider requests to remove links but we are not obligated to or so or to respond to you directly. </p>
 <p>We do not ensure that the information on this website is correct, we do not warrant its completeness or accuracy; nor do we promise to ensure that the website remains available or that the material on the website is kept up to date. </p>

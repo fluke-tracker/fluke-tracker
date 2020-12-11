@@ -58,7 +58,7 @@ ReactDOM.render(
           path="/browse-pictures"
           render={(props) => <SearchPage {...props} history={hist} />}
         />
-        <Route path="/term-of-condition" render={() => <Term history={hist} />} />
+        <Route path="/terms" render={() => <Term history={hist} />} />
         <Route path="/privacy-policy" render={() => <Privacy history={hist} />} />
         <Route path="/about" render={() => <Imprint history={hist} />} />
         <Route path="/" render={() => <WelcomePage history={hist} />} />

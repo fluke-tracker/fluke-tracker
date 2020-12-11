@@ -29,7 +29,7 @@ class CropperComponent extends React.Component {
     };
   }
 
-  dataURItoBlob(dataURI) {
+  dataURItoBlob(dataURI, fileName) {
     if (!dataURI) return null;
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
@@ -51,15 +51,17 @@ class CropperComponent extends React.Component {
 
     // write the ArrayBuffer to a blob, and you're done
     var blob = new Blob([ab], { type: mimeString });
+    blob.name = fileName;
     return blob;
   }
 
-  async getCroppedImage() {
+  async getCroppedImage(filename) {
     return await new Promise((resolve) => {
       return this.state.cropper
         ? resolve(
             this.dataURItoBlob(
-              this.state.cropper.getCroppedCanvas()?.toDataURL('image/jpeg')
+              this.state.cropper.getCroppedCanvas()?.toDataURL('image/jpeg'),
+              filename
             )
           )
         : resolve(undefined);
@@ -104,7 +106,7 @@ class CropperComponent extends React.Component {
   }
 
   async download_file() {
-    var string = await this.readFileAsDataURL(this.getCroppedImage());
+    var string = await this.readFileAsDataURL(this.getCroppedImage('image.jpg'));
     var iframe =
       "<iframe width='100%' height='100%' src='" + string + "'></iframe>";
     var x = window.open();

@@ -391,10 +391,10 @@ class MatchingPage extends React.Component {
   getCurrentNamesIds() {
     const leftPicObj = this.state.newPicsList[this.state.vertical];
     const rightPicObj = this.state.simPicObj;
-    const leftImgName = leftPicObj.id;
-    const rightImgName = rightPicObj.id;
-    const leftWhaleId = leftPicObj.whale.id;
-    const rightWhaleId = rightPicObj.whale.id;
+    const leftImgName = leftPicObj?.id;
+    const rightImgName = rightPicObj?.id;
+    const leftWhaleId = leftPicObj?.whale?.id;
+    const rightWhaleId = rightPicObj?.whale?.id;
 
     return [leftImgName, rightImgName, leftWhaleId, rightWhaleId];
   }
@@ -621,12 +621,12 @@ class MatchingPage extends React.Component {
     const U_KEY = 85;
 
     switch (event.keyCode) {
-      case M_KEY:
-        if (this.state.adminFlag) this.matchPicture();
-        break;
-      case U_KEY:
-        if (this.state.adminFlag) this.unmatchPictures();
-        break;
+      //case M_KEY:
+      //  if (this.state.adminFlag) this.matchPicture();
+      //  break;
+      //case U_KEY:
+      //  if (this.state.adminFlag) this.unmatchPictures();
+      //  break;
       case LEFT_ARROW_KEY:
         this.navigationAction('left');
         break;
