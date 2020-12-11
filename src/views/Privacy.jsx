@@ -125,11 +125,11 @@ class Privacy extends React.Component {
 <ul>
 <li>Manage access to different functions on our website. </li>
 <li>Add watermarks to the photos that are uploaded to our website</li>
-<li>Assign and display the user name of the photos on our website</li>
+<li>Assign and display the username of the photos on our website</li>
 </ul>
 <h2>How do we store your data? </h2>
 <p>FlukeTracker securely stores your data on cloud infrastructure which is managed by AWS. Security precautions are taken by our service provider AWS. All privacy-related information can be found in AWS’s privacy policy on <a href="https://aws.amazon.com">https://aws.amazon.com</a>.</p>
-<p>FlukeTracker will keep your user data for as long as there are photos uploaded by you in our database. Once this is not fulfilled anymore, your user information is automatically deleted with the photos.</p>
+<p>Your username will also be stored together with the photos you upload on our website so that we could unambiguously identify the owner of each picture.</p>
 <h2>What are your data protection rights? </h2>
 <p>FlukeTracker would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following: </p>
 <p><strong>The right to access</strong> – You have the right to request FlukeTracker for copies of your personal data. We may charge you a small fee for this service. </p>
