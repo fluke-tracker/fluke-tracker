@@ -31,6 +31,8 @@ function Footer({ ...props }) {
         <a href={"/terms"} style={{color: "white"}}>Terms</a></div>
         <div style={{margin: "auto 0px auto 25px"}}>
         <a href={"/privacy-policy"} style={{color: "white"}}>Privacy Policy</a></div>
+                <div style={{margin: "auto 0px auto 25px"}}>
+        <a href="mailto:contact@fluke-tracker.com" style={{color: "white"}}>Contact Us</a></div>
         </div></div>
         </footer>
   );
