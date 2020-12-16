@@ -216,6 +216,13 @@ class LoginPage extends React.Component {
                 </Card>
               </GridItem>
             </GridContainer>
+            <div>
+                                              <h4 style={{ paddingBottom: '5px' }}>
+                      <strong>
+                        * If you don't have an account on FlukeTracker yet, please <a href="mailto:contact@fluke-tracker.com">Contact Us</a>
+                      </strong>
+                    </h4>
+          </div>
           </div>
         </div>
         <Footer whiteFont />

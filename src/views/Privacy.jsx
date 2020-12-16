@@ -139,7 +139,7 @@ class Privacy extends React.Component {
 <p><strong>The right to object to processing</strong>  – You have the right to object to FlukeTracker’s processing of your personal data, under certain conditions. </p>
 <p><strong>The right to data portability</strong> – You have the right to request that FlukeTracker transfer the data that we have collected to another organization, or directly to you, under certain conditions. </p>
 <p>If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please contact us at our email: </p>
-<p>Call us at: <a href="mailto:marcel.bergmann@capgemini.com">marcel.bergmann@capgemini.com</a></p>
+<p>Call us at: <a href="mailto:contact@fluke-tracker.com">contact@fluke-tracker.com</a></p>
 <h2>Cookies</h2>
 <p>Cookies are text files placed on your computer to collect standard Internet log information and visitor behavior information. When you visit our websites, we may collect information from you automatically through cookies or similar technology.</p>
 <p>For further information, visit <a href="allaboutcookies.org">allaboutcookies.org</a>.</p>
@@ -162,7 +162,7 @@ class Privacy extends React.Component {
 <p>FlukeTracker keeps its privacy policy under regular review and places any updates on this web page. This privacy policy was last updated on 1st December 2020. </p>
 <h2>How to contact us</h2>
 <p>If you have any questions about FlukeTracker’s privacy policy, the data we hold on you, or you would like to exercise one of your data protection rights, please do not hesitate to contact us. </p>
-<p>Email us at: <a href="mailto:marcel.bergmann@capgemini.com">marcel.bergmann@capgemini.com</a></p>
+<p>Email us at: <a href="mailto:contact@fluke-tracker.com">contact@fluke-tracker.com</a></p>
 
                   </div>
                 </div>
