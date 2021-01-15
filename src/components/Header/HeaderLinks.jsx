@@ -1,7 +1,7 @@
 /*eslint-disable*/
 import React from "react";
 // react components for routing our app without refresh
-import { Link } from "react-router-dom";
+import { NavLink as Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../../store/actions";
 // @material-ui/core components
@@ -20,7 +20,7 @@ import { Auth } from "aws-amplify";
 
 const RegisterButton = (props) => (
   <ListItem className={props.classes.listItem}>
-    <Link to={"/login"} className={props.classes.navLink} user={props.user}>
+    <Link to={"/login"} className={props.classes.navLink} user={props.user} activeStyle={{textDecoration: "underline"}}>
         Login/Register
     </Link>
   </ListItem>
@@ -44,27 +44,32 @@ function HeaderLinks({ ...props }) {
       {
       <>
       <ListItem className={classes.listItem}>
-        <Link to= {"/welcome-upload"} className={classes.navLink} user={props.user}>
+        <Link to= {"/welcome-upload"} className={classes.navLink} user={props.user} 
+        activeStyle={{textDecoration: "underline"}}>
             Welcome
           </Link>
       </ListItem>
       <ListItem className={classes.listItem}>
-          <Link to= {"/upload"} className={classes.navLink} user={props.user}>
+          <Link to= {"/upload"} className={classes.navLink} user={props.user}
+          activeStyle={{textDecoration: "underline" }}>
             Upload
           </Link>
       </ListItem>
       <ListItem className={classes.listItem}>
-            <Link to= {"/match-whales"} className={classes.navLink} user={props.user}>
+            <Link to= {"/match-whales"} className={classes.navLink} user={props.user}
+            activeStyle={{textDecoration: "underline"}}>
               Match Whales
             </Link>
             </ListItem>
             <ListItem className={classes.listItem}>
-            <Link to= {"/browse-pictures"} className={classes.navLink} user={props.user}>
+            <Link to= {"/browse-pictures"} className={classes.navLink} user={props.user}
+            activeStyle={{textDecoration: "underline"}}>
             Browse Pictures
           </Link>
           </ListItem>
           <ListItem className={classes.listItem}>
-             <Link to = {"/about"} className={classes.navLink} user={props.user}>
+             <Link to = {"/about"} className={classes.navLink} user={props.user}
+             activeStyle={{textDecoration: "underline"}}>
              About
            </Link>
       </ListItem>

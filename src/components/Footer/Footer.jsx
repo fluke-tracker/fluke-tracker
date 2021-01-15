@@ -28,9 +28,11 @@ function Footer({ ...props }) {
         <div style={{margin: "auto 250px auto 25px"}}>
         <p style={{fontSize: "9px"}}>All rights reserved by fluke-tracker. Copyright © 2020</p></div>
                 <div style={{margin: "auto 0px auto 200px"}}>
-        <a href={"/term-of-condition"} style={{color: "white"}}>Term of Condition</a></div>
+        <a href={"/terms"} style={{color: "white"}}>Terms</a></div>
         <div style={{margin: "auto 0px auto 25px"}}>
         <a href={"/privacy-policy"} style={{color: "white"}}>Privacy Policy</a></div>
+                <div style={{margin: "auto 0px auto 25px"}}>
+        <a href="mailto:contact@fluke-tracker.com" style={{color: "white"}}>Contact Us</a></div>
         </div></div>
         </footer>
   );

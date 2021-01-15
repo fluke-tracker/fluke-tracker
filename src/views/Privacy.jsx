@@ -125,11 +125,11 @@ class Privacy extends React.Component {
 <ul>
 <li>Manage access to different functions on our website. </li>
 <li>Add watermarks to the photos that are uploaded to our website</li>
-<li>Assign and display the user name of the photos on our website</li>
+<li>Assign and display the username of the photos on our website</li>
 </ul>
 <h2>How do we store your data? </h2>
-<>FlukeTracker securely stores your data on cloud infrastructure which is managed by AWS. Security precautions are taken by our service provider AWS. All privacy-related information can be found in AWS’s privacy policy on https://aws.amazon.com. </>
-<>FlukeTracker will keep your user data for as long as there are photos uploaded by you in our database. Once this is not fulfilled anymore, your user information is automatically deleted with the photos. </>
+<p>FlukeTracker securely stores your data on cloud infrastructure which is managed by AWS. Security precautions are taken by our service provider AWS. All privacy-related information can be found in AWS’s privacy policy on <a href="https://aws.amazon.com">https://aws.amazon.com</a>.</p>
+<p>Your username will also be stored together with the photos you upload on our website so that we could unambiguously identify the owner of each picture.</p>
 <h2>What are your data protection rights? </h2>
 <p>FlukeTracker would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following: </p>
 <p><strong>The right to access</strong> – You have the right to request FlukeTracker for copies of your personal data. We may charge you a small fee for this service. </p>
@@ -139,10 +139,10 @@ class Privacy extends React.Component {
 <p><strong>The right to object to processing</strong>  – You have the right to object to FlukeTracker’s processing of your personal data, under certain conditions. </p>
 <p><strong>The right to data portability</strong> – You have the right to request that FlukeTracker transfer the data that we have collected to another organization, or directly to you, under certain conditions. </p>
 <p>If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please contact us at our email: </p>
-<p>Call us at: <a href="mailto:marcel.bergmann@capgemini.com">marcel.bergmann@capgemini.com</a></p>
+<p>Call us at: <a href="mailto:contact@fluke-tracker.com">contact@fluke-tracker.com</a></p>
 <h2>Cookies</h2>
-<p>Cookies are text files placed on your computer to collect standard Internet log information and visitor behavior information. When you visit our websites, we may collect information from you automatically through cookies or similar technology</p>
-<p>For further information, visit allaboutcookies.org. </p>
+<p>Cookies are text files placed on your computer to collect standard Internet log information and visitor behavior information. When you visit our websites, we may collect information from you automatically through cookies or similar technology.</p>
+<p>For further information, visit <a href="allaboutcookies.org">allaboutcookies.org</a>.</p>
 <h2>How do we use cookies? </h2>
 <p>FlukeTracker uses cookies in a range of ways to improve your experience on our website, including: </p>
 <ul>
@@ -152,8 +152,7 @@ class Privacy extends React.Component {
 <h2>What types of cookies do we use? </h2>
 <p>There are a number of different types of cookies, however, our website uses: </p>
 <ul>
-<li>Functionality – FlukeTracker uses these cookies so that we recognize you on our website and remember your previously selected preferences. These could include what language you prefer and location you are in. A mix of first-party and third-party cookies are used. </li>
-<li>Advertising – FlukeTracker uses these cookies to collect information about your visit to our website, the content you viewed, the links you followed and information about your browser, device, and your IP address. FlukeTracker sometimes shares some limited aspects of this data with third parties for advertising purposes. We may also share online data collected through cookies with our advertising partners. This means that when you visit another website, you may be shown advertising based on your browsing patterns on our website. </li>
+<li>Functionality – FlukeTracker uses these cookies so that we recognize you on our website and remember your previously selected preferences. These could include what language you prefer and location you are in. A mix of first-party and third-party cookies are used.</li>
 </ul>
 <h2>How to manage cookies</h2>
 <p>You can set your browser not to accept cookies, and the above website tells you how to remove cookies from your browser. However, in a few cases, some of our website features may not function as a result. </p>
@@ -163,7 +162,7 @@ class Privacy extends React.Component {
 <p>FlukeTracker keeps its privacy policy under regular review and places any updates on this web page. This privacy policy was last updated on 1st December 2020. </p>
 <h2>How to contact us</h2>
 <p>If you have any questions about FlukeTracker’s privacy policy, the data we hold on you, or you would like to exercise one of your data protection rights, please do not hesitate to contact us. </p>
-<p>Email us at: <a href="mailto:marcel.bergmann@capgemini.com">marcel.bergmann@capgemini.com</a></p>
+<p>Email us at: <a href="mailto:contact@fluke-tracker.com">contact@fluke-tracker.com</a></p>
 
                   </div>
                 </div>

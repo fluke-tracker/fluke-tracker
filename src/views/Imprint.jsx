@@ -168,7 +168,7 @@ class Imprint extends React.Component {
                       presented findings at International marine mammal
                       conferences. For several years, she developed B&W films,
                       printed the flukes and matched them on her living room
-                      floor! In 2002, an semi-automated system was developed as
+                      floor! In 2002, a semi-automated system was developed as
                       part of “Europhlukes” a EU funded project, to do the
                       matching and she has been using that program ever since.
                       But technology has come a long way since 1992 and when the
