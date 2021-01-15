@@ -69,7 +69,7 @@ class SearchPage extends React.Component {
     console.log('image', image);
     var images = this.state.IMAGES.slice();
     var img = images[index];
-    if (Object.property.hasOwnProperty.call(img, 'isSelected')) {
+    if (Object.hasOwnProperty.call(img, 'isSelected')) {
       img.isSelected = !img.isSelected;
     } else img.isSelected = true;
     this.setState({
