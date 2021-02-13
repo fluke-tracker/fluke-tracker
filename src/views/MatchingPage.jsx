@@ -899,7 +899,6 @@ class MatchingPage extends React.Component {
       }
 
       console.log('IN PROCESSING - SETTING STATE');
-      console.log(pics);
 
       this.setState({
         vertical: Math.max(0, Math.min(pics.length - 1, this.state.vertical)),
@@ -911,6 +910,7 @@ class MatchingPage extends React.Component {
       console.log(error);
     }
     const leftPicObj = this.state.newPicsList[this.state.vertical];
+    console.log('IN PROCESSING leftPicObj',leftPicObj);
     if (leftPicObj !== undefined) {
       this.setState({
         imageCreatedAt: this.state.newPicsList[this.state.vertical].createdAt,
@@ -920,12 +920,12 @@ class MatchingPage extends React.Component {
 
   render() {
     console.log('IN RENDER', this.state, this.state.newPicsList);
-
+    const leftPic = this.state.newPicsList[this.state.vertical];
+    const imageLoadDate = leftPic!= undefined ? leftPic.createdAt : this.state.imageCreatedAt;
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
-
     const myMoment = moment();
-    const myMoment5 = moment(this.state.imageCreatedAt).add(300, 'seconds');
+    const myMoment5 = moment(imageLoadDate).add(300, 'seconds');
     var allowDelete = false;
     allowDelete = Boolean(myMoment.diff(myMoment5) > 0);
     console.log('time diff ', myMoment.diff(myMoment5));
