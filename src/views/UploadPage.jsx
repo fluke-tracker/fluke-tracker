@@ -120,6 +120,10 @@ class UploadPage extends React.Component {
                         color: 'black',
                       }}
                     >
+                      <li><strong style={{ color: 'red' }}>Recommended</strong>:
+                        Please upload manually cropped images by selecting the{' '}
+                        <b>No Cropping</b> option, in order to get the best matching results.
+                      </li>
                       <li>
                         The fluke tracker machine learning model, finds the best
                         matches to images in the database by using images
@@ -137,10 +141,6 @@ class UploadPage extends React.Component {
                         Select the <b>Use Cropping Algorithm </b>option to
                         leverage the algorithm which automatically crops
                         uploaded images{' '}
-                      </li>
-                      <li>
-                        To upload manually cropped images, select the{' '}
-                        <b>No Cropping</b> option.
                       </li>
                     </ul>
                   </div>

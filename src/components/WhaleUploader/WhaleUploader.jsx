@@ -24,7 +24,7 @@ class WhaleUploaderComponent extends React.Component {
       longitude: null,
       imageDate: null,
       cropperComponents: [],
-      selectedEnabled: 'browserCropping',
+      selectedEnabled: 'noCropping',
     };
     this.workerHandler = new WorkerHandler();
     this.uploadImages = this.uploadImages.bind(this);
@@ -375,6 +375,28 @@ class WhaleUploaderComponent extends React.Component {
         <FormControlLabel
           control={
             <Radio
+              checked={this.state.selectedEnabled === 'noCropping'}
+              onChange={this.handleChangeEnabled}
+              value="noCropping"
+              name="radio button noCropping"
+              aria-label="No Cropping"
+              icon={<FiberManualRecord className={classes.radioUnchecked} />}
+              checkedIcon={
+                <FiberManualRecord className={classes.radioChecked} />
+              }
+              classes={{
+                checked: classes.radio,
+              }}
+            />
+          }
+          classes={{
+            label: classes.label,
+          }}
+          label="No Cropping"
+        />
+        <FormControlLabel
+          control={
+            <Radio
               checked={this.state.selectedEnabled === 'browserCropping'}
               onChange={this.handleChangeEnabled}
               value="browserCropping"
@@ -417,29 +439,7 @@ class WhaleUploaderComponent extends React.Component {
           }}
           label="Use Cropping Algorithm"
         />
-        <FormControlLabel
-          control={
-            <Radio
-              checked={this.state.selectedEnabled === 'noCropping'}
-              onChange={this.handleChangeEnabled}
-              value="noCropping"
-              name="radio button noCropping"
-              aria-label="No Cropping"
-              icon={<FiberManualRecord className={classes.radioUnchecked} />}
-              checkedIcon={
-                <FiberManualRecord className={classes.radioChecked} />
-              }
-              classes={{
-                checked: classes.radio,
-              }}
-            />
-          }
-          classes={{
-            label: classes.label,
-          }}
-          label="No Cropping"
-        />
-      </div>
+       </div>
     );
 
     return (
