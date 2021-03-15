@@ -3,6 +3,8 @@ import React from 'react';
 import Header from 'components/Header/Header.jsx';
 import HeaderLinks from 'components/Header/HeaderLinks.jsx';
 import Storage from '@aws-amplify/storage';
+// Pagination See: https://demos.creative-tim.com/material-kit-react/#/documentation/pagination
+import Pagination from 'components/Pagination/Pagination.jsx';
 import withStyles from '@material-ui/core/styles/withStyles';
 import landingPageStyle from 'assets/jss/material-kit-react/views/landingPage.jsx';
 import Button from 'components/CustomButtons/Button.jsx';
@@ -23,6 +25,7 @@ class SearchPage extends React.Component {
     this.state = {
       user: null,
       IMAGES: [],
+      VISIBLE_IMAGES: [],
       noData: false,
       selectedImages: [],
       dialogMessage: '',
@@ -30,6 +33,8 @@ class SearchPage extends React.Component {
       loading: true,
       whales: [],
       searchResult: [],
+      page: 0,
+      max_per_page: 3,
     };
     Amplify.configure({
       aws_appsync_authenticationType: 'API_KEY',
@@ -75,6 +80,7 @@ class SearchPage extends React.Component {
     this.setState({
       IMAGES: images,
     });
+    this.updatePage(this.state.page);
     console.log('state images', this.state.IMAGES);
   }
 
@@ -195,6 +201,7 @@ class SearchPage extends React.Component {
       console.log('no results found', e);
       await this.setState({ loading: false });
     }
+    this.updatePage(this.state.page);
   }
   async handleSubmit(event) {
     event.preventDefault();
@@ -214,6 +221,7 @@ class SearchPage extends React.Component {
     try {
       this.setState({ loading: true });
       this.setState({ IMAGES: [], response: '' });
+      this.updatePage(this.state.page);
       const S3bucket = await Storage.get('');
       returnPath = S3bucket.split('public/')[0];
       console.log('search page bucket path', returnPath);
@@ -245,6 +253,7 @@ class SearchPage extends React.Component {
       this.setState({ loading: false });
     }
     console.log('state after submit', this.state);
+    this.updatePage(this.state.page);
   }
 
   formatImages(item, whale_id, S3bucket) {
@@ -281,6 +290,12 @@ class SearchPage extends React.Component {
         this.searchWhales(this.state, searchInput);
       }
     }, 1);
+  }
+  updatePage(page){
+      console.log(page);
+      page = Math.min(Math.round(this.state.IMAGES.length/this.state.max_per_page), page);
+      console.log(page);
+      this.setState({VISIBLE_IMAGES: this.state.IMAGES.slice(this.state.max_per_page*page, this.state.max_per_page * page+this.state.max_per_page), page: page});
   }
   render() {
     const { dialogMessage } = this.state;
@@ -397,13 +412,30 @@ class SearchPage extends React.Component {
               <div></div>
             )}
 
-            <Gallery
-              images={this.state.IMAGES}
-              rowHeight={90}
-              enableLightbox={true}
-              backdropClosesModal
-              onSelectImage={this.onSelectImage}
-            />
+             <div className="row">
+                <div className="col-12">
+                    <Gallery
+                      images={this.state.VISIBLE_IMAGES}
+                      rowHeight={90}
+                      enableLightbox={true}
+                      backdropClosesModal
+                      onSelectImage={this.onSelectImage}
+                    />
+                </div>
+                <div className="col-12">
+                    {this.state.IMAGES.length > 0 &&
+                        <>
+                        <Pagination
+                          pages={
+                          Array.from(Array(Math.ceil(this.state.IMAGES.length/this.state.max_per_page)).keys()).map(num => {return {text: num+1, active: num == this.state.page, onClick: p => this.updatePage(num) }})
+                         }
+                          color="info"
+                        />
+
+                       </>
+                    }
+                </div>
+            </div>
 
             {this.state.noData && (
               <p style={{ color: 'red' }}>
