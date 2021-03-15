@@ -34,7 +34,7 @@ class SearchPage extends React.Component {
       whales: [],
       searchResult: [],
       page: 0,
-      max_per_page: 3,
+      max_per_page: 10,
     };
     Amplify.configure({
       aws_appsync_authenticationType: 'API_KEY',
