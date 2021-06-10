@@ -51,13 +51,14 @@
     "semantic-ui-react": "2.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.11.6",
-    "@babel/core": "7.11.6",
-    "@babel/plugin-proposal-class-properties": "7.10.4",
+    "@babel/cli": "7.13.10",
+    "@babel/core": "7.13.10",
+    "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/preset-env": "7.11.5",
-    "@babel/preset-react": "7.10.4",
-    "babel-loader": "8.1.0",
-    "react-app-rewired": "2.1.6",
+    "@babel/preset-react": "7.12.13",
+    "@babel/helper-define-map": "7.12.13",
+    "babel-loader": "8.2.2",
+    "react-app-rewired": "2.1.8",
     "worker-loader": "3.0.4"
   },
   "optionalDependencies": {
