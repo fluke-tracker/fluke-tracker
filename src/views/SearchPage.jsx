@@ -291,16 +291,25 @@ class SearchPage extends React.Component {
       }
     }, 1);
   }
-  updatePage(page){
-      console.log(page);
-      page = Math.min(Math.round(this.state.IMAGES.length/this.state.max_per_page), page);
-      console.log(page);
-      this.setState({VISIBLE_IMAGES: this.state.IMAGES.slice(this.state.max_per_page*page, this.state.max_per_page * page+this.state.max_per_page), page: page});
+  updatePage(page) {
+    console.log(page);
+    page = Math.min(
+      Math.round(this.state.IMAGES.length / this.state.max_per_page),
+      page
+    );
+    console.log(page);
+    this.setState({
+      VISIBLE_IMAGES: this.state.IMAGES.slice(
+        this.state.max_per_page * page,
+        this.state.max_per_page * page + this.state.max_per_page
+      ),
+      page: page,
+    });
   }
   render() {
     const { dialogMessage } = this.state;
     const { classes, ...rest } = this.props;
-    const admins = new Set(['LisaSteiner', 'whalewatching']);
+    const admins = new Set(['LisaSteiner', 'whalewatching', 'jonathan.gordon']);
     const adminFlag = admins.has(this.state.user) ? true : false;
     console.log('adminFlag', adminFlag);
 
@@ -412,29 +421,38 @@ class SearchPage extends React.Component {
               <div></div>
             )}
 
-             <div className="row">
-                <div className="col-12">
-                    <Gallery
-                      images={this.state.VISIBLE_IMAGES}
-                      rowHeight={90}
-                      enableLightbox={true}
-                      backdropClosesModal
-                      onSelectImage={this.onSelectImage}
+            <div className="row">
+              <div className="col-12">
+                <Gallery
+                  images={this.state.VISIBLE_IMAGES}
+                  rowHeight={90}
+                  enableLightbox={true}
+                  backdropClosesModal
+                  onSelectImage={this.onSelectImage}
+                />
+              </div>
+              <div className="col-12">
+                {this.state.IMAGES.length > 0 && (
+                  <>
+                    <Pagination
+                      pages={Array.from(
+                        Array(
+                          Math.ceil(
+                            this.state.IMAGES.length / this.state.max_per_page
+                          )
+                        ).keys()
+                      ).map((num) => {
+                        return {
+                          text: num + 1,
+                          active: num == this.state.page,
+                          onClick: (p) => this.updatePage(num),
+                        };
+                      })}
+                      color="info"
                     />
-                </div>
-                <div className="col-12">
-                    {this.state.IMAGES.length > 0 &&
-                        <>
-                        <Pagination
-                          pages={
-                          Array.from(Array(Math.ceil(this.state.IMAGES.length/this.state.max_per_page)).keys()).map(num => {return {text: num+1, active: num == this.state.page, onClick: p => this.updatePage(num) }})
-                         }
-                          color="info"
-                        />
-
-                       </>
-                    }
-                </div>
+                  </>
+                )}
+              </div>
             </div>
 
             {this.state.noData && (

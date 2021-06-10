@@ -91,9 +91,8 @@ class MatchingPage extends React.Component {
     this.go_right = this.go_right.bind(this);
 
     this.fetchNewPicturesList = this.fetchNewPicturesList.bind(this);
-    this.fetchAndDisplaySimilarPictures = this.fetchAndDisplaySimilarPictures.bind(
-      this
-    );
+    this.fetchAndDisplaySimilarPictures =
+      this.fetchAndDisplaySimilarPictures.bind(this);
     this.picLoadHandler = this.picLoadHandler.bind(this);
 
     this._handleKeyDown = this._handleKeyDown.bind(this);
@@ -105,7 +104,7 @@ class MatchingPage extends React.Component {
   }
 
   authenticate_user() {
-    const admins = new Set(['LisaSteiner', 'whalewatching']);
+    const admins = new Set(['LisaSteiner', 'whalewatching', 'jonathan.gordon']);
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log('MATCHINGPAGE user', user, user.username);
@@ -400,12 +399,8 @@ class MatchingPage extends React.Component {
   }
 
   async matchPicture() {
-    const [
-      left_img_name,
-      right_img_name,
-      leftWhaleId,
-      rightWhaleId,
-    ] = this.getCurrentNamesIds();
+    const [left_img_name, right_img_name, leftWhaleId, rightWhaleId] =
+      this.getCurrentNamesIds();
 
     console.log(
       'left_img_name is: ',
@@ -910,7 +905,7 @@ class MatchingPage extends React.Component {
       console.log(error);
     }
     const leftPicObj = this.state.newPicsList[this.state.vertical];
-    console.log('IN PROCESSING leftPicObj',leftPicObj);
+    console.log('IN PROCESSING leftPicObj', leftPicObj);
     if (leftPicObj !== undefined) {
       this.setState({
         imageCreatedAt: this.state.newPicsList[this.state.vertical].createdAt,
@@ -921,7 +916,8 @@ class MatchingPage extends React.Component {
   render() {
     console.log('IN RENDER', this.state, this.state.newPicsList);
     const leftPic = this.state.newPicsList[this.state.vertical];
-    const imageLoadDate = leftPic!= undefined ? leftPic.createdAt : this.state.imageCreatedAt;
+    const imageLoadDate =
+      leftPic != undefined ? leftPic.createdAt : this.state.imageCreatedAt;
     const { classes, ...rest } = this.props;
     const { dialogMessage } = this.state;
     const myMoment = moment();
