@@ -17,8 +17,8 @@ Built with amplify, react, python by a team of professional software developers 
 <br />
 
 ## Setting up for development
- - clone the project: `https://xxx`
- - change directory to this project: `fluke-tracker`
+ - clone the project: `git clone https://github.com/fluke-tracker/fluke-tracker`
+ - change directory to this project: `cd fluke-tracker`
  - Default backend URL `http://localhost:8080`. 
 
 <br />
